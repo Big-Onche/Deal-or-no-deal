@@ -111,7 +111,7 @@ namespace game
         sound::playSound("bank_offer");
 
         loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
-        if(openCount(true)) bankOffer/=openCount(true)*1.3f;
+        if(openCount(true)) bankOffer/=((float)openCount(true)*1.25);
 
         if(player.bankGain)
         {
@@ -221,11 +221,19 @@ namespace game
             if(redraw)
             {
                 drawBoxes();
-                drawRemainingPrices();
+                if(!allOpened()) drawRemainingPrices();
             }
 
             if(openCount())printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
-            switch(openCount()) { case 5: case 8: case 10: bankCall(); }
+
+            if(allOpened())
+            {
+                if(player.bankGain) printf("You won %d$ and there was %d$ in your box, %s", player.bankGain, boxes[player.playerBox-1].insideBox, player.bankGain>=boxes[player.playerBox-1].insideBox ? "well done!\n\n" : "bad luck!\n\n");
+                else printf("You won %d$ with your box %d.\n\n", boxes[player.playerBox-1].insideBox, player.playerBox);
+                break;
+            }
+
+            switch(openCount()) { case 6: case 10: case 14: bankCall(); }
 
             printf("Please choose a box to open:\n");
             scanf("%d", &player.choosenBox);
@@ -251,18 +259,10 @@ namespace game
             else
             {
                 boxes[player.choosenBox-1].opened = true;
-                if(!allOpened()) clearConsole();
+                clearConsole();
                 if(boxes[player.choosenBox-1].insideBox>=20000) sound::playSound("money_loss");
                 else sound::playSound("box_open");
                 redraw = true;
-            }
-
-            if(allOpened())
-            {
-                if(player.bankGain) printf("You won %d$ and there was %d$ in your box, %s", player.bankGain, boxes[player.playerBox-1].insideBox, player.bankGain>=boxes[player.playerBox-1].insideBox ? "well done!\n\n" : "bad luck!\n\n");
-                else printf("You won %d$ with your box %d.\n\n", boxes[player.playerBox-1].insideBox, player.playerBox);
-                clearConsole();
-                break;
             }
         }
     }
