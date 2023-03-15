@@ -98,15 +98,12 @@ namespace game
 
         if(player.bankGain)
         {
-            clearConsole();
             printf("At this time, the bank would make another offer: %d$, %s", bankOffer, player.bankGain>=bankOffer ? "well done!\n\n" : "bad luck!\n\n");
         }
         else
         {
-            printf("The bank has an offer for you!\n");
+            printf("The bank has an offer for you: %d$ Deal or no deal? (Y/N)\n", bankOffer);
             string response;
-            printf("Offer: %d$. Deal or no deal? (Y/N)\n", bankOffer);
-
             while(response!="Y" || response!="N")
             {
                 getline(cin, response);
@@ -114,13 +111,11 @@ namespace game
                 {
                     player.bankGain = bankOffer;
                     sound::playSound("victory");
-                    clearConsole();
                     printf("You selled your box for %d$\n\n", player.bankGain);
                     break;
                 }
                 else if(response=="N")
                 {
-                    clearConsole();
                     printf("You declined bank's offer.\n\n");
                     break;
                 }
@@ -187,6 +182,9 @@ namespace game
                 drawRemainingPrices();
             }
 
+            printf("There was %d$ in the %d box!\n\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+            switch(openCount()) { case 5: case 8: case 10: bankCall(); }
+
             printf("Please choose a box to open:\n");
             scanf("%d", &player.choosenBox);
             if(player.choosenBox==player.playerBox)
@@ -211,15 +209,9 @@ namespace game
             else
             {
                 boxes[player.choosenBox-1].opened = true;
-
-                bool setBankCall = false;
-                switch(openCount()) { case 5: case 8: case 10: setBankCall = true; }
-
-                if(!allOpened() && !setBankCall) clearConsole();
-                printf("There was %d$ in the %d box!\n\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+                if(!allOpened()) clearConsole();
                 if(boxes[player.choosenBox-1].insideBox>=20000) sound::playSound("money_loss");
                 else sound::playSound("box_open");
-                if(setBankCall) bankCall();
                 redraw = true;
             }
 
