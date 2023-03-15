@@ -37,6 +37,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="console.cpp" />
 		<Unit filename="game.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
