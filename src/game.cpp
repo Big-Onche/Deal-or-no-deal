@@ -182,7 +182,7 @@ namespace game
                 drawRemainingPrices();
             }
 
-            printf("There was %d$ in the %d box!\n\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+            if(openCount())printf("There was %d$ in the %d box!\n\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
             switch(openCount()) { case 5: case 8: case 10: bankCall(); }
 
             printf("Please choose a box to open:\n");
