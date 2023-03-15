@@ -22,6 +22,21 @@ namespace game
     };
     struct playerinfo player;
 
+    void drawProgressBar(float progress)
+    {
+        const int barWidth = 40;
+        int numBars = (int)(progress / 100.0f * barWidth);
+        conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes...\n", progress);
+        printf("[");
+        loopi(barWidth)
+        {
+            if (i < numBars) printf("=");
+            else printf(" ");
+        }
+        printf("] %3.1f%%\r", progress);
+        fflush(stdout);
+    }
+
     void assignBoxes()
     {
         random_device rd;
@@ -34,8 +49,7 @@ namespace game
         {
             boxes[i].opened = false;
 
-            float progress = (float)i / maxBoxes * 100;
-            conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes... (%1.f%%)\n", progress);
+            drawProgressBar((float)i / maxBoxes * 100);
 
             int value;
             bool uniqueValueFound = false;
