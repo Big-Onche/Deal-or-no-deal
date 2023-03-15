@@ -22,7 +22,6 @@ namespace game
     };
     struct playerinfo player;
 
-
     void assignBoxes() // assign unique value to each box
     {
         srand(time(NULL));
@@ -156,14 +155,13 @@ namespace game
 
         if(numValues > 0)
         {
-            printf("Remaining: ");
+            conoutf(C_DEF, C_DEF, "Remaining boxes: %d\n", openCount(true));
             loopi(numValues)
             {
-                printf("%d", values[i]);
-
-                if (i < numValues - 1) printf(" | ");
+                conoutf(C_WHITE, values[i]<2000 ? C_BLUE : values[i]<20000 ? C_YELLOW : C_RED, "%d$", values[i]);
+                if(i < numValues - 1) conoutf(C_DEF, C_DEF, " ");
             }
-            printf("\n");
+            conoutf(C_DEF, C_DEF, "\n");
         }
     }
 
