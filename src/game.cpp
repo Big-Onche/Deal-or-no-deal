@@ -22,27 +22,30 @@ namespace game
     };
     struct playerinfo player;
 
-    void assignBoxes() // assign unique value to each box
+    void assignBoxes()
     {
-        srand(time(NULL));
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<int> dis(0, maxBoxes-1);
+
+        unordered_set<int> usedValues;
+
         loopi(maxBoxes)
         {
             boxes[i].opened = false;
-            conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes... (%1.f%%)\n", ((float)100/maxBoxes)*i);
+
+            float progress = (float)i / maxBoxes * 100;
+            conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes... (%1.f%%)\n", progress);
+
+            int value;
             bool uniqueValueFound = false;
-            while(!uniqueValueFound)
+            while (!uniqueValueFound)
             {
-                boxes[i].insideBox = boxValues[rnd(maxBoxes)];
-                uniqueValueFound = true;
-                loopj(i)
-                {
-                    if(boxes[i].insideBox == boxes[j].insideBox)
-                    {
-                        uniqueValueFound = false;
-                        break;
-                    }
-                }
+                value = dis(gen);
+                uniqueValueFound = usedValues.insert(value).second;
             }
+
+            boxes[i].insideBox = boxValues[value];
             clearConsole();
         }
     }

@@ -7,6 +7,8 @@
 #include <string>
 #include <algorithm>
 #include <stdarg.h>
+#include <unordered_set>
+#include <random>
 
 #ifdef WIN32
   #include <windows.h>
