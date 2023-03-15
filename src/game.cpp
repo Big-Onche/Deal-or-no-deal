@@ -105,7 +105,7 @@ namespace game
         {
             printf("The bank has an offer for you!\n");
             string response;
-            printf("Offer: %d$. Accept that offer? (Y/N)\n", bankOffer);
+            printf("Offer: %d$. Deal or no deal? (Y/N)\n", bankOffer);
 
             while(response!="Y" || response!="N")
             {

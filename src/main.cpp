@@ -7,7 +7,7 @@ int main()
     #ifdef WIN32
       SetConsoleTitle("Deal or no Deal");
     #endif
-    logoutf("\ninit: main");
+    logoutf("init: main");
     sound::initAudio();
     clearConsole();
     sound::playSound("theme");
@@ -19,5 +19,6 @@ int main()
 void quit()
 {
     sound::unInitAudio();
+    logoutf("uninit: exit success\n\n");
     exit(EXIT_SUCCESS);
 }
