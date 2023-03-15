@@ -92,15 +92,18 @@ namespace game
         int bankOffer = 0;
 
         sound::playSound("bank_offer");
-        printf(player.bankGain ? "At this time, the bank would make another offer:\n": "The bank has an offer for you!\n");
 
         loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
-
         if(openCount(true)) bankOffer/=openCount(true)*1.3f;
 
-        if(player.bankGain) printf("Offer: %d$, %s", bankOffer, player.bankGain>=bankOffer ? "well done!\n\n" : "bad luck!\n\n");
+        if(player.bankGain)
+        {
+            clearConsole();
+            printf("At this time, the bank would make another offer: %d$, %s", bankOffer, player.bankGain>=bankOffer ? "well done!\n\n" : "bad luck!\n\n");
+        }
         else
         {
+            printf("The bank has an offer for you!\n");
             string response;
             printf("Offer: %d$. Accept that offer? (Y/N)\n", bankOffer);
 
@@ -174,30 +177,25 @@ namespace game
         }
         clearConsole();
 
-        bool redraw = true;
-
         for(;;)
         {
-            if(redraw) drawGame();
+            drawGame();
             drawRemainingPrices();
             printf("Please choose a box to open:\n");
             scanf("%d", &player.choosenBox);
             if(player.choosenBox==player.playerBox)
             {
                 printf("That's your box, please choose another one.\n");
-                redraw = false;
                 continue;
             }
             else if(boxes[player.choosenBox-1].opened)
             {
                 printf("That box is already opened, please choose another one.\n");
-                redraw = false;
                 continue;
             }
             else if(player.choosenBox<1 || player.choosenBox>maxBoxes)
             {
                 printf("Invalid box, please choose between 1 and %d.\n", maxBoxes);
-                redraw = false;
                 continue;
             }
             else
@@ -212,8 +210,6 @@ namespace game
                 if(boxes[player.choosenBox-1].insideBox>=20000) sound::playSound("money_loss");
                 else sound::playSound("box_open");
                 if(setBankCall) bankCall();
-
-                redraw = true;
             }
 
             if(allOpened())
