@@ -29,7 +29,7 @@ namespace game
         loopi(maxBoxes)
         {
             boxes[i].opened = false;
-            printf("Please wait, we are assigning boxes... (%1.f%%)\n", ((float)100/maxBoxes)*i);
+            conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes... (%1.f%%)\n", ((float)100/maxBoxes)*i);
             bool uniqueValueFound = false;
             while(!uniqueValueFound)
             {
@@ -50,6 +50,7 @@ namespace game
 
     void initGame() // (re)initialize everything for a new game
     {
+        logoutf("init: game");
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
@@ -61,18 +62,18 @@ namespace game
         {
             playGame();
 
-            printf("You want to continue? (y=yes, n=no)\n");
+            printf("You want to continue? (Y/N)\n");
             string response;
 
-            while(response!="y" || response!="n")
+            while(response!="Y" || response!="N")
             {
                 getline(cin, response);
-                if(response=="y")
+                if(response=="Y")
                 {
                     initGame();
                     break;
                 }
-                else if(response=="n") quit();
+                else if(response=="N") quit();
             }
         }
     }
@@ -104,12 +105,12 @@ namespace game
         else
         {
             string response;
-            printf("Offer: %d$. Accept that offer? (y=yes, n=no)\n", bankOffer);
+            printf("Offer: %d$. Accept that offer? (Y/N)\n", bankOffer);
 
-            while(response!="y" || response!="n")
+            while(response!="Y" || response!="N")
             {
                 getline(cin, response);
-                if(response=="y")
+                if(response=="Y")
                 {
                     player.bankGain = bankOffer;
                     sound::playSound("victory");
@@ -117,7 +118,7 @@ namespace game
                     printf("You selled your box for %d$\n\n", player.bankGain);
                     break;
                 }
-                else if(response=="n")
+                else if(response=="N")
                 {
                     clearConsole();
                     printf("You declined bank's offer.\n\n");

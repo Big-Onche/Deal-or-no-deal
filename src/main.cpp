@@ -10,20 +10,20 @@ int main()
     sound::initAudio();
     clearConsole();
     sound::playSound("theme");
-    printf("Welcome to Deal or no Deal!\n");
-    printf("Press \"y\" to continue or \"n\" to quit.\n");
+    conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
+    conoutf(C_DEF, C_DEF, "Press \"Y\" to continue or \"N\" to quit.\n");
     string response;
 
-    while(response!="y" || response!="n")
+    while(response!="Y" || response!="N")
     {
         getline(cin, response);
-        if(response=="y")
+        if(response=="Y")
         {
             game::initGame();
             game::runGame(); // main loop here
             break;
         }
-        else if(response=="n") quit();
+        else if(response=="N") quit();
     }
 }
 
@@ -32,13 +32,3 @@ void quit()
     sound::unInitAudio();
     exit(EXIT_SUCCESS);
 }
-
-void clearConsole()
-{
-    #if __linux__
-      system("clear");
-    #elif _WIN32
-      system("cls");
-    #endif
-}
-

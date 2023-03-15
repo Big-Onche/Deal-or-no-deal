@@ -2,9 +2,11 @@
 #define TOOLS_H
 
 #include <iostream>
+#include <fstream>
 #include <ctime>
 #include <string>
 #include <algorithm>
+#include <stdarg.h>
 
 #ifdef WIN32
   #include <windows.h>
