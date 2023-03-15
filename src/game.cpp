@@ -50,7 +50,6 @@ namespace game
 
     void initGame() // (re)initialize everything for a new game
     {
-        logoutf("init: game");
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
@@ -60,8 +59,6 @@ namespace game
     {
         for(;;)
         {
-            playGame();
-
             printf("You want to continue? (Y/N)\n");
             string response;
 
@@ -75,6 +72,7 @@ namespace game
                 }
                 else if(response=="N") quit();
             }
+            playGame();
         }
     }
 

@@ -11,20 +11,7 @@ int main()
     clearConsole();
     sound::playSound("theme");
     conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
-    conoutf(C_DEF, C_DEF, "Press \"Y\" to continue or \"N\" to quit.\n");
-    string response;
-
-    while(response!="Y" || response!="N")
-    {
-        getline(cin, response);
-        if(response=="Y")
-        {
-            game::initGame();
-            game::runGame(); // main loop here
-            break;
-        }
-        else if(response=="N") quit();
-    }
+    game::runGame();
 }
 
 void quit()
