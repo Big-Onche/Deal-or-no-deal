@@ -4,8 +4,8 @@ using namespace std;
 
 namespace game
 {
-    const int maxBoxes = 12;
-    const int boxValues[maxBoxes] = {1, 10, 50, 100, 500, 2000, 5000, 10000, 20000, 50000, 100000, 500000};
+    const int maxBoxes = 16;
+    const int boxValues[maxBoxes] = {0, 1, 10, 30, 69, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 250000, 500000};
 
     struct box
     {
@@ -140,9 +140,7 @@ namespace game
         }
     }
 
-
-
-    void drawGame() // drawing boxes numbers and content of opened boxes
+    void drawBoxes() // drawing boxes numbers and content of opened boxes
     {
         printf("\n");
         for (int row = 0; row < 4; row++)
@@ -201,10 +199,10 @@ namespace game
             conoutf(C_DEF, C_DEF, "Remaining boxes: %d\n", openCount(true));
             loopi(numValues)
             {
-                conoutf(C_WHITE, values[i]<2000 ? C_BLUE : values[i]<20000 ? C_YELLOW : C_RED, "%d$", values[i]);
+                conoutf(C_WHITE, values[i]==69 ? C_MAGENTA : values[i]<2000 ? C_BLUE : values[i]<20000 ? C_YELLOW : C_RED, "%d$", values[i]);
                 if(i < numValues - 1) conoutf(C_DEF, C_DEF, " ");
             }
-            conoutf(C_DEF, C_DEF, "\n");
+            conoutf(C_DEF, C_DEF, "\n\n");
         }
     }
 
@@ -222,11 +220,11 @@ namespace game
         {
             if(redraw)
             {
-                drawGame();
+                drawBoxes();
                 drawRemainingPrices();
             }
 
-            if(openCount())printf("There was %d$ in the %d box!\n\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+            if(openCount())printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
             switch(openCount()) { case 5: case 8: case 10: bankCall(); }
 
             printf("Please choose a box to open:\n");
