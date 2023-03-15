@@ -18,7 +18,7 @@ void conoutf(ConsoleColors background, ConsoleColors text, const char* format, .
 
 void logoutf(const char* format, ...) // Print to log file
 {
-    FILE* logfile = fopen("log.txt", "w"); // Open log file in append mode
+    FILE* logfile = fopen("log.txt", "a"); // Open log file in append mode
 
     // Print formatted text
     va_list args;

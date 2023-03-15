@@ -7,10 +7,12 @@ int main()
     #ifdef WIN32
       SetConsoleTitle("Deal or no Deal");
     #endif
+    logoutf("\ninit: main");
     sound::initAudio();
     clearConsole();
     sound::playSound("theme");
     conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
+    logoutf("init: game");
     game::runGame();
 }
 

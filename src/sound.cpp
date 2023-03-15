@@ -15,7 +15,7 @@ namespace sound
             conoutf(C_RED, C_DEF, "Failed to initialize audio module (miniaudio)\n");
             return result;  // Failed to initialize the engine.
         }
-        logoutf("init: miniaudio version: %s", MA_VERSION_STRING);
+        logoutf("init: audio (miniaudio version: %s)", MA_VERSION_STRING);
 
         return true;
     }
