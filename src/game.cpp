@@ -133,10 +133,11 @@ namespace game
         loopi(maxBoxes)
         {
             char boxPrice[32]; sprintf(boxPrice, " (%d$)", boxes[i].insideBox);
+            char realValue[32]; sprintf(realValue, " (Real value: %d$)", boxes[i].insideBox);
             char sellPrice[32]; sprintf(sellPrice, " - Selled for %d$", player.bankGain);
-            char yourBox[32]; sprintf(yourBox, " (Your box)%s", player.bankGain ? sellPrice : "");
+            char yourBox[64]; sprintf(yourBox, " (Your box)%s%s", player.bankGain ? sellPrice : "", allOpened() ? realValue : "");
 
-            printf("#####%d%s####%s%s\n", i+1, i+1>9 ? "" : "#", i+1==player.playerBox ? yourBox : "", boxes[i].opened ? boxPrice : "");
+            conoutf(i+1==player.playerBox ? C_GREEN : (boxes[i].opened ? C_MAGENTA : C_RED), C_WHITE, "#####%d%s####\033[0m%s%s\n", i+1, i+1>9 ? "" : "#", i+1==player.playerBox ? yourBox : "", boxes[i].opened ? boxPrice : "");
             printf("\n");
         }
     }
@@ -176,26 +177,35 @@ namespace game
             scanf("%d", &player.playerBox);
         }
         clearConsole();
+        bool redraw = true;
 
         for(;;)
         {
-            drawGame();
-            drawRemainingPrices();
+            if(redraw)
+            {
+                drawGame();
+                drawRemainingPrices();
+            }
+
             printf("Please choose a box to open:\n");
             scanf("%d", &player.choosenBox);
             if(player.choosenBox==player.playerBox)
             {
                 printf("That's your box, please choose another one.\n");
+                redraw = false;
+                continue;
+            }
+            else if(player.choosenBox<1 || player.choosenBox>maxBoxes)
+            {
+                player.choosenBox=0;
+                printf("Invalid box, please choose between 1 and %d.\n", maxBoxes);
+                redraw = false;
                 continue;
             }
             else if(boxes[player.choosenBox-1].opened)
             {
                 printf("That box is already opened, please choose another one.\n");
-                continue;
-            }
-            else if(player.choosenBox<1 || player.choosenBox>maxBoxes)
-            {
-                printf("Invalid box, please choose between 1 and %d.\n", maxBoxes);
+                redraw = false;
                 continue;
             }
             else
@@ -210,6 +220,7 @@ namespace game
                 if(boxes[player.choosenBox-1].insideBox>=20000) sound::playSound("money_loss");
                 else sound::playSound("box_open");
                 if(setBankCall) bankCall();
+                redraw = true;
             }
 
             if(allOpened())
