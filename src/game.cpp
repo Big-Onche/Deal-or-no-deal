@@ -140,17 +140,44 @@ namespace game
         }
     }
 
+
+
     void drawGame() // drawing boxes numbers and content of opened boxes
     {
-        loopi(maxBoxes)
+        printf("\n");
+        for (int row = 0; row < 4; row++)
         {
-            char boxPrice[32]; sprintf(boxPrice, " (%d$)", boxes[i].insideBox);
-            char realValue[32]; sprintf(realValue, " (Real value: %d$)", boxes[i].insideBox);
-            char sellPrice[32]; sprintf(sellPrice, " - Selled for %d$", player.bankGain);
-            char yourBox[64]; sprintf(yourBox, " (Your box)%s%s", player.bankGain ? sellPrice : "", allOpened() ? realValue : "");
+            for (int col = 0; col < 4; col++)
+            {
+                int index = row * 4 + col;
 
-            conoutf(i+1==player.playerBox ? C_GREEN : (boxes[i].opened ? C_MAGENTA : C_RED), C_WHITE, "#####%d%s####\033[0m%s%s\n", i+1, i+1>9 ? "" : "#", i+1==player.playerBox ? yourBox : "", boxes[i].opened ? boxPrice : "");
+                char boxTop[32];
+
+                if(!boxes[index].opened && !allOpened()) sprintf(boxTop, "###########");
+                else sprintf(boxTop, "[%s%d$%s]",
+                             boxes[index].insideBox < 10 ? "    " :
+                             boxes[index].insideBox < 100 ? "   " :
+                             boxes[index].insideBox < 1000 ? "   " :
+                             boxes[index].insideBox < 10000 ? "  " :
+                             boxes[index].insideBox < 100000 ? "  " : " ",
+                             boxes[index].insideBox,
+                             boxes[index].insideBox < 10 ? "   " :
+                             boxes[index].insideBox < 100 ? "   " :
+                             boxes[index].insideBox < 1000 ? "  " :
+                             boxes[index].insideBox < 10000 ? "  " :
+                             boxes[index].insideBox < 100000 ? " " : " ");
+
+                conoutf(index+1==player.playerBox ? C_GREEN : (boxes[index].opened ? C_MAGENTA : C_RED), C_WHITE, "%s\033[0m ", boxTop);
+            }
+
             printf("\n");
+
+            for (int col = 0; col < 4; col++)
+            {
+                int index = row * 4 + col;
+                conoutf(index+1==player.playerBox ? C_GREEN : (boxes[index].opened ? C_MAGENTA : C_RED), C_WHITE, "#####%d%s####\033[0m ", index+1, index+1>9 ? "" : "#");
+            }
+            printf("\n\n");
         }
     }
 
@@ -234,10 +261,9 @@ namespace game
 
             if(allOpened())
             {
-                clearConsole();
                 if(player.bankGain) printf("You won %d$ and there was %d$ in your box, %s", player.bankGain, boxes[player.playerBox-1].insideBox, player.bankGain>=boxes[player.playerBox-1].insideBox ? "well done!\n\n" : "bad luck!\n\n");
                 else printf("You won %d$ with your box %d.\n\n", boxes[player.playerBox-1].insideBox, player.playerBox);
-                drawGame();
+                clearConsole();
                 break;
             }
         }

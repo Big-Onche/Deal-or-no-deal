@@ -12,7 +12,7 @@ void conoutf(ConsoleColors background, ConsoleColors text, const char* format, .
     vprintf(format, args);
     va_end(args);
 
-    cout << "\033[" << C_DEF << "m"; // Reset color
+    cout << "\033[0m"; // Reset color
 
 }
 
