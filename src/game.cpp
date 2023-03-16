@@ -86,10 +86,10 @@ namespace game
 
     void playGame() // run a game
     {
-        while(player.playerBox<1 || player.playerBox>maxBoxes)
+        while(player.playerBox < 1 || player.playerBox > maxBoxes)
         {
             printf("Please select a box from 1 to %d:\n", maxBoxes);
-            scanf("%d", &player.playerBox);
+            playerInput(&player.playerBox);
         }
         clearConsole();
         bool redraw = true;
@@ -102,7 +102,7 @@ namespace game
                 if(!allOpened()) render::drawRemainingPrices(player, boxes);
             }
 
-            if(openCount())printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+            if(openCount()) printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
 
             if(allOpened())
             {
@@ -114,7 +114,8 @@ namespace game
             switch(openCount()) { case 6: case 10: case 14: bankCall(); }
 
             printf("Please choose a box to open:\n");
-            scanf("%d", &player.choosenBox);
+            playerInput(&player.choosenBox);
+
             if(player.choosenBox==player.playerBox)
             {
                 printf("That's your box, please choose another one.\n");

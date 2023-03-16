@@ -21,6 +21,7 @@ enum ConsoleColors
     C_WHITE
 };
 
+extern void playerInput(int *value);
 extern void logoutf(const char* format, ...);
 extern void conoutf(ConsoleColors background, ConsoleColors text, const char* format, ...);
 extern void clearConsole();

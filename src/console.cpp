@@ -2,6 +2,13 @@
 
 using namespace std;
 
+void playerInput(int *value)
+{
+    char input[32];
+    fgets(input, sizeof(input), stdin);
+    sscanf(input, "%d", value);
+}
+
 void conoutf(ConsoleColors background, ConsoleColors text, const char* format, ...) // print to console with ANSI colors
 {
     cout << "\033[" << text + 10 << ";" << background << "m"; // Set color
