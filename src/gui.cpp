@@ -10,7 +10,7 @@ namespace gui
         if(!gameLogo) return;
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-        gl::renderCenteredTexture(renderer, gameLogo, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gl::renderCenteredTexture(renderer, gameLogo, screenw, screenh);
 
         int tw, th; // text width, text height
         int textSize = 3;
@@ -18,8 +18,8 @@ namespace gui
         string text = "Press any key to continue";
         gl::getTextSize(text, tw, th, textSize);
 
-        int x = (SCREEN_WIDTH - tw) / 2;
-        int y = (SCREEN_HEIGHT - th) / 1.05f;
+        int x = (screenw - tw) / 2;
+        int y = (screenh - th) / 1.05f;
 
         gl::renderText(renderer, fontTexture, text, x, y, textSize);
     }

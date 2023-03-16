@@ -2,6 +2,10 @@
 
 using namespace std;
 
+int screenw = 1280;
+int screenh = 720;
+bool fullscreen = false;
+
 namespace gl
 {
     SDL_Window *window = nullptr;
@@ -28,7 +32,7 @@ namespace gl
             exit(EXIT_FAILURE);
         }
 
-        window = SDL_CreateWindow("Deal or no Deal", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("Deal or no Deal", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenw, screenh, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
         if (window == NULL)
         {
             logoutf("Unable to create window (%s)\n", SDL_GetError());
@@ -116,8 +120,19 @@ namespace gl
 
         while(SDL_PollEvent(&event))
         {
-            if(event.type == SDL_QUIT) return false;
-            if(event.type == SDL_KEYDOWN && splashScreen) {splashScreen = false; mainMenu = true;}
+            if(event.type == SDL_QUIT) return false; // quit
+            if(event.type == SDL_KEYDOWN && splashScreen) {splashScreen = false; mainMenu = true;} // exit splash screen
+            else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
+            {
+                fullscreen = !fullscreen;
+                if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                else SDL_SetWindowFullscreen(window, 0);
+            }
+            if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
+            {
+                screenw = event.window.data1;
+                screenh = event.window.data2;
+            }
             gui::handleMouseEvents(event);
         }
 
