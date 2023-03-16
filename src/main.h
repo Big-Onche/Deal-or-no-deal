@@ -27,9 +27,34 @@ extern void clearConsole();
 
 namespace game
 {
+    const int maxBoxes = 16;
+
+    struct box {
+        int insideBox;
+        bool opened;
+    };
+
+    struct playerinfo {
+        int playerBox;
+        int choosenBox;
+        int bankGain;
+    };
+
+    extern box boxes[maxBoxes];
+    extern playerinfo player;
+
+    extern int openCount(bool remaining = false);
+    extern bool allOpened();
+
     extern void initGame();
     extern void runGame();
     extern void playGame();
+}
+
+namespace render
+{
+    extern void drawBoxes(const game::playerinfo &player, game::box boxes[]);
+    extern void drawRemainingPrices(const game::playerinfo &player, game::box boxes[]);
 }
 
 namespace sound

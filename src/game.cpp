@@ -4,22 +4,10 @@ using namespace std;
 
 namespace game
 {
-    const int maxBoxes = 16;
+    //const int maxBoxes = 16;
     const int boxValues[maxBoxes] = {0, 1, 10, 30, 69, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 250000, 500000};
 
-    struct box
-    {
-        int insideBox;
-        bool opened;
-    };
     box boxes[maxBoxes];
-
-    struct playerinfo
-    {
-        int playerBox;
-        int choosenBox;
-        int bankGain;
-    };
     struct playerinfo player;
 
     void drawProgressBar(float progress)
@@ -92,7 +80,7 @@ namespace game
         }
     }
 
-    int openCount(bool remaining = false) // count the number of opened boxes (or the number of remaining)
+    int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
     {
         int num = 0;
         loopi(maxBoxes) if(boxes[i].opened) num++;
@@ -140,72 +128,6 @@ namespace game
         }
     }
 
-    void drawBoxes() // drawing boxes numbers and content of opened boxes
-    {
-        printf("\n");
-        for (int row = 0; row < 4; row++)
-        {
-            for (int col = 0; col < 4; col++)
-            {
-                int index = row * 4 + col;
-
-                char boxTop[32];
-
-                if(!boxes[index].opened && !allOpened()) sprintf(boxTop, "###########");
-                else sprintf(boxTop, "[%s%d$%s]",
-                             boxes[index].insideBox < 10 ? "    " :
-                             boxes[index].insideBox < 100 ? "   " :
-                             boxes[index].insideBox < 1000 ? "   " :
-                             boxes[index].insideBox < 10000 ? "  " :
-                             boxes[index].insideBox < 100000 ? "  " : " ",
-                             boxes[index].insideBox,
-                             boxes[index].insideBox < 10 ? "   " :
-                             boxes[index].insideBox < 100 ? "   " :
-                             boxes[index].insideBox < 1000 ? "  " :
-                             boxes[index].insideBox < 10000 ? "  " :
-                             boxes[index].insideBox < 100000 ? " " : " ");
-
-                conoutf(index+1==player.playerBox ? C_GREEN : (boxes[index].opened ? C_MAGENTA : C_RED), C_WHITE, "%s\033[0m ", boxTop);
-            }
-
-            printf("\n");
-
-            for (int col = 0; col < 4; col++)
-            {
-                int index = row * 4 + col;
-                conoutf(index+1==player.playerBox ? C_GREEN : (boxes[index].opened ? C_MAGENTA : C_RED), C_WHITE, "#####%d%s####\033[0m ", index+1, index+1>9 ? "" : "#");
-            }
-            printf("\n\n");
-        }
-    }
-
-    void drawRemainingPrices()
-    {
-        int values[maxBoxes];
-        int numValues = 0; // keep track of number of non-zero values
-
-        loopi(maxBoxes)
-        {
-            if(!boxes[i].opened && boxes[i].insideBox != 0)
-            {
-                values[numValues++] = boxes[i].insideBox;
-            }
-        }
-
-        sort(values, values + numValues); // sort only non-zero values
-
-        if(numValues > 0)
-        {
-            conoutf(C_DEF, C_DEF, "Remaining boxes: %d\n", openCount(true));
-            loopi(numValues)
-            {
-                conoutf(C_WHITE, values[i]==69 ? C_MAGENTA : values[i]<2000 ? C_BLUE : values[i]<20000 ? C_YELLOW : C_RED, "%d$", values[i]);
-                if(i < numValues - 1) conoutf(C_DEF, C_DEF, " ");
-            }
-            conoutf(C_DEF, C_DEF, "\n\n");
-        }
-    }
-
     void playGame() // run a game
     {
         while(player.playerBox<1 || player.playerBox>maxBoxes)
@@ -220,8 +142,8 @@ namespace game
         {
             if(redraw)
             {
-                drawBoxes();
-                if(!allOpened()) drawRemainingPrices();
+                render::drawBoxes(player, boxes);
+                if(!allOpened()) render::drawRemainingPrices(player, boxes);
             }
 
             if(openCount())printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
