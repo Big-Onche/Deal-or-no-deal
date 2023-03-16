@@ -25,13 +25,13 @@ namespace game
         fflush(stdout);
     }
 
-    void assignBoxes()
+    void assignBoxes() // random distribution of boxes
     {
         random_device rd;
         mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, maxBoxes-1);
 
-        unordered_set<int> usedValues;
+        vector<int> tempBoxValues(boxValues, boxValues + maxBoxes);
+        shuffle(tempBoxValues.begin(), tempBoxValues.end(), gen);
 
         loopi(maxBoxes)
         {
@@ -39,15 +39,7 @@ namespace game
 
             drawProgressBar((float)i / maxBoxes * 100);
 
-            int value;
-            bool uniqueValueFound = false;
-            while (!uniqueValueFound)
-            {
-                value = dis(gen);
-                uniqueValueFound = usedValues.insert(value).second;
-            }
-
-            boxes[i].insideBox = boxValues[value];
+            boxes[i].insideBox = tempBoxValues[i]; // assign the shuffled value directly to the boxes array
             clearConsole();
         }
     }
