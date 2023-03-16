@@ -47,7 +47,6 @@ namespace game
     extern bool allOpened();
 
     extern void initGame();
-    extern void runGame();
     extern void playGame();
 }
 

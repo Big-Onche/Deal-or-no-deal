@@ -36,27 +36,6 @@ namespace game
         assignBoxes();
     }
 
-    void runGame() // main loop, initializing game and continue/quit choice after each game
-    {
-        for(;;)
-        {
-            printf("You want to continue? (Y/N)\n");
-            string response;
-
-            while(response!="Y" || response!="N")
-            {
-                getline(cin, response);
-                if(response=="Y")
-                {
-                    initGame();
-                    break;
-                }
-                else if(response=="N") quit();
-            }
-            playGame();
-        }
-    }
-
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
     {
         int num = 0;
