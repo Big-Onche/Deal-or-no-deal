@@ -10,21 +10,6 @@ namespace game
     box boxes[maxBoxes];
     struct playerinfo player;
 
-    void drawProgressBar(float progress)
-    {
-        const int barWidth = 40;
-        int numBars = (int)(progress / 100.0f * barWidth);
-        conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes...\n", progress);
-        printf("[");
-        loopi(barWidth)
-        {
-            if (i < numBars) printf("=");
-            else printf(" ");
-        }
-        printf("] %3.1f%%\r", progress);
-        fflush(stdout);
-    }
-
     void assignBoxes() // random distribution of boxes
     {
         random_device rd;
@@ -37,7 +22,7 @@ namespace game
         {
             boxes[i].opened = false;
 
-            drawProgressBar((float)i / maxBoxes * 100);
+            render::drawProgressBar((float)i / maxBoxes * 100);
 
             boxes[i].insideBox = tempBoxValues[i]; // assign the shuffled value directly to the boxes array
             clearConsole();
@@ -91,7 +76,7 @@ namespace game
         sound::playSound("bank_offer");
 
         loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
-        if(openCount(true)) bankOffer/=((float)openCount(true)*1.25);
+        if(openCount(true)) bankOffer/=((float)openCount(true)*1.35);
 
         if(player.bankGain)
         {
@@ -174,8 +159,15 @@ namespace game
             {
                 boxes[player.choosenBox-1].opened = true;
                 clearConsole();
-                if(boxes[player.choosenBox-1].insideBox>=20000) sound::playSound("money_loss");
-                else sound::playSound("box_open");
+
+                if(allOpened()) boxes[player.playerBox].opened = true;
+
+                bool soundTrigger = (openCount() < 10 && boxes[player.choosenBox-1].insideBox>=50000) ? true :
+                                     openCount() > 10 && boxes[player.choosenBox-1].insideBox>=10000 ? true : false;
+
+                soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
+
+
                 redraw = true;
             }
         }

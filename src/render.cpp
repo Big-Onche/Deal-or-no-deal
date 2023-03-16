@@ -2,6 +2,21 @@
 
 namespace render
 {
+    void drawProgressBar(float progress)
+    {
+        const int barWidth = 40;
+        int numBars = (int)(progress / 100.0f * barWidth);
+        conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes...\n", progress);
+        printf("[");
+        loopi(barWidth)
+        {
+            if (i < numBars) printf("=");
+            else printf(" ");
+        }
+        printf("] %3.1f%%\r", progress);
+        fflush(stdout);
+    }
+
     const char *boxcolor(int id, int playerBox, bool opened) // color of the box, based on: your box / opened / not opened
     {
         return id + 1 == playerBox ? "\033[1;31m" : (opened ? "\033[1;35m" : "\033[1;32m");

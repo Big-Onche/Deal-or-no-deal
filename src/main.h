@@ -53,6 +53,7 @@ namespace game
 
 namespace render
 {
+    extern void drawProgressBar(float progress);
     extern void drawBoxes(const game::playerinfo &player, game::box boxes[]);
     extern void drawRemainingPrices(const game::playerinfo &player, game::box boxes[]);
 }
