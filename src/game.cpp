@@ -139,13 +139,12 @@ namespace game
                 boxes[player.choosenBox-1].opened = true;
                 clearConsole();
 
-                if(allOpened()) boxes[player.playerBox].opened = true;
+                if(allOpened()) boxes[player.playerBox-1].opened = true;
 
                 bool soundTrigger = (openCount() < 10 && boxes[player.choosenBox-1].insideBox>=50000) ? true :
                                      openCount() > 10 && boxes[player.choosenBox-1].insideBox>=10000 ? true : false;
 
                 soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
-
 
                 redraw = true;
             }
