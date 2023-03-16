@@ -20,7 +20,6 @@ void conoutf(ConsoleColors background, ConsoleColors text, const char* format, .
     va_end(args);
 
     cout << "\033[0m"; // Reset color
-
 }
 
 void logoutf(const char* format, ...) // Print to log file
