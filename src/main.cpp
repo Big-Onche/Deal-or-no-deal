@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     for(;;) // main loop, initializing game and continue/quit choice after each game
     {
         gl::glLoop();
+        /*
         printf("You want to continue? (Y/N)\n");
         string response;
 
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
             else if(response=="N") quit();
         }
         game::playGame();
+        */
     }
 }
 

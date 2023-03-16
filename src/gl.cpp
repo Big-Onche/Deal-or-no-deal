@@ -81,20 +81,26 @@ namespace gl
         }
     }
 
+    bool splashScreen = true;
+
     bool glLoop() // (future) renderer loop
     {
         SDL_Event event;
 
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                return false;
-            }
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT) return false;
+            if (event.type == SDL_KEYDOWN) splashScreen = false;
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        showSplashScreen();
+        if(splashScreen) showSplashScreen();
+        else
+        {
+
+        }
 
         SDL_RenderPresent(renderer);
         return true;
