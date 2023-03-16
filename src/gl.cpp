@@ -9,10 +9,10 @@ const int SCREEN_HEIGHT = 720;
 
 namespace gl
 {
-    SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
-    SDL_Texture *gameLogo = NULL;
-    SDL_Texture *fontTexture = NULL;
+    SDL_Window *window = nullptr;
+    SDL_Renderer *renderer = nullptr;
+    SDL_Texture *gameLogo = nullptr;
+    SDL_Texture *fontTexture = nullptr;
 
     extern void preloadTextures();
 
@@ -35,7 +35,7 @@ namespace gl
 
         window = SDL_CreateWindow("Deal or no Deal", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         if (window == NULL)
-            {
+        {
             logoutf("Unable to create window (%s)\n", SDL_GetError());
             exit(EXIT_FAILURE);
         }
@@ -53,39 +53,25 @@ namespace gl
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file) // load an image
     {
         SDL_Surface *surface = IMG_Load(file);
-        if(!surface) { logoutf("Error loading image: %s\n", IMG_GetError()); return NULL; }
+        if(!surface) { logoutf("Error loading image: %s\n", IMG_GetError()); return nullptr; }
 
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
-        if(!texture) { logoutf("Error creating texture: %s\n", SDL_GetError()); return NULL; }
+        if(!texture) { logoutf("Error creating texture: %s\n", SDL_GetError()); return nullptr; }
 
         return texture;
     }
 
-    SDL_Texture* loadBitmapFont(SDL_Renderer* renderer, const char* file)
-    {
-        // Load the bitmap font image using SDL_image
-        SDL_Surface* fontSurface = IMG_Load(file);
-        if (!fontSurface) {
-            logoutf("Error loading font image: %s", IMG_GetError());
-            return nullptr;
-        }
-
-        // Convert the SDL_Surface to an SDL_Texture
-        SDL_Texture* fontTexture = SDL_CreateTextureFromSurface(renderer, fontSurface);
-        SDL_FreeSurface(fontSurface); // Free the surface, as we don't need it anymore
-        if (!fontTexture) {
-            logoutf("Error creating font texture: %s", SDL_GetError());
-            return nullptr;
-        }
-
-        return fontTexture;
-    }
-
-    void preloadTextures()
+    void preloadTextures() // preload images used in the game
     {
         gameLogo = loadTexture(renderer, "data/gui/logo.jpg");
-        fontTexture = loadBitmapFont(renderer, "data/gui/font.png");
+        fontTexture = loadTexture(renderer, "data/gui/font.png");
+    }
+
+    void freeTextures() // free images before stopping gl
+    {
+        if(gameLogo != nullptr) { SDL_DestroyTexture(gameLogo);gameLogo = nullptr; }
+        if(fontTexture != nullptr) { SDL_DestroyTexture(fontTexture); fontTexture = nullptr; }
     }
 
     const int cw = 8; // char width
@@ -180,6 +166,7 @@ namespace gl
     void glQuit()
     {
         logoutf("shutdown: gl");
+        freeTextures();
         IMG_Quit();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
