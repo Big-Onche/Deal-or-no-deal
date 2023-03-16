@@ -1,6 +1,4 @@
 #include "main.h"
-#include <SDL.h>
-#include <SDL_image.h>
 #include <functional>
 
 using namespace std;
