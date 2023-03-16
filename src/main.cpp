@@ -1,13 +1,15 @@
+#define SDL_MAIN_HANDLED
 #include "main.h"
 
 using namespace std;
 
-int main()
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
+int main(int argc, char *argv[])
 {
-    #ifdef WIN32
-      SetConsoleTitle("Deal or no Deal");
-    #endif
     logoutf("init: main");
+    gl::glInit();
     sound::initAudio();
     clearConsole();
     sound::playSound("theme");
@@ -30,11 +32,13 @@ int main()
             else if(response=="N") quit();
         }
         game::playGame();
+        //gl::glLoop();
     }
 }
 
 void quit()
 {
+    gl::glQuit();
     sound::unInitAudio();
     logoutf("uninit: exit success\n\n");
     exit(EXIT_SUCCESS);

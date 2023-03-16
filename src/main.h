@@ -51,6 +51,13 @@ namespace game
     extern void playGame();
 }
 
+namespace gl
+{
+    extern void glInit();
+    extern bool glLoop();
+    extern void glQuit();
+}
+
 namespace render
 {
     extern void drawProgressBar(float progress);
