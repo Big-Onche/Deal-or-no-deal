@@ -29,7 +29,7 @@ namespace sound
 
     void unInitAudio()
     {
-        logoutf("uninit: miniaudio");
+        logoutf("shutdown: miniaudio");
         ma_engine_uninit(&engine);
     }
 }
