@@ -55,7 +55,7 @@ namespace game
         sound::playSound("bank_offer");
 
         loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
-        if(openCount(true)) bankOffer/=((float)openCount(true)*1.35);
+        if(openCount(true)) bankOffer/= (openCount(true)<3 ? (float)openCount(true)*1.3 : (openCount(true)*3) + rnd(2)) ;
 
         if(player.bankGain)
         {
@@ -63,22 +63,36 @@ namespace game
         }
         else
         {
-            printf("The bank has an offer for you: %d$ Deal or no deal? (Y/N)\n", bankOffer);
+            bool exchangeOffer = !rnd(3);
+            printf("The bank has an offer for you: %s%s Deal or no deal? (Y/N)\n", exchangeOffer ? "Box exchange," : to_string(bankOffer).c_str(), exchangeOffer? "" : "$");
+
             string response;
             while(response!="Y" || response!="N")
             {
                 getline(cin, response);
                 if(response=="Y")
                 {
-                    player.bankGain = bankOffer;
-                    sound::playSound("victory");
-                    printf("You selled your box for %d$\n\n", player.bankGain);
+                    if(exchangeOffer)
+                    {
+                        printf("Please enter the box you want:\n");
+                        playerInput(&player.playerBox);
+                        clearConsole();
+                        render::drawBoxes(player, boxes);
+                        if(!allOpened()) render::drawRemainingPrices(player, boxes);
+                        printf("Your box is now the number %d!:\n", player.playerBox);
+                    }
+                    else
+                    {
+                        player.bankGain = bankOffer;
+                        sound::playSound("victory");
+                        printf("You selled your box for %d$\n\n", player.bankGain);
+                    }
                     break;
                 }
                 else if(response=="N")
                 {
                     printf("You declined bank's offer.\n\n");
-                    break;
+                        break;
                 }
             }
         }
@@ -92,17 +106,17 @@ namespace game
             playerInput(&player.playerBox);
         }
         clearConsole();
-        bool redraw = true;
+        bool nextStep = true;
 
         for(;;)
         {
-            if(redraw)
+            if(nextStep)
             {
                 render::drawBoxes(player, boxes);
                 if(!allOpened()) render::drawRemainingPrices(player, boxes);
             }
 
-            if(openCount()) printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
+            if(openCount() && nextStep) printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
 
             if(allOpened())
             {
@@ -111,7 +125,7 @@ namespace game
                 break;
             }
 
-            switch(openCount()) { case 6: case 10: case 14: bankCall(); }
+            if(nextStep) switch(openCount()) { case 6: case 10: case 14: bankCall(); }
 
             printf("Please choose a box to open:\n");
             playerInput(&player.choosenBox);
@@ -119,20 +133,20 @@ namespace game
             if(player.choosenBox==player.playerBox)
             {
                 printf("That's your box, please choose another one.\n");
-                redraw = false;
+                nextStep = false;
                 continue;
             }
             else if(player.choosenBox<1 || player.choosenBox>maxBoxes)
             {
                 player.choosenBox=0;
                 printf("Invalid box, please choose between 1 and %d.\n", maxBoxes);
-                redraw = false;
+                nextStep = false;
                 continue;
             }
             else if(boxes[player.choosenBox-1].opened)
             {
                 printf("That box is already opened, please choose another one.\n");
-                redraw = false;
+                nextStep = false;
                 continue;
             }
             else
@@ -147,7 +161,7 @@ namespace game
 
                 soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
 
-                redraw = true;
+                nextStep = true;
             }
         }
     }
