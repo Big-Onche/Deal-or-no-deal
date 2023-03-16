@@ -1,12 +1,6 @@
 #include "main.h"
-#include <SDL.h>
-#include <SDL_image.h>
-#include <functional>
 
 using namespace std;
-
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
 
 namespace gl
 {
@@ -75,10 +69,6 @@ namespace gl
         if(fontTexture != nullptr) { SDL_DestroyTexture(fontTexture); fontTexture = nullptr; }
     }
 
-    const int cw = 8; // char width
-    const int ch = 12; // height
-    const int cpr = 16; // char per rows
-
     void getTextSize(const string &text, int &width, int &height, int fontSize)
     {
         int charWidth = cw * fontSize;
@@ -87,7 +77,7 @@ namespace gl
         height = charHeight;
     }
 
-    void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize = 2.f)
+    void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize)
     {
         SDL_Rect srcRect = {0, 0, cw, ch};
         SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
@@ -117,60 +107,6 @@ namespace gl
         SDL_RenderCopy(renderer, texture, NULL, &destRect);
     }
 
-    void showSplashScreen() // showing splash screen
-    {
-        if(!gameLogo) return;
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        renderCenteredTexture(renderer, gameLogo, SCREEN_WIDTH, SCREEN_HEIGHT);
-    }
-
-    SDL_Rect newGameRect;
-    SDL_Rect optionsRect;
-    SDL_Rect exitRect;
-
-    void handleMouseEvents(SDL_Event &event)
-    {
-        if(event.type == SDL_MOUSEBUTTONDOWN)
-        {
-            int mouseX, mouseY;
-            SDL_GetMouseState(&mouseX, &mouseY);
-            SDL_Point mousePoint = {mouseX, mouseY};
-
-            if (SDL_PointInRect(&mousePoint, &newGameRect))
-            {
-                sound::playSound("money_loss"); // just a test
-            }
-            else if (SDL_PointInRect(&mousePoint, &optionsRect))
-            {
-            }
-            else if (SDL_PointInRect(&mousePoint, &exitRect))
-            {
-                quit(); // the only useful btn atm
-            }
-        }
-    }
-
-    void renderMenu(SDL_Renderer *renderer, SDL_Texture *fontTexture) // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first
-    {
-        int textSize = 3;
-
-        int x = 100, y = 200;
-        std::string newGameText = "New Game";
-        renderText(renderer, fontTexture, newGameText, x, y, textSize);
-        newGameRect = {x, y, static_cast<int>(newGameText.length()) * cw * textSize, ch * textSize}; // Play
-
-        y+=75;
-        std::string optionsText = "Options";
-        renderText(renderer, fontTexture, optionsText, x, y, textSize);
-        optionsRect = {x, y, static_cast<int>(optionsText.length()) * cw * textSize, ch * textSize}; // Options
-
-        y+=75;
-        std::string exitText = "Exit";
-        renderText(renderer, fontTexture, exitText, x, y, textSize);
-        exitRect = {x, y, static_cast<int>(exitText.length()) * cw * textSize, ch * textSize}; // Exit
-    }
-
     bool splashScreen = true;
     bool mainMenu = false;
 
@@ -182,31 +118,14 @@ namespace gl
         {
             if(event.type == SDL_QUIT) return false;
             if(event.type == SDL_KEYDOWN && splashScreen) {splashScreen = false; mainMenu = true;}
-            handleMouseEvents(event);
+            gui::handleMouseEvents(event);
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        if(splashScreen) // game intro splash screen
-        {
-            showSplashScreen();
-
-            int tw, th; // text width, text height
-            int textSize = 3;
-
-            string text = "Press any key to continue";
-            getTextSize(text, tw, th, textSize);
-
-            int x = (SCREEN_WIDTH - tw) / 2;
-            int y = (SCREEN_HEIGHT - th) / 1.05f;
-
-            renderText(renderer, fontTexture, text, x, y, textSize);
-        }
-        else if(mainMenu) // main menu
-        {
-            renderMenu(renderer, fontTexture);
-        }
+        if(splashScreen) gui::showSplashScreen(renderer, fontTexture, gameLogo); // game intro splash screen
+        else if(mainMenu) gui::renderMenu(renderer, fontTexture); // main menu
 
         SDL_RenderPresent(renderer);
         return true;

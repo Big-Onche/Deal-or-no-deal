@@ -10,6 +10,9 @@
 #include <stdarg.h>
 #include <unordered_set>
 #include <random>
+#include <functional>
+#include <SDL.h>
+#include <SDL_image.h>
 
 #ifdef WIN32
   #include <windows.h>

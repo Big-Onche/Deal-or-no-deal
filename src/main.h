@@ -5,6 +5,9 @@
 
 using namespace std;
 
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
+
 extern void quit();
 
 // console
@@ -51,11 +54,29 @@ namespace game
     extern void playGame();
 }
 
+namespace gui
+{
+    extern void showSplashScreen(SDL_Renderer *renderer, SDL_Texture *fontTexture, SDL_Texture *gameLogo);
+    extern void handleMouseEvents(SDL_Event &event);
+    extern void renderMenu(SDL_Renderer *renderer, SDL_Texture *fontTexture);
+}
+
 namespace gl
 {
+    // bitmap font
+    const int cw = 8; // char width
+    const int ch = 12; // height
+    const int cpr = 16; // char per rows
+
+    // main gl funcs
     extern void glInit();
     extern bool glLoop();
     extern void glQuit();
+
+    // other useful funcs
+    extern void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize = 2.f);
+    extern void getTextSize(const string &text, int &width, int &height, int fontSize);
+    extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
 
 namespace render
