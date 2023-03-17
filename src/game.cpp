@@ -31,7 +31,7 @@ namespace game
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
-        engineStatus = S_InGame;
+        currentState = S_InGame;
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)

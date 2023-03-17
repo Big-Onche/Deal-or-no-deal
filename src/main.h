@@ -7,8 +7,8 @@ using namespace std;
 
 extern int screenw, screenh;
 
-extern int engineStatus;
-enum {S_Initialization = 0, S_SplashScreen, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
+enum GameState {S_Initialization = 0, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
+extern GameState currentState;
 
 extern void quit();
 

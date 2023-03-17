@@ -37,7 +37,7 @@ namespace gui
 
             if(SDL_PointInRect(&mousePoint, &newGameRect))
             {
-                engineStatus = S_LoadingScreen;
+                currentState = S_LoadingScreen;
                 game::initGame();
             }
             else if(SDL_PointInRect(&mousePoint, &optionsRect))

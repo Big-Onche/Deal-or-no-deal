@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int engineStatus = S_Initialization;
+GameState currentState;
 
 int main(int argc, char *argv[])
 {
@@ -15,8 +15,6 @@ int main(int argc, char *argv[])
     conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
     logoutf("init: game");
 
-    engineStatus = S_SplashScreen;
-
     for(;;) // main loop
     {
         if(!gl::glLoop()) break; // break if SDL_QUIT is called
@@ -27,7 +25,7 @@ int main(int argc, char *argv[])
 
 void quit() // cleanup and quit
 {
-    engineStatus = S_ShuttingDown;
+    currentState = S_ShuttingDown;
     gl::glQuit();
     sound::unInitAudio();
     logoutf("shutdown: exit success\n\n");

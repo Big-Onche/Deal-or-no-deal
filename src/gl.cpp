@@ -117,7 +117,7 @@ namespace gl
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
-            if(event.type == SDL_KEYDOWN && engineStatus==S_SplashScreen) { engineStatus=S_MainMenu; } // exit splash screen
+            if(event.type == SDL_KEYDOWN && currentState==S_Initialization) { currentState=S_MainMenu; } // exit splash screen
             else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
             {
                 fullscreen = !fullscreen;
@@ -135,9 +135,9 @@ namespace gl
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        switch(engineStatus)
+        switch(currentState)
         {
-            case S_SplashScreen: // game intro splash screen
+            case S_Initialization: // game intro splash screen
                 gui::showSplashScreen("Press any key to continue.");
                 break;
 
@@ -145,8 +145,13 @@ namespace gl
                 gui::renderMenu();
                 break;
 
-            case S_LoadingScreen: case S_InGame: // loading screen
+            case S_LoadingScreen: // loading screen
                 gui::showSplashScreen("Loading...");
+                break;
+
+            case S_InGame: // in game
+                break;
+            case S_ShuttingDown:
                 break;
         }
 
