@@ -58,6 +58,7 @@ namespace game
 
 namespace gui
 {
+    extern void handleKeyboardEvents(SDL_Event &event);
     extern void handleMouseEvents(SDL_Event &event);
     extern void showSplashScreen(string text);
     extern void renderMenu();

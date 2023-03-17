@@ -4,7 +4,6 @@ using namespace std;
 
 int screenw = 1280;
 int screenh = 720;
-bool fullscreen = false;
 
 namespace gl
 {
@@ -138,18 +137,7 @@ namespace gl
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
-            if(event.type == SDL_KEYDOWN && currentState==S_Initialization) { currentState=S_MainMenu; } // exit splash screen
-            else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
-            {
-                fullscreen = !fullscreen;
-                if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-                else SDL_SetWindowFullscreen(window, 0);
-                SDL_GetWindowSize(window, &screenw, &screenh);
-            }
-            if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
-            {
-                screenw = event.window.data1; screenh = event.window.data2;
-            }
+            gui::handleKeyboardEvents(event);
             gui::handleMouseEvents(event);
         }
 

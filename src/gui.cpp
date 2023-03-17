@@ -23,6 +23,20 @@ namespace gui
         gl::renderText(text, x, y, textSize);
     }
 
+    bool fullscreen = false;
+
+    void handleKeyboardEvents(SDL_Event &event)
+    {
+        if(event.type == SDL_KEYDOWN && currentState==S_Initialization) { currentState=S_MainMenu; } // exit splash screen
+        else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
+        {
+            fullscreen = !fullscreen;
+            if(fullscreen) SDL_SetWindowFullscreen(gl::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            else SDL_SetWindowFullscreen(gl::window, 0);
+            SDL_GetWindowSize(gl::window, &screenw, &screenh);
+        }
+    }
+
     SDL_Rect newGameRect;
     SDL_Rect optionsRect;
     SDL_Rect exitRect;
@@ -47,6 +61,10 @@ namespace gui
             {
                 quit(); // the only useful btn atm
             }
+        }
+        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
+        {
+            screenw = event.window.data1; screenh = event.window.data2;
         }
     }
 
@@ -95,7 +113,7 @@ namespace gui
             else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
 
             SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
-            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
+            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
 
             SDL_SetTextureColorMod(gl::priceTexture, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
             SDL_RenderCopy(gl::renderer, gl::priceTexture, nullptr, &rectDst);

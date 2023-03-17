@@ -6,7 +6,7 @@ using namespace std;
 namespace game
 {
     //const int maxBoxes = 16;
-    const int boxValues[maxBoxes] = {0, 1, 10, 30, 69, 100, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 250000, 500000};
+    const int boxValues[maxBoxes] = {0, 1, 10, 30, 69, 100, 420, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 250000, 500000};
 
     box boxes[maxBoxes];
     struct playerinfo player;
