@@ -3,7 +3,7 @@
 
 using namespace std;
 
-GameState currentState;
+EngineState engineState;
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
 void quit() // cleanup and quit
 {
-    currentState = S_ShuttingDown;
+    engineState = S_ShuttingDown;
     gl::glQuit();
     sound::unInitAudio();
     logoutf("shutdown: exit success\n\n");

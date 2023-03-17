@@ -27,7 +27,7 @@ namespace gui
 
     void handleKeyboardEvents(SDL_Event &event)
     {
-        if(event.type == SDL_KEYDOWN && currentState==S_Initialization) { currentState=S_MainMenu; } // exit splash screen
+        if(event.type == SDL_KEYDOWN && engineState==S_Initialization) { engineState=S_MainMenu; } // exit splash screen
         else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
         {
             fullscreen = !fullscreen;
@@ -49,12 +49,12 @@ namespace gui
             SDL_GetMouseState(&mouseX, &mouseY);
             SDL_Point mousePoint = {mouseX, mouseY};
 
-            switch(currentState)
+            switch(engineState)
             {
                 case S_MainMenu:
                     if(SDL_PointInRect(&mousePoint, &newGameRect))
                     {
-                        currentState = S_LoadingScreen;
+                        engineState = S_LoadingScreen;
                         game::initGame();
                     }
                     else if(SDL_PointInRect(&mousePoint, &optionsRect))
@@ -72,23 +72,33 @@ namespace gui
                     SDL_GetMouseState(&mouseX, &mouseY);
                     SDL_Point mousePoint = {mouseX, mouseY};
 
-                    // Check if any box was clicked
-                    loopi(4)
+                    switch(gameState)
                     {
-                        loopj(4)
-                        {
-                            int id = i * 4 + j;
-                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing), render::boxesgridY() + i * (render::boxHeight + render::boxSpacing), render::boxWidth, render::boxHeight};
-                            if(SDL_PointInRect(&mousePoint, &boxRect))
+
+
+                        case S_OpeningBoxes:
+                            // Check if any box was clicked
+                            loopi(4)
                             {
-                                if(!game::boxes[id].opened)
+                                loopj(4)
                                 {
-                                    game::boxes[id].opened = true;
-                                    // Perform any additional actions for opening the box
+                                    int id = i * 4 + j;
+                                    SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing), render::boxesgridY() + i * (render::boxHeight + render::boxSpacing), render::boxWidth, render::boxHeight};
+                                    if(SDL_PointInRect(&mousePoint, &boxRect))
+                                    {
+                                        if(!game::boxes[id].opened)
+                                        {
+                                            game::boxes[id].opened = true;
+                                            // Perform any additional actions for opening the box
+                                        }
+                                    }
                                 }
                             }
-                        }
+                        break;
+
                     }
+
+
                 }
                 break;
                 default: break;

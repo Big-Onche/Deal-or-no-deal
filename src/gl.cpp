@@ -150,7 +150,7 @@ namespace gl
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        switch(currentState)
+        switch(engineState)
         {
             case S_Initialization: // game intro splash screen
                 gui::showSplashScreen("Press any key to continue.");

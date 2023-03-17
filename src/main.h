@@ -7,8 +7,11 @@ using namespace std;
 
 extern int screenw, screenh;
 
-enum GameState {S_Initialization = 0, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
-extern GameState currentState;
+enum EngineState {S_Initialization = 0, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
+extern EngineState engineState;
+
+enum GameState {S_ChoosePlayerBox = 0, S_OpeningBoxes, S_BankCall, S_AcceptedDeal, S_GameOver};
+extern GameState gameState;
 
 extern void quit();
 
