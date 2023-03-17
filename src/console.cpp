@@ -1,7 +1,5 @@
 #include "main.h"
 
-using namespace std;
-
 void playerInput(int *value)
 {
     char input[32];

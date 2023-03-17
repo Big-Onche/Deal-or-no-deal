@@ -1,7 +1,5 @@
 #include "main.h"
 
-using namespace std;
-
 int screenw = 1280;
 int screenh = 720;
 
@@ -48,6 +46,46 @@ namespace gl
         }
 
         preloadTextures();
+    }
+
+    bool glLoop() // renderer loop
+    {
+        SDL_Event event;
+
+        while(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT) return false; // quit
+            gui::handleKeyboardEvents(event);
+            gui::handleMouseEvents(event);
+        }
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        switch(engineState)
+        {
+            case S_Initialization: // game intro splash screen
+                gui::showSplashScreen("Press any key to continue.");
+                break;
+
+            case S_MainMenu: // main menu
+                gui::renderMenu();
+                break;
+
+            case S_LoadingScreen: // loading screen
+                gui::showSplashScreen("Loading...");
+                break;
+
+            case S_InGame: // in game
+                render::renderGame();
+                break;
+
+            case S_ShuttingDown:
+                break;
+        }
+
+        SDL_RenderPresent(renderer);
+        return true;
     }
 
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file) // load an image
@@ -134,46 +172,6 @@ namespace gl
         destRect.h = imgh;
 
         SDL_RenderCopy(renderer, texture, NULL, &destRect);
-    }
-
-    bool glLoop() // renderer loop
-    {
-        SDL_Event event;
-
-        while(SDL_PollEvent(&event))
-        {
-            if(event.type == SDL_QUIT) return false; // quit
-            gui::handleKeyboardEvents(event);
-            gui::handleMouseEvents(event);
-        }
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
-        switch(engineState)
-        {
-            case S_Initialization: // game intro splash screen
-                gui::showSplashScreen("Press any key to continue.");
-                break;
-
-            case S_MainMenu: // main menu
-                gui::renderMenu();
-                break;
-
-            case S_LoadingScreen: // loading screen
-                gui::showSplashScreen("Loading...");
-                break;
-
-            case S_InGame: // in game
-                render::renderGame();
-                break;
-
-            case S_ShuttingDown:
-                break;
-        }
-
-        SDL_RenderPresent(renderer);
-        return true;
     }
 
     void glQuit()

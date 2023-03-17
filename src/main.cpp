@@ -1,8 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
 
-using namespace std;
-
 EngineState engineState;
 
 int main(int argc, char *argv[])

@@ -5,24 +5,6 @@ using namespace std;
 
 namespace gui
 {
-    void showSplashScreen(string text) // showing splash screen
-    {
-        if(!gl::gameLogo) return;
-        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
-        SDL_RenderClear(gl::renderer);
-        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
-
-        int tw, th; // text width, text height
-        int textSize = 3;
-
-        gl::getTextSize(text, tw, th, textSize);
-
-        int x = (screenw - tw) / 2;
-        int y = (screenh - th) / 1.05f;
-
-        gl::renderText(text, x, y, textSize);
-    }
-
     bool fullscreen = false;
 
     void handleKeyboardEvents(SDL_Event &event)
@@ -67,40 +49,9 @@ namespace gui
                     break;
 
                 case S_InGame:
-                {
-                    int mouseX, mouseY;
-                    SDL_GetMouseState(&mouseX, &mouseY);
-                    SDL_Point mousePoint = {mouseX, mouseY};
+                    game::handleGameEvents(event, mousePoint);
+                    break;
 
-                    switch(gameState)
-                    {
-
-
-                        case S_OpeningBoxes:
-                            // Check if any box was clicked
-                            loopi(4)
-                            {
-                                loopj(4)
-                                {
-                                    int id = i * 4 + j;
-                                    SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing), render::boxesgridY() + i * (render::boxHeight + render::boxSpacing), render::boxWidth, render::boxHeight};
-                                    if(SDL_PointInRect(&mousePoint, &boxRect))
-                                    {
-                                        if(!game::boxes[id].opened)
-                                        {
-                                            game::boxes[id].opened = true;
-                                            // Perform any additional actions for opening the box
-                                        }
-                                    }
-                                }
-                            }
-                        break;
-
-                    }
-
-
-                }
-                break;
                 default: break;
             }
         }
@@ -108,6 +59,24 @@ namespace gui
         {
             screenw = event.window.data1; screenh = event.window.data2;
         }
+    }
+
+    void showSplashScreen(string text) // showing splash screen
+    {
+        if(!gl::gameLogo) return;
+        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
+        SDL_RenderClear(gl::renderer);
+        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
+
+        int tw, th; // text width, text height
+        int textSize = 3;
+
+        gl::getTextSize(text, tw, th, textSize);
+
+        int x = (screenw - tw) / 2;
+        int y = (screenh - th) / 1.05f;
+
+        gl::renderText(text, x, y, textSize);
     }
 
     void renderMenu() // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first

@@ -55,8 +55,9 @@ namespace game
     extern int openCount(bool remaining = false);
     extern bool allOpened();
 
+    extern void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint);
+
     extern void initGame();
-    extern void playGame();
 }
 
 namespace gui // menus and splash/loading screens

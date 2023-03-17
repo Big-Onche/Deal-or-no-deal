@@ -1,8 +1,6 @@
 #include "main.h"
 #include <SDL_thread.h>
 
-using namespace std;
-
 GameState gameState;
 
 namespace game
@@ -12,8 +10,6 @@ namespace game
 
     box boxes[maxBoxes];
     struct playerinfo player;
-
-
 
     void assignBoxes() // random distribution of boxes
     {
@@ -35,6 +31,7 @@ namespace game
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
+        gameState = S_ChoosePlayerBox;
         engineState = S_InGame;
     }
 
@@ -47,7 +44,46 @@ namespace game
 
     bool allOpened() // check if all boxes are opened
     {
-        return openCount()>=maxBoxes-1; //-1 because of player box
+        return openCount()>=maxBoxes-1; //-1 because of player box not opened
+    }
+
+    void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint)
+    {
+        logoutf("%d, %d", gameState, player.playerBox);
+        switch(gameState)
+        {
+            case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
+                loopi(4) {
+                    loopj(4) {
+                        int id = i * 4 + j;
+                        // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
+                        SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
+                                            render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
+                                            render::boxWidth, render::boxHeight};
+
+                        if(SDL_PointInRect(&mousePoint, &boxRect))
+                        {
+                            if(gameState==S_ChoosePlayerBox) // just choose a box (early game or bank exchange)
+                            {
+                                player.playerBox = id;
+                                gameState = S_OpeningBoxes;
+                                break;
+                            }
+                            else if(!game::boxes[id].opened && id!=player.playerBox) game::boxes[id].opened = true; //else we open boxes if possible
+                        }
+                    }
+                }
+                break;
+
+            case S_BankCall:
+                break;
+
+            case S_AcceptedDeal:
+                break;
+
+            case S_GameOver:
+                break;
+        }
     }
 
     void bankCall()
