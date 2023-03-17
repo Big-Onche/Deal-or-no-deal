@@ -32,14 +32,14 @@ namespace gl
         }
 
         window = SDL_CreateWindow("Deal or no Deal", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenw, screenh, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-        if (window == NULL)
+        if(window == NULL)
         {
             logoutf("Unable to create window (%s)\n", SDL_GetError());
             exit(EXIT_FAILURE);
         }
 
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-        if (renderer == NULL)
+        if(renderer == NULL)
         {
             logoutf("Unable to initialize renderer (%s)\n", SDL_GetError());
             exit(EXIT_FAILURE);
@@ -65,7 +65,7 @@ namespace gl
         switch(engineState)
         {
             case S_Initialization: // game intro splash screen
-                gui::showSplashScreen("Press any key to continue.");
+                gui::renderSplashScreen("Press any key to continue.");
                 break;
 
             case S_MainMenu: // main menu
@@ -73,7 +73,7 @@ namespace gl
                 break;
 
             case S_LoadingScreen: // loading screen
-                gui::showSplashScreen("Loading...");
+                gui::renderSplashScreen("Loading...");
                 break;
 
             case S_InGame: // in game
@@ -104,6 +104,7 @@ namespace gl
     {
         gameLogo = loadTexture(renderer, "data/gui/logo.jpg");
         fontTex = loadTexture(renderer, "data/gui/font.png");
+        if(!fontTex) fatal("Unable to load font texture!");
         priceTex = loadTexture(renderer, "data/gui/price.png");
         closedBoxTex = loadTexture(renderer, "data/images/box_closed.png");
         openedBoxTex = loadTexture(renderer, "data/images/box_opened.png");

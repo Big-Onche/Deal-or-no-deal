@@ -61,7 +61,7 @@ namespace gui
         }
     }
 
-    void showSplashScreen(string text) // showing splash screen
+    void renderSplashScreen(string text) // showing splash screen
     {
         if(!gl::gameLogo) return;
         SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);

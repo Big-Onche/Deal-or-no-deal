@@ -13,7 +13,8 @@ extern EngineState engineState;
 enum GameState {S_ChoosePlayerBox = 0, S_OpeningBoxes, S_BankCall, S_AcceptedDeal, S_GameOver};
 extern GameState gameState;
 
-extern void quit();
+extern void quit(bool fatal = false);
+extern void fatal(const string &message);
 
 // console
 enum ConsoleColors
@@ -64,7 +65,7 @@ namespace gui // menus and splash/loading screens
 {
     extern void handleKeyboardEvents(SDL_Event &event);
     extern void handleMouseEvents(SDL_Event &event);
-    extern void showSplashScreen(string text);
+    extern void renderSplashScreen(string text);
     extern void renderMenu();
 }
 
