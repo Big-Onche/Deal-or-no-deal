@@ -56,14 +56,12 @@ namespace game
     extern void playGame();
 }
 
-namespace gui
+namespace gui // menus and splash/loading screens
 {
     extern void handleKeyboardEvents(SDL_Event &event);
     extern void handleMouseEvents(SDL_Event &event);
     extern void showSplashScreen(string text);
     extern void renderMenu();
-    //game
-    extern void renderGame();
 }
 
 namespace gl
@@ -94,10 +92,13 @@ namespace gl
     extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
 
-namespace render
+namespace render // render game
 {
-    extern void drawProgressBar(float progress);
-    extern void drawBoxes(const game::playerinfo &player, game::box boxes[]);
+    extern int boxSize;
+    extern int boxSpacing;
+    extern int boxesgridX();
+    extern int boxesgridY();
+    extern void renderGame();
 }
 
 namespace sound

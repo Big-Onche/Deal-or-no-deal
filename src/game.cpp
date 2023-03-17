@@ -75,7 +75,7 @@ namespace game
                         printf("Please enter the box you want:\n");
                         playerInput(&player.playerBox);
                         clearConsole();
-                        render::drawBoxes(player, boxes);
+                        //render::drawBoxes(player, boxes);
                         //if(!allOpened()) render::drawRemainingPrices(player, boxes);
                         printf("Your box is now the number %d!:\n", player.playerBox);
                     }
@@ -110,7 +110,7 @@ namespace game
         {
             if(nextStep)
             {
-                render::drawBoxes(player, boxes);
+                //render::drawBoxes(player, boxes);
                 //if(!allOpened()) render::drawRemainingPrices(player, boxes);
             }
 

@@ -2,68 +2,75 @@
 
 namespace render
 {
-    void drawProgressBar(float progress)
+    int boxSize = 75;
+    int boxSpacing = 30;
+
+    int boxesgridX() { return (screenw - (4 * boxSize + 3 * boxSpacing)) / 2; }
+    int boxesgridY() { return (screenh - (4 * boxSize + 3 * boxSpacing)) / 2; }
+
+    void drawBox(int id, int x, int y, float size, bool opened) // draw one box
     {
-        const int barWidth = 40;
-        int numBars = (int)(progress / 100.0f * barWidth);
-        conoutf(C_GREEN, C_BLACK, "Please wait, we are assigning boxes...\n", progress);
-        printf("[");
-        loopi(barWidth)
-        {
-            if (i < numBars) printf("=");
-            else printf(" ");
-        }
-        printf("] %3.1f%%\r", progress);
-        fflush(stdout);
+        SDL_Rect boxRect = {x, y, static_cast<int>(size), static_cast<int>(size)};
+
+        uint32_t boxColor = opened ? 0x443333 : 0x666666FF;
+        SDL_SetRenderDrawColor(gl::renderer, (boxColor >> 16) & 0xFF, (boxColor >> 8) & 0xFF, boxColor & 0xFF, 255);
+
+        SDL_RenderFillRect(gl::renderer, &boxRect);
+
+        gl::renderText(to_string(id + 1), x + size / 2, y + size / 2, 2.5f, 0xFFFFFF);
     }
 
-    const char *boxcolor(int id, int playerBox, bool opened) // color of the box, based on: your box / opened / not opened
-    {
-        return id + 1 == playerBox ? "\033[1;31m" : (opened ? "\033[1;35m" : "\033[1;32m");
-    }
-
-    string openedBoxTop(int insideBox) // build the top of the opened box with centered price
-    {
-        stringstream ss;
-        int valueLength = to_string(insideBox).length();
-        int leftPadding = (12 - valueLength) / 2;
-        int rightPadding = 12 - valueLength - leftPadding;
-
-        ss << "[" << setw(leftPadding) << "" << insideBox << "$" << setw(rightPadding) << "]";
-        return ss.str();
-    }
-
-    void drawBoxTop(int id, int playerBox, bool opened, int insideBox) // draw closed or opened top of the box
-    {
-        if(!opened) printf("%s%c%s%c\033[0m   ", boxcolor(id, playerBox, opened), 218, "------------", 191);
-        else printf("%s%s\033[0m   ", boxcolor(id, playerBox, opened), openedBoxTop(insideBox).c_str());
-    }
-
-    void drawBoxBottom(int id, int playerBox, bool opened) // bottom of the box with centered box number
-    {
-        printf("%s|_____%s%d_____|\033[0m   ", boxcolor(id, playerBox, opened), id + 1 > 9 ? "" : "_", id + 1);
-    }
-
-    void drawBoxes(const game::playerinfo &player, game::box boxes[]) // rendering all boxes
+    void drawBoxes() // draw all boxes in a grid
     {
         loopi(4)
         {
-            loopj(4) { // top
+            loopj(4)
+            {
                 int id = i * 4 + j;
-                drawBoxTop(id, player.playerBox, boxes[id].opened, boxes[id].insideBox);
+                int x = boxesgridX() + j * (boxSize + boxSpacing);
+                int y = boxesgridY() + i * (boxSize + boxSpacing);
+                drawBox(id, x, y, boxSize, game::boxes[id].opened);
             }
-            printf("\n");
-
-            loopj(4) { // middle (always the same)
-                int id = i * 4 + j;
-                printf("%s%c%s%c\033[0m   ", boxcolor(id, player.playerBox, boxes[id].opened), 218, "------------", 191);
-            }
-            printf("\n");
-            loopj(4) { // bottom
-                int id = i * 4 + j;
-                drawBoxBottom(id, player.playerBox, boxes[id].opened);
-            }
-            printf("\n\n\n");
         }
+    }
+
+    void drawRemainingPrices()
+    {
+        int textSize = 3;
+
+        int values[game::maxBoxes], numValues = 0;
+
+        loopi(game::maxBoxes) if (!game::boxes[i].opened) values[numValues++] = game::boxes[i].insideBox;
+
+        sort(values, values + numValues);
+
+        int splitIndex = numValues/2;
+        int lineHeight = static_cast<int>(gl::ch * textSize) + 11;
+
+        loopi(numValues)
+        {
+            int val = values[i];
+            string text = "$" + to_string(val);
+            int x, y, tw, th;
+
+            gl::getTextSize(text, tw, th, textSize);
+
+            if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
+            else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
+
+            SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
+            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
+
+            SDL_SetTextureColorMod(gl::priceTexture, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
+            SDL_RenderCopy(gl::renderer, gl::priceTexture, nullptr, &rectDst);
+
+            gl::renderOutlinedText(text, x, y, textSize, 0xFFFFFF, 0x333333);
+        }
+    }
+
+    void renderGame() // rendering a game
+    {
+        drawBoxes();
+        drawRemainingPrices();
     }
 }

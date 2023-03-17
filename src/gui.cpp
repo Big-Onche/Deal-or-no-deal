@@ -49,17 +49,49 @@ namespace gui
             SDL_GetMouseState(&mouseX, &mouseY);
             SDL_Point mousePoint = {mouseX, mouseY};
 
-            if(SDL_PointInRect(&mousePoint, &newGameRect))
+            switch(currentState)
             {
-                currentState = S_LoadingScreen;
-                game::initGame();
-            }
-            else if(SDL_PointInRect(&mousePoint, &optionsRect))
-            {
-            }
-            else if(SDL_PointInRect(&mousePoint, &exitRect))
-            {
-                quit(); // the only useful btn atm
+                case S_MainMenu:
+                    if(SDL_PointInRect(&mousePoint, &newGameRect))
+                    {
+                        currentState = S_LoadingScreen;
+                        game::initGame();
+                    }
+                    else if(SDL_PointInRect(&mousePoint, &optionsRect))
+                    {
+                    }
+                    else if(SDL_PointInRect(&mousePoint, &exitRect))
+                    {
+                        quit(); // the only useful btn atm
+                    }
+                    break;
+
+                case S_InGame:
+                {
+                    int mouseX, mouseY;
+                    SDL_GetMouseState(&mouseX, &mouseY);
+                    SDL_Point mousePoint = {mouseX, mouseY};
+
+                    // Check if any box was clicked
+                    loopi(4)
+                    {
+                        loopj(4)
+                        {
+                            int id = i * 4 + j;
+                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxSize + render::boxSpacing), render::boxesgridY() + i * (render::boxSize + render::boxSpacing), render::boxSize, render::boxSize};
+                            if(SDL_PointInRect(&mousePoint, &boxRect))
+                            {
+                                if(!game::boxes[id].opened)
+                                {
+                                    game::boxes[id].opened = true;
+                                    // Perform any additional actions for opening the box
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+                default: break;
             }
         }
         else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
@@ -86,46 +118,6 @@ namespace gui
         std::string exitText = "Exit";
         gl::renderText(exitText, x, y, textSize);
         exitRect = {x, y, static_cast<int>(exitText.length()) * gl::cw * textSize, gl::ch * textSize}; // Exit
-    }
-
-    void drawRemainingPrices()
-    {
-        int textSize = 3;
-
-        int values[game::maxBoxes], numValues = 0;
-
-        loopi(game::maxBoxes) if (!game::boxes[i].opened) values[numValues++] = game::boxes[i].insideBox;
-
-        sort(values, values + numValues);
-
-        int splitIndex = numValues/2;
-        int lineHeight = static_cast<int>(gl::ch * textSize) + 11;
-
-        loopi(numValues)
-        {
-            int val = values[i];
-            string text = "$" + to_string(val);
-            int x, y, tw, th;
-
-            gl::getTextSize(text, tw, th, textSize);
-
-            if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
-            else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
-
-            SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
-            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
-
-            SDL_SetTextureColorMod(gl::priceTexture, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
-            SDL_RenderCopy(gl::renderer, gl::priceTexture, nullptr, &rectDst);
-
-            gl::renderOutlinedText(text, x, y, textSize, 0xFFFFFF, 0x333333);
-        }
-    }
-
-
-    void renderGame() // rendering a game
-    {
-        drawRemainingPrices();
     }
 }
 

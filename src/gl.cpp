@@ -159,7 +159,7 @@ namespace gl
                 break;
 
             case S_InGame: // in game
-                gui::renderGame();
+                render::renderGame();
                 break;
 
             case S_ShuttingDown:
