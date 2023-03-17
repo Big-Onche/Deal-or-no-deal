@@ -77,8 +77,37 @@ namespace render
         }
     }
 
+    void drawDialogs()
+    {
+        int textSize = 3;
+        int tw, th;
+
+        string text;
+
+        switch(gameState)
+        {
+            case S_ChoosePlayerBox:
+                text = "Please choose your box!";
+                break;
+            case S_OpeningBoxes:
+                text = "Please choose a box to open.";
+                break;
+        }
+
+
+
+
+        gl::getTextSize(text, tw, th, textSize);
+
+        int x = (screenw - tw) / 2;
+        int y = (screenh - th) / 1.05f;
+
+        gl::renderText(text, x, y, textSize);
+    }
+
     void renderGame() // rendering a game
     {
+        drawDialogs();
         drawBoxes();
         drawRemainingPrices();
     }

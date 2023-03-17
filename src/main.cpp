@@ -3,6 +3,12 @@
 
 EngineState engineState;
 
+const int maxfps = 60;
+const int frameDelay = 1000 / maxfps;
+
+Uint32 frameStart;
+int frameTime;
+
 int main(int argc, char *argv[])
 {
     logoutf("init: main");
@@ -15,7 +21,12 @@ int main(int argc, char *argv[])
 
     for(;;) // main loop
     {
+        frameStart = SDL_GetTicks();
+
         if(!gl::glLoop()) break; // break if SDL_QUIT is called
+
+        frameTime = SDL_GetTicks() - frameStart; // Calculate the time taken for one loop iteration
+        if(frameDelay > frameTime) SDL_Delay(frameDelay - frameTime);
     }
 
     quit();
