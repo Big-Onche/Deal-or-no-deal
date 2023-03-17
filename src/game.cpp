@@ -49,7 +49,6 @@ namespace game
 
     void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint)
     {
-        logoutf("%d, %d", gameState, player.playerBox);
         switch(gameState)
         {
             case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes

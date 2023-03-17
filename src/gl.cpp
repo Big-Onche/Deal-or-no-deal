@@ -91,11 +91,11 @@ namespace gl
     SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file) // load an image
     {
         SDL_Surface *surface = IMG_Load(file);
-        if(!surface) { logoutf("Error loading image: %s\n", IMG_GetError()); return nullptr; }
+        if(!surface) { logoutf("Error loading image: %s", IMG_GetError()); return nullptr; }
 
         SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
-        if(!texture) { logoutf("Error creating texture: %s\n", SDL_GetError()); return nullptr; }
+        if(!texture) { logoutf("Error creating texture: %s", SDL_GetError()); return nullptr; }
 
         return texture;
     }
