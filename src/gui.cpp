@@ -20,7 +20,7 @@ namespace gui
         int x = (screenw - tw) / 2;
         int y = (screenh - th) / 1.05f;
 
-        gl::renderText(gl::renderer, gl::fontTexture, text, x, y, textSize);
+        gl::renderText(text, x, y, textSize);
     }
 
     SDL_Rect newGameRect;
@@ -56,37 +56,58 @@ namespace gui
 
         int x = 100, y = 200;
         std::string newGameText = "New Game";
-        gl::renderText(gl::renderer, gl::fontTexture, newGameText, x, y, textSize);
+        gl::renderText(newGameText, x, y, textSize);
         newGameRect = {x, y, static_cast<int>(newGameText.length()) * gl::cw * textSize, gl::ch * textSize}; // Play
 
         y+=75;
         std::string optionsText = "Options";
-        gl::renderText(gl::renderer, gl::fontTexture, optionsText, x, y, textSize);
+        gl::renderText(optionsText, x, y, textSize);
         optionsRect = {x, y, static_cast<int>(optionsText.length()) * gl::cw * textSize, gl::ch * textSize}; // Options
 
         y+=75;
         std::string exitText = "Exit";
-        gl::renderText(gl::renderer, gl::fontTexture, exitText, x, y, textSize);
+        gl::renderText(exitText, x, y, textSize);
         exitRect = {x, y, static_cast<int>(exitText.length()) * gl::cw * textSize, gl::ch * textSize}; // Exit
     }
 
-    void showLoadingScreen()
+    void drawRemainingPrices()
     {
-        if(!gl::gameLogo) return;
-        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
-        SDL_RenderClear(gl::renderer);
-        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
-
-        int tw, th; // text width, text height
         int textSize = 3;
 
-        string text = "Loading...";
-        gl::getTextSize(text, tw, th, textSize);
+        int values[game::maxBoxes], numValues = 0;
 
-        int x = (screenw - tw) / 2;
-        int y = (screenh - th) / 1.05f;
+        loopi(game::maxBoxes) if (!game::boxes[i].opened) values[numValues++] = game::boxes[i].insideBox;
 
-        gl::renderText(gl::renderer, gl::fontTexture, text, x, y, textSize);
+        sort(values, values + numValues);
+
+        int splitIndex = numValues/2;
+        int lineHeight = static_cast<int>(gl::ch * textSize) + 11;
+
+        loopi(numValues)
+        {
+            int val = values[i];
+            string text = "$" + to_string(val);
+            int x, y, tw, th;
+
+            gl::getTextSize(text, tw, th, textSize);
+
+            if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
+            else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
+
+            SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
+            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
+
+            SDL_SetTextureColorMod(gl::priceTexture, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
+            SDL_RenderCopy(gl::renderer, gl::priceTexture, nullptr, &rectDst);
+
+            gl::renderOutlinedText(text, x, y, textSize, 0xFFFFFF, 0x333333);
+        }
+    }
+
+
+    void renderGame() // rendering a game
+    {
+        drawRemainingPrices();
     }
 }
 

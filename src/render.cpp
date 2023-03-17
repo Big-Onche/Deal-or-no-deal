@@ -66,27 +66,4 @@ namespace render
             printf("\n\n\n");
         }
     }
-
-    void drawRemainingPrices(const game::playerinfo &player, game::box boxes[]) // rendering all remaining prices
-    {
-        conoutf(C_DEF, C_DEF, "Remaining boxes: %d\n", game::openCount(true));
-
-        int values[game::maxBoxes];
-        int numValues = 0;
-
-        loopi(game::maxBoxes)
-        {
-            if (!boxes[i].opened) values[numValues++] = boxes[i].insideBox;
-        }
-
-        sort(values, values + numValues);
-
-        for (int i = 0; i < numValues; i += 8) {
-            for (int j = i; j < i + 8 && j < numValues; j++) {
-                int val = values[j];
-                conoutf(C_WHITE, values[j]==69 ? C_MAGENTA : values[j]<2000 ? C_BLUE : values[j]<50000 ? C_YELLOW : C_RED, "$%-11d\033[0m ", val);
-            }
-            printf("\n\n");
-        }
-    }
 }

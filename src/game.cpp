@@ -76,7 +76,7 @@ namespace game
                         playerInput(&player.playerBox);
                         clearConsole();
                         render::drawBoxes(player, boxes);
-                        if(!allOpened()) render::drawRemainingPrices(player, boxes);
+                        //if(!allOpened()) render::drawRemainingPrices(player, boxes);
                         printf("Your box is now the number %d!:\n", player.playerBox);
                     }
                     else
@@ -111,7 +111,7 @@ namespace game
             if(nextStep)
             {
                 render::drawBoxes(player, boxes);
-                if(!allOpened()) render::drawRemainingPrices(player, boxes);
+                //if(!allOpened()) render::drawRemainingPrices(player, boxes);
             }
 
             if(openCount() && nextStep) printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);

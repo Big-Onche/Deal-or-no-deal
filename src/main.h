@@ -61,6 +61,8 @@ namespace gui
     extern void handleMouseEvents(SDL_Event &event);
     extern void showSplashScreen(string text);
     extern void renderMenu();
+    //game
+    extern void renderGame();
 }
 
 namespace gl
@@ -70,6 +72,7 @@ namespace gl
     //time to use an array or some shit like that
     extern SDL_Texture *gameLogo;
     extern SDL_Texture *fontTexture;
+    extern SDL_Texture *priceTexture;
 
     // bitmap font
     const int cw = 8; // char width
@@ -83,7 +86,9 @@ namespace gl
 
     // other useful funcs
     extern void preloadTextures();
-    extern void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize = 2.f);
+    extern void renderText(const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF);
+    extern void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333);
+    extern void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333);
     extern void getTextSize(const string &text, int &width, int &height, int fontSize);
     extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
@@ -92,7 +97,6 @@ namespace render
 {
     extern void drawProgressBar(float progress);
     extern void drawBoxes(const game::playerinfo &player, game::box boxes[]);
-    extern void drawRemainingPrices(const game::playerinfo &player, game::box boxes[]);
 }
 
 namespace sound

@@ -13,6 +13,7 @@ namespace gl
     //time to use an array or some shit like that
     SDL_Texture *gameLogo = nullptr;
     SDL_Texture *fontTexture = nullptr;
+    SDL_Texture *priceTexture = nullptr;
 
     void glInit() // initing SDL
     {
@@ -64,12 +65,14 @@ namespace gl
     {
         gameLogo = loadTexture(renderer, "data/gui/logo.jpg");
         fontTexture = loadTexture(renderer, "data/gui/font.png");
+        priceTexture = loadTexture(renderer, "data/gui/price.png");
     }
 
     void freeTextures() // free images before stopping gl
     {
         if(gameLogo != nullptr) { SDL_DestroyTexture(gameLogo);gameLogo = nullptr; }
         if(fontTexture != nullptr) { SDL_DestroyTexture(fontTexture); fontTexture = nullptr; }
+        if(priceTexture != nullptr) { SDL_DestroyTexture(priceTexture); priceTexture = nullptr; }
     }
 
     void getTextSize(const string &text, int &width, int &height, int fontSize)
@@ -80,12 +83,15 @@ namespace gl
         height = charHeight;
     }
 
-    void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize)
+    void renderText(const string &text, int x, int y, float fontSize, uint32_t fontColor)
     {
         SDL_Rect srcRect = {0, 0, cw, ch};
         SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
 
-        for (char c : text) {
+        SDL_SetTextureColorMod(fontTexture, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
+
+        for (char c : text)
+        {
             int charIndex = static_cast<int>(c) - 32;
             srcRect.x = (charIndex % cpr) * cw;
             srcRect.y = (charIndex / cpr) * ch;
@@ -94,6 +100,21 @@ namespace gl
 
             dstRect.x += static_cast<int>(cw * fontSize);
         }
+    }
+
+    void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor)
+    {
+        renderText(text, x, y, fontSize, textColor);
+        renderText(text, x-3, y-3, fontSize, shadowColor);
+    }
+
+    void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor)
+    {
+        renderText(text, x+2, y, fontSize, outlineColor);
+        renderText(text, x-2, y, fontSize, outlineColor);
+        renderText(text, x, y+2, fontSize, outlineColor);
+        renderText(text, x, y-2, fontSize, outlineColor);
+        renderText(text, x, y, fontSize, textColor);
     }
 
     void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh) // render an image at the center of the window
@@ -150,7 +171,9 @@ namespace gl
                 break;
 
             case S_InGame: // in game
+                gui::renderGame();
                 break;
+
             case S_ShuttingDown:
                 break;
         }
