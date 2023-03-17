@@ -70,8 +70,10 @@ namespace gl
     extern SDL_Renderer *renderer;
     //time to use an array or some shit like that
     extern SDL_Texture *gameLogo;
-    extern SDL_Texture *fontTexture;
-    extern SDL_Texture *priceTexture;
+    extern SDL_Texture *fontTex;
+    extern SDL_Texture *priceTex;
+    extern SDL_Texture *openedBoxTex;
+    extern SDL_Texture *closedBoxTex;
 
     // bitmap font
     const int cw = 8; // char width
@@ -94,7 +96,7 @@ namespace gl
 
 namespace render // render game
 {
-    extern int boxSize;
+    extern int boxWidth, boxHeight;
     extern int boxSpacing;
     extern int boxesgridX();
     extern int boxesgridY();

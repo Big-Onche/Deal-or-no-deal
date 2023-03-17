@@ -2,22 +2,31 @@
 
 namespace render
 {
-    int boxSize = 75;
-    int boxSpacing = 30;
+    int boxWidth = 140, boxHeight = 125;
+    int boxSpacing = 40;
 
-    int boxesgridX() { return (screenw - (4 * boxSize + 3 * boxSpacing)) / 2; }
-    int boxesgridY() { return (screenh - (4 * boxSize + 3 * boxSpacing)) / 2; }
+    int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
+    int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 2; }
 
-    void drawBox(int id, int x, int y, float size, bool opened) // draw one box
+    void drawBox(int id, int x, int y, float width, float height, int boxvalue, bool opened) // draw one box
     {
-        SDL_Rect boxRect = {x, y, static_cast<int>(size), static_cast<int>(size)};
+        SDL_Rect boxRect = {x, y, static_cast<int>(width), static_cast<int>(height)};
 
-        uint32_t boxColor = opened ? 0x443333 : 0x666666FF;
-        SDL_SetRenderDrawColor(gl::renderer, (boxColor >> 16) & 0xFF, (boxColor >> 8) & 0xFF, boxColor & 0xFF, 255);
+        SDL_RenderCopy(gl::renderer, opened ? gl::openedBoxTex : gl::closedBoxTex, nullptr, &boxRect);
 
-        SDL_RenderFillRect(gl::renderer, &boxRect);
+        if(opened)
+        {
+            string text = "$" + to_string(boxvalue);
 
-        gl::renderText(to_string(id + 1), x + size / 2, y + size / 2, 2.5f, 0xFFFFFF);
+            int tw, th;
+            float textSize = 2;
+            gl::getTextSize(text, tw, th, textSize);
+            int textX = (x + (width - tw) / 2) + 8, textY = y + (height - th) / 5;
+
+            gl::renderText(text, textX, textY, textSize, 0xFFFFFF);
+        }
+
+        gl::renderText(to_string(id + 1), x + width / 2, y + height / 1.5f, 2.5f, opened ? 0x999999 : 0xFFFFFF);
     }
 
     void drawBoxes() // draw all boxes in a grid
@@ -27,9 +36,9 @@ namespace render
             loopj(4)
             {
                 int id = i * 4 + j;
-                int x = boxesgridX() + j * (boxSize + boxSpacing);
-                int y = boxesgridY() + i * (boxSize + boxSpacing);
-                drawBox(id, x, y, boxSize, game::boxes[id].opened);
+                int x = boxesgridX() + j * (boxWidth + boxSpacing);
+                int y = boxesgridY() + i * (boxHeight + boxSpacing);
+                drawBox(id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
             }
         }
     }
@@ -61,8 +70,8 @@ namespace render
             SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
             uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
 
-            SDL_SetTextureColorMod(gl::priceTexture, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
-            SDL_RenderCopy(gl::renderer, gl::priceTexture, nullptr, &rectDst);
+            SDL_SetTextureColorMod(gl::priceTex, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
+            SDL_RenderCopy(gl::renderer, gl::priceTex, nullptr, &rectDst);
 
             gl::renderOutlinedText(text, x, y, textSize, 0xFFFFFF, 0x333333);
         }

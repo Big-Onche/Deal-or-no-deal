@@ -78,7 +78,7 @@ namespace gui
                         loopj(4)
                         {
                             int id = i * 4 + j;
-                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxSize + render::boxSpacing), render::boxesgridY() + i * (render::boxSize + render::boxSpacing), render::boxSize, render::boxSize};
+                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing), render::boxesgridY() + i * (render::boxHeight + render::boxSpacing), render::boxWidth, render::boxHeight};
                             if(SDL_PointInRect(&mousePoint, &boxRect))
                             {
                                 if(!game::boxes[id].opened)

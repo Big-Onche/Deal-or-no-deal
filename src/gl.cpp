@@ -11,8 +11,10 @@ namespace gl
     SDL_Renderer *renderer = nullptr;
     //time to use an array or some shit like that
     SDL_Texture *gameLogo = nullptr;
-    SDL_Texture *fontTexture = nullptr;
-    SDL_Texture *priceTexture = nullptr;
+    SDL_Texture *fontTex = nullptr;
+    SDL_Texture *priceTex = nullptr;
+    SDL_Texture *closedBoxTex = nullptr;
+    SDL_Texture *openedBoxTex = nullptr;
 
     void glInit() // initing SDL
     {
@@ -63,15 +65,19 @@ namespace gl
     void preloadTextures() // preload images used in the game
     {
         gameLogo = loadTexture(renderer, "data/gui/logo.jpg");
-        fontTexture = loadTexture(renderer, "data/gui/font.png");
-        priceTexture = loadTexture(renderer, "data/gui/price.png");
+        fontTex = loadTexture(renderer, "data/gui/font.png");
+        priceTex = loadTexture(renderer, "data/gui/price.png");
+        closedBoxTex = loadTexture(renderer, "data/images/box_closed.png");
+        openedBoxTex = loadTexture(renderer, "data/images/box_opened.png");
     }
 
     void freeTextures() // free images before stopping gl
     {
         if(gameLogo != nullptr) { SDL_DestroyTexture(gameLogo);gameLogo = nullptr; }
-        if(fontTexture != nullptr) { SDL_DestroyTexture(fontTexture); fontTexture = nullptr; }
-        if(priceTexture != nullptr) { SDL_DestroyTexture(priceTexture); priceTexture = nullptr; }
+        if(fontTex != nullptr) { SDL_DestroyTexture(fontTex); fontTex = nullptr; }
+        if(priceTex != nullptr) { SDL_DestroyTexture(priceTex); priceTex = nullptr; }
+        if(closedBoxTex != nullptr) { SDL_DestroyTexture(closedBoxTex); closedBoxTex = nullptr; }
+        if(openedBoxTex != nullptr) { SDL_DestroyTexture(openedBoxTex); openedBoxTex = nullptr; }
     }
 
     void getTextSize(const string &text, int &width, int &height, int fontSize)
@@ -87,7 +93,7 @@ namespace gl
         SDL_Rect srcRect = {0, 0, cw, ch};
         SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
 
-        SDL_SetTextureColorMod(fontTexture, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
+        SDL_SetTextureColorMod(fontTex, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
 
         for (char c : text)
         {
@@ -95,7 +101,7 @@ namespace gl
             srcRect.x = (charIndex % cpr) * cw;
             srcRect.y = (charIndex / cpr) * ch;
 
-            SDL_RenderCopy(renderer, fontTexture, &srcRect, &dstRect);
+            SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
 
             dstRect.x += static_cast<int>(cw * fontSize);
         }
