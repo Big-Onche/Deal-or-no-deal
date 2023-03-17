@@ -7,6 +7,9 @@ using namespace std;
 
 extern int screenw, screenh;
 
+extern int engineStatus;
+enum {S_Initialization = 0, S_SplashScreen, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
+
 extern void quit();
 
 // console
@@ -55,13 +58,19 @@ namespace game
 
 namespace gui
 {
-    extern void showSplashScreen(SDL_Renderer *renderer, SDL_Texture *fontTexture, SDL_Texture *gameLogo);
     extern void handleMouseEvents(SDL_Event &event);
-    extern void renderMenu(SDL_Renderer *renderer, SDL_Texture *fontTexture);
+    extern void showSplashScreen(string text);
+    extern void renderMenu();
 }
 
 namespace gl
 {
+    extern SDL_Window *window;
+    extern SDL_Renderer *renderer;
+    //time to use an array or some shit like that
+    extern SDL_Texture *gameLogo;
+    extern SDL_Texture *fontTexture;
+
     // bitmap font
     const int cw = 8; // char width
     const int ch = 12; // height
@@ -73,6 +82,7 @@ namespace gl
     extern void glQuit();
 
     // other useful funcs
+    extern void preloadTextures();
     extern void renderText(SDL_Renderer *renderer, SDL_Texture *fontTexture, const string &text, int x, int y, float fontSize = 2.f);
     extern void getTextSize(const string &text, int &width, int &height, int fontSize);
     extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);

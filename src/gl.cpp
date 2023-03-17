@@ -10,10 +10,9 @@ namespace gl
 {
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
+    //time to use an array or some shit like that
     SDL_Texture *gameLogo = nullptr;
     SDL_Texture *fontTexture = nullptr;
-
-    extern void preloadTextures();
 
     void glInit() // initing SDL
     {
@@ -111,9 +110,6 @@ namespace gl
         SDL_RenderCopy(renderer, texture, NULL, &destRect);
     }
 
-    bool splashScreen = true;
-    bool mainMenu = false;
-
     bool glLoop() // renderer loop
     {
         SDL_Event event;
@@ -121,17 +117,17 @@ namespace gl
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
-            if(event.type == SDL_KEYDOWN && splashScreen) {splashScreen = false; mainMenu = true;} // exit splash screen
+            if(event.type == SDL_KEYDOWN && engineStatus==S_SplashScreen) { engineStatus=S_MainMenu; } // exit splash screen
             else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
             {
                 fullscreen = !fullscreen;
                 if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
                 else SDL_SetWindowFullscreen(window, 0);
+                SDL_GetWindowSize(window, &screenw, &screenh);
             }
             if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
             {
-                screenw = event.window.data1;
-                screenh = event.window.data2;
+                screenw = event.window.data1; screenh = event.window.data2;
             }
             gui::handleMouseEvents(event);
         }
@@ -139,8 +135,20 @@ namespace gl
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        if(splashScreen) gui::showSplashScreen(renderer, fontTexture, gameLogo); // game intro splash screen
-        else if(mainMenu) gui::renderMenu(renderer, fontTexture); // main menu
+        switch(engineStatus)
+        {
+            case S_SplashScreen: // game intro splash screen
+                gui::showSplashScreen("Press any key to continue.");
+                break;
+
+            case S_MainMenu: // main menu
+                gui::renderMenu();
+                break;
+
+            case S_LoadingScreen: case S_InGame: // loading screen
+                gui::showSplashScreen("Loading...");
+                break;
+        }
 
         SDL_RenderPresent(renderer);
         return true;

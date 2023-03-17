@@ -3,6 +3,8 @@
 
 using namespace std;
 
+int engineStatus = S_Initialization;
+
 int main(int argc, char *argv[])
 {
     logoutf("init: main");
@@ -12,6 +14,8 @@ int main(int argc, char *argv[])
     sound::playSound("theme");
     conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
     logoutf("init: game");
+
+    engineStatus = S_SplashScreen;
 
     for(;;) // main loop
     {
@@ -23,6 +27,7 @@ int main(int argc, char *argv[])
 
 void quit() // cleanup and quit
 {
+    engineStatus = S_ShuttingDown;
     gl::glQuit();
     sound::unInitAudio();
     logoutf("shutdown: exit success\n\n");

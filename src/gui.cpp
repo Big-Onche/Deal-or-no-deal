@@ -5,23 +5,22 @@ using namespace std;
 
 namespace gui
 {
-    void showSplashScreen(SDL_Renderer *renderer, SDL_Texture *fontTexture, SDL_Texture *gameLogo) // showing splash screen
+    void showSplashScreen(string text) // showing splash screen
     {
-        if(!gameLogo) return;
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        gl::renderCenteredTexture(renderer, gameLogo, screenw, screenh);
+        if(!gl::gameLogo) return;
+        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
+        SDL_RenderClear(gl::renderer);
+        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
 
         int tw, th; // text width, text height
         int textSize = 3;
 
-        string text = "Press any key to continue";
         gl::getTextSize(text, tw, th, textSize);
 
         int x = (screenw - tw) / 2;
         int y = (screenh - th) / 1.05f;
 
-        gl::renderText(renderer, fontTexture, text, x, y, textSize);
+        gl::renderText(gl::renderer, gl::fontTexture, text, x, y, textSize);
     }
 
     SDL_Rect newGameRect;
@@ -38,7 +37,8 @@ namespace gui
 
             if(SDL_PointInRect(&mousePoint, &newGameRect))
             {
-                sound::playSound("money_loss"); // just a test
+                engineStatus = S_LoadingScreen;
+                game::initGame();
             }
             else if(SDL_PointInRect(&mousePoint, &optionsRect))
             {
@@ -50,24 +50,43 @@ namespace gui
         }
     }
 
-    void renderMenu(SDL_Renderer *renderer, SDL_Texture *fontTexture) // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first
+    void renderMenu() // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first
     {
         int textSize = 3;
 
         int x = 100, y = 200;
         std::string newGameText = "New Game";
-        gl::renderText(renderer, fontTexture, newGameText, x, y, textSize);
+        gl::renderText(gl::renderer, gl::fontTexture, newGameText, x, y, textSize);
         newGameRect = {x, y, static_cast<int>(newGameText.length()) * gl::cw * textSize, gl::ch * textSize}; // Play
 
         y+=75;
         std::string optionsText = "Options";
-        gl::renderText(renderer, fontTexture, optionsText, x, y, textSize);
+        gl::renderText(gl::renderer, gl::fontTexture, optionsText, x, y, textSize);
         optionsRect = {x, y, static_cast<int>(optionsText.length()) * gl::cw * textSize, gl::ch * textSize}; // Options
 
         y+=75;
         std::string exitText = "Exit";
-        gl::renderText(renderer, fontTexture, exitText, x, y, textSize);
+        gl::renderText(gl::renderer, gl::fontTexture, exitText, x, y, textSize);
         exitRect = {x, y, static_cast<int>(exitText.length()) * gl::cw * textSize, gl::ch * textSize}; // Exit
+    }
+
+    void showLoadingScreen()
+    {
+        if(!gl::gameLogo) return;
+        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
+        SDL_RenderClear(gl::renderer);
+        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
+
+        int tw, th; // text width, text height
+        int textSize = 3;
+
+        string text = "Loading...";
+        gl::getTextSize(text, tw, th, textSize);
+
+        int x = (screenw - tw) / 2;
+        int y = (screenh - th) / 1.05f;
+
+        gl::renderText(gl::renderer, gl::fontTexture, text, x, y, textSize);
     }
 }
 

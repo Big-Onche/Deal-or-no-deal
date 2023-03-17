@@ -1,4 +1,5 @@
 #include "main.h"
+#include <SDL_thread.h>
 
 using namespace std;
 
@@ -21,11 +22,7 @@ namespace game
         loopi(maxBoxes)
         {
             boxes[i].opened = false;
-
-            render::drawProgressBar((float)i / maxBoxes * 100);
-
             boxes[i].insideBox = tempBoxValues[i]; // assign the shuffled value directly to the boxes array
-            clearConsole();
         }
     }
 
@@ -34,6 +31,7 @@ namespace game
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
+        engineStatus = S_InGame;
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
