@@ -44,7 +44,7 @@ namespace gui
                     }
                     else if(SDL_PointInRect(&mousePoint, &exitRect))
                     {
-                        quit(); // the only useful btn atm
+                        quit();
                     }
                     break;
 

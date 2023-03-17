@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     sound::initAudio();
     clearConsole();
     sound::playSound("theme");
-    conoutf(C_YELLOW, C_BLACK, "Welcome to Deal or no Deal!\n\n");
     logoutf("init: game");
 
     for(;;) // main loop
