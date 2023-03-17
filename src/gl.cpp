@@ -119,40 +119,88 @@ namespace gl
         if(openedBoxTex != nullptr) { SDL_DestroyTexture(openedBoxTex); openedBoxTex = nullptr; }
     }
 
-    void getTextSize(const string &text, int &width, int &height, int fontSize)
+    void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth)
     {
         int charWidth = cw * fontSize;
         int charHeight = ch * fontSize;
-        width = static_cast<int>(text.length()) * charWidth;
-        height = charHeight;
+        int currentWidth = 0;
+        int currentHeight = charHeight;
+        int lineWidth = 0;
+
+        for (char c : text)
+        {
+            if (c == ' ')
+            {
+                currentWidth += charWidth;
+                if (currentWidth + charWidth > maxWidth)
+                {
+                    currentWidth = 0;
+                    currentHeight += charHeight;
+                }
+            }
+            else
+            {
+                currentWidth += charWidth;
+            }
+
+            lineWidth = std::max(lineWidth, currentWidth);
+        }
+
+        width = lineWidth;
+        height = currentHeight;
     }
 
-    void renderText(const string &text, int x, int y, float fontSize, uint32_t fontColor)
+    void renderText(const string &text, int x, int y, float fontSize, uint32_t fontColor, int maxWidth)
     {
         SDL_Rect srcRect = {0, 0, cw, ch};
         SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
 
         SDL_SetTextureColorMod(fontTex, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
 
-        for (char c : text)
+        stringstream ss(text); string word;
+
+        while (ss >> word)
         {
-            int charIndex = static_cast<int>(c) - 32;
-            srcRect.x = (charIndex % cpr) * cw;
-            srcRect.y = (charIndex / cpr) * ch;
+            int wordWidth = word.length() * static_cast<int>(cw * fontSize);
+            int spaceWidth = static_cast<int>(cw * fontSize);
 
-            SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
+            if(maxWidth > 0 && (dstRect.x + wordWidth + spaceWidth) - x > maxWidth)
+            {
+                dstRect.x = x;
+                dstRect.y += static_cast<int>(ch * fontSize);
+            }
 
-            dstRect.x += static_cast<int>(cw * fontSize);
+            for (char c : word)
+            {
+                int charIndex = static_cast<int>(c) - 32;
+                srcRect.x = (charIndex % cpr) * cw;
+                srcRect.y = (charIndex / cpr) * ch;
+
+                SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
+
+                dstRect.x += static_cast<int>(cw * fontSize);
+            }
+
+            if(!ss.eof()) // render a space after each word (except the last one)
+            {
+                int charIndex = static_cast<int>(' ') - 32;
+                srcRect.x = (charIndex % cpr) * cw;
+                srcRect.y = (charIndex / cpr) * ch;
+
+                SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
+
+                dstRect.x += static_cast<int>(cw * fontSize);
+            }
         }
     }
 
-    void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor)
+    void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor, int maxWidth)
     {
         renderText(text, x, y, fontSize, textColor);
         renderText(text, x-3, y-3, fontSize, shadowColor);
     }
 
-    void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor)
+    void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor, int maxWidth)
     {
         renderText(text, x+2, y, fontSize, outlineColor);
         renderText(text, x-2, y, fontSize, outlineColor);

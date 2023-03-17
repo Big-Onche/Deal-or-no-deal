@@ -50,6 +50,8 @@ namespace game
         int bankGain;
     };
 
+    extern string presentatorDialog;
+
     extern box boxes[maxBoxes];
     extern playerinfo player;
 
@@ -92,10 +94,10 @@ namespace gl
 
     // other useful funcs
     extern void preloadTextures();
-    extern void renderText(const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF);
-    extern void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333);
-    extern void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333);
-    extern void getTextSize(const string &text, int &width, int &height, int fontSize);
+    extern void renderText(const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF, int maxWidth = screenw/1.5f);
+    extern void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+    extern void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+    extern void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
     extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
 

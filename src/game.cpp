@@ -11,6 +11,8 @@ namespace game
     box boxes[maxBoxes];
     struct playerinfo player;
 
+    string presentatorDialog;
+
     void assignBoxes() // random distribution of boxes
     {
         random_device rd;
@@ -66,6 +68,7 @@ namespace game
                             {
                                 player.playerBox = id;
                                 gameState = S_OpeningBoxes;
+                                presentatorDialog = "You choosed the box " + to_string(id+1) + ", I hope that it's a good number for you today!";
                                 break;
                             }
                             else if(!game::boxes[id].opened && id!=player.playerBox) game::boxes[id].opened = true; //else we open boxes if possible

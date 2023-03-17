@@ -6,7 +6,7 @@ namespace render
     int boxSpacing = 40;
 
     int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
-    int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 2; }
+    int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 3; }
 
     void drawBox(int id, int x, int y, float width, float height, int boxvalue, bool opened) // draw one box
     {
@@ -38,8 +38,14 @@ namespace render
                 int id = i * 4 + j;
                 int x = boxesgridX() + j * (boxWidth + boxSpacing);
                 int y = boxesgridY() + i * (boxHeight + boxSpacing);
-                drawBox(id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
+                if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
             }
+        }
+
+        if(gameState>S_ChoosePlayerBox)
+        {
+            int id = game::player.playerBox;
+            drawBox(id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, id, game::allOpened());
         }
     }
 
@@ -82,27 +88,9 @@ namespace render
         int textSize = 3;
         int tw, th;
 
-        string text;
+        if(gameState == S_ChoosePlayerBox) game::presentatorDialog = "Please choose your box!";
 
-        switch(gameState)
-        {
-            case S_ChoosePlayerBox:
-                text = "Please choose your box!";
-                break;
-            case S_OpeningBoxes:
-                text = "Please choose a box to open.";
-                break;
-        }
-
-
-
-
-        gl::getTextSize(text, tw, th, textSize);
-
-        int x = (screenw - tw) / 2;
-        int y = (screenh - th) / 1.05f;
-
-        gl::renderText(text, x, y, textSize);
+        gl::renderText(game::presentatorDialog, 125, screenh-125, textSize, 0xFFFFFF, screenw/2);
     }
 
     void renderGame() // rendering a game
