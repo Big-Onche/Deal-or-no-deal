@@ -102,20 +102,6 @@ namespace sdl
         return true;
     }
 
-    void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh) // render an image at the center of the window
-    {
-        int imgw, imgh;
-        SDL_QueryTexture(texture, NULL, NULL, &imgw, &imgh);
-
-        SDL_Rect destRect;
-        destRect.x = (screenw - imgw) / 2;
-        destRect.y = (screenh - imgh) / 2;
-        destRect.w = imgw;
-        destRect.h = imgh;
-
-        SDL_RenderCopy(renderer, texture, NULL, &destRect);
-    }
-
     void sdlQuit()
     {
         logoutf("shutdown: gl");

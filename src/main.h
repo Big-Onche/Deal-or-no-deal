@@ -82,8 +82,6 @@ namespace sdl
 
     // other useful funcs
     extern void preloadTextures();
-
-    extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
 
 namespace render // render game
