@@ -5,8 +5,6 @@
 
 using namespace std;
 
-extern int screenw, screenh;
-
 enum EngineState {S_Initialization = 0, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
 extern EngineState engineState;
 
@@ -74,6 +72,9 @@ namespace gui // menus and splash/loading screens
 //sdl things
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
+
+extern int screenw, screenh;
+extern float scalew, scaleh;
 
 // bitmap font
 const int cw = 8; // char width

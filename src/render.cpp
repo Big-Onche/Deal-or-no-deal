@@ -4,25 +4,29 @@
 namespace render
 {
     int boxWidth = 140, boxHeight = 125;
-    int boxSpacing = 40;
+    int boxSpacing = 15;
 
     int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
-    int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 5; }
+    int boxesgridY() { return ((4 * boxHeight + 3 * boxSpacing)) - screenh / 1.3f; }
 
-    void drawBox(TextureManager& textureManager, int id, int x, int y, float width, float height, int boxvalue, bool opened, bool ownBox = false) // draw one box
+    void drawBox(TextureManager& textureManager, int id, int x, int y, int boxvalue, bool opened, bool ownBox = false) // draw one box
     {
-        textureManager.draw(opened ? "OpenedBox" : "ClosedBox", x, y, static_cast<int>(width), static_cast<int>(height), renderer);
+        int bwidth = boxWidth, bheight = boxHeight, shadowOffset = 4, textsize = 2;
+
+        if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset *= 2, textsize*=2; }
+
+        textureManager.drawShadowedTex(opened ? "OpenedBox" : "ClosedBox", x, y, bwidth, bheight, renderer, 0x000000, shadowOffset, shadowOffset, 50, 75);
 
         if(opened)
         {
             string text = "$" + to_string(boxvalue);
             int tw, th;
-            sdl::getTextSize(text, tw, th, ownBox ? 5 : 2);
-            int textX = (x + (width - tw) / 2) + 8, textY = y + (height - th) / 5;
+            sdl::getTextSize(text, tw, th, ownBox ? 3 : 2);
+            int textX = (x + (bwidth - tw) / 2) + 8, textY = y + (bheight - th) / 5;
 
-            sdl::renderText(text, textX, textY, ownBox ? 5 : 2, 0xFFFFFF);
+            sdl::renderText(text, textX, textY, textsize, 0xFFFFFF);
         }
-        sdl::renderText(to_string(id + 1), x + width / 2, y + height / 1.5f, ownBox ? 6 : 3, opened ? 0x999999 : 0xFFFFFF);
+        sdl::renderText(to_string(id + 1), x + bwidth / 2, y + bheight / 1.5f, textsize, opened ? 0x999999 : 0xFFFFFF);
     }
 
     void drawBoxes(TextureManager& textureManager) // draw all boxes in a grid
@@ -34,14 +38,14 @@ namespace render
                 int id = i * 4 + j;
                 int x = boxesgridX() + j * (boxWidth + boxSpacing);
                 int y = boxesgridY() + i * (boxHeight + boxSpacing);
-                if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(textureManager, id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
+                if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(textureManager, id, x, y, game::boxes[id].insideBox, game::boxes[id].opened);
             }
         }
 
         if(gameState>S_ChoosePlayerBox)
         {
             int id = game::player.playerBox;
-            drawBox(textureManager, id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, game::boxes[id].insideBox, game::allOpened(), true);
+            drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 20+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
         }
     }
 
@@ -79,13 +83,11 @@ namespace render
 
     void drawDialogs(TextureManager& textureManager)
     {
-        int textSize = 3;
-
-        textureManager.drawShadowedTex("Presenter", -50, screenh-350, 300, 450, renderer, 0x000000, 5, 5, 50, 1);
-        textureManager.draw("Bubble", 200, screenh-250, 960, 240, renderer);
+        textureManager.drawShadowedTex("Presenter", -30, screenh-230, 200, 300, renderer, 0x000000, 15, 15, 50, 75);
+        textureManager.draw("Bubble", 133, screenh-165, 640, 160, renderer);
 
         if(gameState == S_ChoosePlayerBox) game::presenterDialog = "Please choose your box!";
-        sdl::renderShadowedText(game::presenterDialog, 340, screenh-180, textSize, 0x000000, 0xCCCCCC, 750);
+        sdl::renderText(game::presenterDialog, 225, screenh-120, 2.5f, 0x000000, 500);
     }
 
     void renderGame() // rendering a game

@@ -11,12 +11,11 @@ namespace gui
     void handleKeyboardEvents(SDL_Event &event)
     {
         if(event.type == SDL_KEYDOWN && engineState==S_Initialization) { engineState=S_MainMenu; } // exit splash screen
-        else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
+        else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen (rescaling is called in sdlLoop(), SDL_WINDOWEVENT)
         {
             fullscreen = !fullscreen;
             if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
             else SDL_SetWindowFullscreen(window, 0);
-            SDL_GetWindowSize(window, &screenw, &screenh);
         }
     }
 
@@ -30,7 +29,9 @@ namespace gui
         {
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
-            SDL_Point mousePoint = {mouseX, mouseY};
+
+            SDL_RenderGetScale(renderer, &scalew, &scaleh);
+            SDL_Point mousePoint = { static_cast<int>(mouseX / scalew), static_cast<int>(mouseY / scaleh) };
 
             switch(engineState)
             {
@@ -55,10 +56,6 @@ namespace gui
 
                 default: break;
             }
-        }
-        else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) // window resize
-        {
-            screenw = event.window.data1; screenh = event.window.data2;
         }
     }
 

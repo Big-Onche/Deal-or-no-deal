@@ -51,6 +51,8 @@ namespace game
 
     void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint)
     {
+        SDL_RenderGetScale(renderer, &scalew, &scaleh);
+
         switch(gameState)
         {
             case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
@@ -89,7 +91,7 @@ namespace game
                                         break;
                                     default:
                                         if(boxValue >= 50000) presenterDialog = "Holy shit! $" + to_string(boxValue) + ". I hope it was the last big one.";
-                                        else presenterDialog = "Nice, only $" + to_string(boxValue) + " nice! You're doing well, please choose another box.";
+                                        else presenterDialog = "Nice, only $" + to_string(boxValue) + "! You're doing well, please choose another box.";
                                         break;
                                 }
                             }

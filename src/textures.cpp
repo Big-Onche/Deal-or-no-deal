@@ -68,28 +68,11 @@ void TextureManager::draw(const string& id, int x, int y, int width, int height,
 void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t shadowColor, int offsetX, int offsetY, int blurRadius, Uint8 shadowAlpha)
 {
     TextureManager& textureManager = TextureManager::getInstance();
-
+    // shadow
     textureManager.setColorMod(textureID, (shadowColor >> 16) & 0xFF, (shadowColor >> 8) & 0xFF, shadowColor & 0xFF);
-
-    // Set up random number generation
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> offsetDist(-blurRadius, blurRadius);
-
-    // Render the shadow texture multiple times with different positions and transparency to simulate the blur effect
-    int numSamples = blurRadius * blurRadius; // Adjust this value as needed to control the number of shadow samples
-    for (int k = 0; k < numSamples; ++k)
-    {
-        int randomOffsetX = offsetDist(gen);
-        int randomOffsetY = offsetDist(gen);
-        int posX = x + offsetX + randomOffsetX;
-        int posY = y + offsetY + randomOffsetY;
-
-        textureManager.setAlpha(textureID, shadowAlpha);
-        textureManager.draw(textureID, posX, posY, width, height, renderer);
-    }
-
-    // Render the original texture without any color modulation or offset
+    textureManager.setAlpha(textureID, shadowAlpha);
+    textureManager.draw(textureID, x+offsetX, y+offsetY, width, height, renderer);
+    // original
     textureManager.setColorMod(textureID, 255, 255, 255);
     textureManager.setAlpha(textureID, 255);
     textureManager.draw(textureID, x, y, width, height, renderer);

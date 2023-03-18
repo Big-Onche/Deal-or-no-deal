@@ -3,6 +3,8 @@
 
 int screenw = 1280;
 int screenh = 720;
+float scalew = 1280.f;
+float scaleh = 720.f;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -33,7 +35,8 @@ namespace sdl
             exit(EXIT_FAILURE);
         }
 
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
         if(renderer == NULL)
         {
             logoutf("Unable to initialize renderer (%s)\n", SDL_GetError());
@@ -50,6 +53,21 @@ namespace sdl
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
+
+            switch(event.type)
+            {
+                case SDL_WINDOWEVENT:
+                    if (event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                    {
+                        int newWidth, newHeight;
+                        SDL_GetWindowSize(window, &newWidth, &newHeight);
+                        scalew = static_cast<float>(newWidth) / 1280;
+                        scaleh = static_cast<float>(newHeight) / 720;
+                        SDL_RenderSetScale(renderer, scalew, scaleh);
+                    }
+                    break;
+            }
+
             gui::handleKeyboardEvents(event);
             gui::handleMouseEvents(event);
         }
