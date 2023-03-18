@@ -9,23 +9,20 @@ namespace render
     int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
     int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 3; }
 
-    void drawBox(TextureManager& textureManager, int id, int x, int y, float width, float height, int boxvalue, bool opened) // draw one box
+    void drawBox(TextureManager& textureManager, int id, int x, int y, float width, float height, int boxvalue, bool opened, bool ownBox = false) // draw one box
     {
         textureManager.draw(opened ? "OpenedBox" : "ClosedBox", x, y, static_cast<int>(width), static_cast<int>(height), gl::renderer);
 
         if(opened)
         {
             string text = "$" + to_string(boxvalue);
-
             int tw, th;
-            float textSize = 2;
-            gl::getTextSize(text, tw, th, textSize);
+            gl::getTextSize(text, tw, th, ownBox ? 5 : 2);
             int textX = (x + (width - tw) / 2) + 8, textY = y + (height - th) / 5;
 
-            gl::renderText(text, textX, textY, textSize, 0xFFFFFF);
+            gl::renderText(text, textX, textY, ownBox ? 5 : 2, 0xFFFFFF);
         }
-
-        gl::renderText(to_string(id + 1), x + width / 2, y + height / 1.5f, 2.5f, opened ? 0x999999 : 0xFFFFFF);
+        gl::renderText(to_string(id + 1), x + width / 2, y + height / 1.5f, ownBox ? 6 : 3, opened ? 0x999999 : 0xFFFFFF);
     }
 
     void drawBoxes(TextureManager& textureManager) // draw all boxes in a grid
@@ -44,7 +41,7 @@ namespace render
         if(gameState>S_ChoosePlayerBox)
         {
             int id = game::player.playerBox;
-            drawBox(textureManager, id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, game::boxes[id].insideBox, game::allOpened());
+            drawBox(textureManager, id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, game::boxes[id].insideBox, game::allOpened(), true);
         }
     }
 
