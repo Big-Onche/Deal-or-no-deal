@@ -40,7 +40,7 @@ namespace gl
             exit(EXIT_FAILURE);
         }
 
-        preloadTextures();
+        TextureManager::getInstance().preloadTextures();
     }
 
     bool glLoop() // renderer loop
@@ -81,30 +81,6 @@ namespace gl
 
         SDL_RenderPresent(renderer);
         return true;
-    }
-
-    SDL_Texture *loadTexture(SDL_Renderer *renderer, const char *file) // load an image
-    {
-        SDL_Surface *surface = IMG_Load(file);
-        if(!surface) { logoutf("Error loading image: %s", IMG_GetError()); return nullptr; }
-
-        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
-        if(!texture) { logoutf("Error creating texture: %s", SDL_GetError()); return nullptr; }
-
-        return texture;
-    }
-
-    void preloadTextures() // preload images used in the game
-    {
-        TextureManager& textureManager = TextureManager::getInstance();
-        if(!textureManager.load("data/gui/font.png", "MainFont", renderer)) fatal("Unable to load font texture!");
-        textureManager.load("data/gui/logo.jpg", "GameLogo", renderer);
-        textureManager.load("data/gui/price.png", "RemainingPrices", renderer);
-        textureManager.load("data/images/box_closed.png", "ClosedBox", renderer);
-        textureManager.load("data/images/box_opened.png", "OpenedBox", renderer);
-        textureManager.load("data/images/presenter.png", "Presenter", renderer);
-        textureManager.load("data/images/bubble.png", "Bubble", renderer);
     }
 
     void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth)

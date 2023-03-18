@@ -9,6 +9,7 @@ class TextureManager
     public:
         static TextureManager& getInstance();
         bool load(const string& fileName, const string& id, SDL_Renderer* pRenderer);
+        void preloadTextures();
         void draw(const string& id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
         void drawFrame(const string& textureID, int x, int y, int width, int height, int srcX, int srcY, int srcW, int srcH, int scale, SDL_Renderer* renderer);
         void setColorMod(const string& textureID, Uint8 r, Uint8 g, Uint8 b);

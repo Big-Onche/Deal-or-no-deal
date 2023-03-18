@@ -27,6 +27,41 @@ bool TextureManager::load(const string& fileName, const string& id, SDL_Renderer
     return false;
 }
 
+void TextureManager::preloadTextures() // preload images used in the game, soft-coded in textures.cfg (except font)
+{
+    TextureManager& textureManager = TextureManager::getInstance();
+
+    if(!textureManager.load("data/gui/font.png", "MainFont", gl::renderer)) fatal("Unable to load font texture!");
+
+    ifstream configFile("config/textures.cfg");
+    if (!configFile.is_open()) fatal("Unable to open textures.cfg!");
+
+    string line;
+    while (getline(configFile, line))
+    {
+        istringstream iss(line);
+        string command, filePath, textureID;
+
+        if (iss >> command >> filePath >> textureID)
+        {
+            if (command == "texture") textureManager.load(filePath, textureID, gl::renderer);
+        }
+    }
+    configFile.close();
+}
+/*
+void TextureManager::preloadTextures() // preload images used in the game
+{
+    TextureManager& textureManager = TextureManager::getInstance();
+
+    textureManager.load("data/gui/logo.jpg", "GameLogo", gl::renderer);
+    textureManager.load("data/gui/price.png", "RemainingPrices", gl::renderer);
+    textureManager.load("data/images/box_closed.png", "ClosedBox", gl::renderer);
+    textureManager.load("data/images/box_opened.png", "OpenedBox", gl::renderer);
+    textureManager.load("data/images/presenter.png", "Presenter", gl::renderer);
+    textureManager.load("data/images/bubble.png", "Bubble", gl::renderer);
+}
+*/
 void TextureManager::draw(const string& id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip) //draw an entire texture
 {
     SDL_Rect srcRect;
