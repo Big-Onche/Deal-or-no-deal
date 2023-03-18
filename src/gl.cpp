@@ -1,4 +1,5 @@
 #include "main.h"
+#include "textures.h"
 
 int screenw = 1280;
 int screenh = 720;
@@ -7,12 +8,6 @@ namespace gl
 {
     SDL_Window *window = nullptr;
     SDL_Renderer *renderer = nullptr;
-    //time to use an array or some shit like that
-    SDL_Texture *gameLogo = nullptr;
-    SDL_Texture *fontTex = nullptr;
-    SDL_Texture *priceTex = nullptr;
-    SDL_Texture *closedBoxTex = nullptr;
-    SDL_Texture *openedBoxTex = nullptr;
 
     void glInit() // initing SDL
     {
@@ -102,21 +97,14 @@ namespace gl
 
     void preloadTextures() // preload images used in the game
     {
-        gameLogo = loadTexture(renderer, "data/gui/logo.jpg");
-        fontTex = loadTexture(renderer, "data/gui/font.png");
-        if(!fontTex) fatal("Unable to load font texture!");
-        priceTex = loadTexture(renderer, "data/gui/price.png");
-        closedBoxTex = loadTexture(renderer, "data/images/box_closed.png");
-        openedBoxTex = loadTexture(renderer, "data/images/box_opened.png");
-    }
-
-    void freeTextures() // free images before stopping gl
-    {
-        if(gameLogo != nullptr) { SDL_DestroyTexture(gameLogo);gameLogo = nullptr; }
-        if(fontTex != nullptr) { SDL_DestroyTexture(fontTex); fontTex = nullptr; }
-        if(priceTex != nullptr) { SDL_DestroyTexture(priceTex); priceTex = nullptr; }
-        if(closedBoxTex != nullptr) { SDL_DestroyTexture(closedBoxTex); closedBoxTex = nullptr; }
-        if(openedBoxTex != nullptr) { SDL_DestroyTexture(openedBoxTex); openedBoxTex = nullptr; }
+        TextureManager& textureManager = TextureManager::getInstance();
+        if(!textureManager.load("data/gui/font.png", "MainFont", renderer)) fatal("Unable to load font texture!");
+        textureManager.load("data/gui/logo.jpg", "GameLogo", renderer);
+        textureManager.load("data/gui/price.png", "RemainingPrices", renderer);
+        textureManager.load("data/images/box_closed.png", "ClosedBox", renderer);
+        textureManager.load("data/images/box_opened.png", "OpenedBox", renderer);
+        textureManager.load("data/images/presenter.png", "Presenter", renderer);
+        textureManager.load("data/images/bubble.png", "Bubble", renderer);
     }
 
     void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth)
@@ -152,10 +140,12 @@ namespace gl
 
     void renderText(const string &text, int x, int y, float fontSize, uint32_t fontColor, int maxWidth)
     {
+        TextureManager& textureManager = TextureManager::getInstance();
+
         SDL_Rect srcRect = {0, 0, cw, ch};
         SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
 
-        SDL_SetTextureColorMod(fontTex, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
+        textureManager.setColorMod("MainFont", (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
 
         stringstream ss(text); string word;
 
@@ -176,7 +166,7 @@ namespace gl
                 srcRect.x = (charIndex % cpr) * cw;
                 srcRect.y = (charIndex / cpr) * ch;
 
-                SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
+                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, gl::renderer);
 
                 dstRect.x += static_cast<int>(cw * fontSize);
             }
@@ -187,7 +177,7 @@ namespace gl
                 srcRect.x = (charIndex % cpr) * cw;
                 srcRect.y = (charIndex / cpr) * ch;
 
-                SDL_RenderCopy(renderer, fontTex, &srcRect, &dstRect);
+                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, gl::renderer);
 
                 dstRect.x += static_cast<int>(cw * fontSize);
             }
@@ -196,17 +186,17 @@ namespace gl
 
     void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor, int maxWidth)
     {
-        renderText(text, x, y, fontSize, textColor);
-        renderText(text, x-3, y-3, fontSize, shadowColor);
+        renderText(text, x+3, y+3, fontSize, shadowColor, maxWidth);
+        renderText(text, x, y, fontSize, textColor, maxWidth);
     }
 
     void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor, int maxWidth)
     {
-        renderText(text, x+2, y, fontSize, outlineColor);
-        renderText(text, x-2, y, fontSize, outlineColor);
-        renderText(text, x, y+2, fontSize, outlineColor);
-        renderText(text, x, y-2, fontSize, outlineColor);
-        renderText(text, x, y, fontSize, textColor);
+        renderText(text, x+2, y, fontSize, outlineColor, maxWidth);
+        renderText(text, x-2, y, fontSize, outlineColor, maxWidth);
+        renderText(text, x, y+2, fontSize, outlineColor, maxWidth);
+        renderText(text, x, y-2, fontSize, outlineColor, maxWidth);
+        renderText(text, x, y, fontSize, textColor, maxWidth);
     }
 
     void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh) // render an image at the center of the window
@@ -226,7 +216,7 @@ namespace gl
     void glQuit()
     {
         logoutf("shutdown: gl");
-        freeTextures();
+        TextureManager::getInstance().clearTextures();
         IMG_Quit();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);

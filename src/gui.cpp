@@ -1,4 +1,5 @@
 #include "main.h"
+#include "textures.h"
 #include <functional>
 
 using namespace std;
@@ -63,10 +64,8 @@ namespace gui
 
     void renderSplashScreen(string text) // showing splash screen
     {
-        if(!gl::gameLogo) return;
-        SDL_SetRenderDrawColor(gl::renderer, 0, 0, 0, 255);
-        SDL_RenderClear(gl::renderer);
-        gl::renderCenteredTexture(gl::renderer, gl::gameLogo, screenw, screenh);
+        TextureManager& textureManager = TextureManager::getInstance();
+        textureManager.draw("GameLogo", (screenw - 500) / 2, (screenh - 500) / 2, 500, 500, gl::renderer);
 
         int tw, th; // text width, text height
         int textSize = 3;
@@ -77,6 +76,7 @@ namespace gui
         int y = (screenh - th) / 1.05f;
 
         gl::renderText(text, x, y, textSize);
+
     }
 
     void renderMenu() // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first

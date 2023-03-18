@@ -50,7 +50,7 @@ namespace game
         int bankGain;
     };
 
-    extern string presentatorDialog;
+    extern string presenterDialog;
 
     extern box boxes[maxBoxes];
     extern playerinfo player;
@@ -75,12 +75,6 @@ namespace gl
 {
     extern SDL_Window *window;
     extern SDL_Renderer *renderer;
-    //time to use an array or some shit like that
-    extern SDL_Texture *gameLogo;
-    extern SDL_Texture *fontTex;
-    extern SDL_Texture *priceTex;
-    extern SDL_Texture *openedBoxTex;
-    extern SDL_Texture *closedBoxTex;
 
     // bitmap font
     const int cw = 8; // char width

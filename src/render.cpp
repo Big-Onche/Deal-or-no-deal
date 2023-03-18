@@ -1,4 +1,5 @@
 #include "main.h"
+#include "textures.h"
 
 namespace render
 {
@@ -8,11 +9,9 @@ namespace render
     int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
     int boxesgridY() { return (screenh - (4 * boxHeight + 3 * boxSpacing)) / 3; }
 
-    void drawBox(int id, int x, int y, float width, float height, int boxvalue, bool opened) // draw one box
+    void drawBox(TextureManager& textureManager, int id, int x, int y, float width, float height, int boxvalue, bool opened) // draw one box
     {
-        SDL_Rect boxRect = {x, y, static_cast<int>(width), static_cast<int>(height)};
-
-        SDL_RenderCopy(gl::renderer, opened ? gl::openedBoxTex : gl::closedBoxTex, nullptr, &boxRect);
+        textureManager.draw(opened ? "OpenedBox" : "ClosedBox", x, y, static_cast<int>(width), static_cast<int>(height), gl::renderer);
 
         if(opened)
         {
@@ -29,7 +28,7 @@ namespace render
         gl::renderText(to_string(id + 1), x + width / 2, y + height / 1.5f, 2.5f, opened ? 0x999999 : 0xFFFFFF);
     }
 
-    void drawBoxes() // draw all boxes in a grid
+    void drawBoxes(TextureManager& textureManager) // draw all boxes in a grid
     {
         loopi(4)
         {
@@ -38,21 +37,20 @@ namespace render
                 int id = i * 4 + j;
                 int x = boxesgridX() + j * (boxWidth + boxSpacing);
                 int y = boxesgridY() + i * (boxHeight + boxSpacing);
-                if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
+                if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(textureManager, id, x, y, boxWidth, boxHeight, game::boxes[id].insideBox, game::boxes[id].opened);
             }
         }
 
         if(gameState>S_ChoosePlayerBox)
         {
             int id = game::player.playerBox;
-            drawBox(id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, id, game::allOpened());
+            drawBox(textureManager, id, (screenw-boxWidth*2.5f)-30, 30+(screenh-boxWidth*2.5f), boxWidth*2.5f, boxHeight*2.5f, game::boxes[id].insideBox, game::allOpened());
         }
     }
 
-    void drawRemainingPrices()
+    void drawRemainingPrices(TextureManager& textureManager)
     {
         int textSize = 3;
-
         int values[game::maxBoxes], numValues = 0;
 
         loopi(game::maxBoxes) if (!game::boxes[i].opened) values[numValues++] = game::boxes[i].insideBox;
@@ -73,30 +71,31 @@ namespace render
             if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
             else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
 
-            SDL_Rect rectDst = {x - 4, y - 6, tw + 8, th + 8};
             uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
 
-            SDL_SetTextureColorMod(gl::priceTex, (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
-            SDL_RenderCopy(gl::renderer, gl::priceTex, nullptr, &rectDst);
+            textureManager.setColorMod("RemainingPrices", (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
+            textureManager.draw("RemainingPrices", x - 4, y - 6, tw + 8, th + 8, gl::renderer);
 
             gl::renderOutlinedText(text, x, y, textSize, 0xFFFFFF, 0x333333);
         }
     }
 
-    void drawDialogs()
+    void drawDialogs(TextureManager& textureManager)
     {
         int textSize = 3;
-        int tw, th;
 
-        if(gameState == S_ChoosePlayerBox) game::presentatorDialog = "Please choose your box!";
+        textureManager.draw("Presenter", -50, screenh-350, 300, 450, gl::renderer);
+        textureManager.draw("Bubble", 200, screenh-250, 960, 240, gl::renderer);
 
-        gl::renderText(game::presentatorDialog, 125, screenh-125, textSize, 0xFFFFFF, screenw/2);
+        if(gameState == S_ChoosePlayerBox) game::presenterDialog = "Please choose your box!";
+        gl::renderShadowedText(game::presenterDialog, 340, screenh-180, textSize, 0x000000, 0xCCCCCC, 750);
     }
 
     void renderGame() // rendering a game
     {
-        drawDialogs();
-        drawBoxes();
-        drawRemainingPrices();
+        TextureManager& textureManager = TextureManager::getInstance();
+        drawDialogs(textureManager);
+        drawBoxes(textureManager);
+        drawRemainingPrices(textureManager);
     }
 }
