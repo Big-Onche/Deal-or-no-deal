@@ -49,6 +49,32 @@ namespace game
         return openCount()>=maxBoxes-1; //-1 because of player box not opened
     }
 
+    void openBox(int id)
+    {
+        if(game::boxes[id].opened || id==player.playerBox) return;
+
+        game::boxes[id].opened = true;
+        int boxValue = game::boxes[id].insideBox;
+
+        bool soundTrigger = (openCount() < 10 && boxValue>=50000) ? true :
+                openCount() > 10 && boxValue>=10000 ? true : false;
+
+        soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
+
+        switch(game::openCount())
+        {
+            case 1:
+                if(boxValue >= 50000) presenterDialog = "What a bad start! $" + to_string(boxValue) + " in the first box. Let's try to forget that.";
+                else presenterDialog = "Only $" + to_string(boxValue) + " nice! Let's continue like this.";
+                break;
+
+            default:
+                if(boxValue >= 50000) presenterDialog = "Holy shit! $" + to_string(boxValue) + ". I hope it was the last big one.";
+                else presenterDialog = "Nice, only $" + to_string(boxValue) + "! You're doing well, please choose another box.";
+                break;
+        }
+    }
+
     void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint)
     {
         SDL_RenderGetScale(renderer, &scalew, &scaleh);
@@ -73,28 +99,7 @@ namespace game
                                 presenterDialog = "You choosed the box " + to_string(id+1) + ", I hope that it's a good number for you today!";
                                 break;
                             }
-                            else if(!game::boxes[id].opened && id!=player.playerBox) //else we open boxes if possible
-                            {
-                                game::boxes[id].opened = true;
-                                int boxValue = game::boxes[id].insideBox;
-
-                                bool soundTrigger = (openCount() < 10 && boxValue>=50000) ? true :
-                                     openCount() > 10 && boxValue>=10000 ? true : false;
-
-                                soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
-
-                                switch(game::openCount())
-                                {
-                                    case 1:
-                                        if(boxValue >= 50000) presenterDialog = "What a bad start! $" + to_string(boxValue) + " in the first box. Let's try to forget that.";
-                                        else presenterDialog = "Only $" + to_string(boxValue) + " nice! Let's continue like this.";
-                                        break;
-                                    default:
-                                        if(boxValue >= 50000) presenterDialog = "Holy shit! $" + to_string(boxValue) + ". I hope it was the last big one.";
-                                        else presenterDialog = "Nice, only $" + to_string(boxValue) + "! You're doing well, please choose another box.";
-                                        break;
-                                }
-                            }
+                            else openBox(id);
                         }
                     }
                 }
