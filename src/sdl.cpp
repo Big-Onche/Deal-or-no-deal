@@ -4,12 +4,12 @@
 int screenw = 1280;
 int screenh = 720;
 
-namespace gl
-{
-    SDL_Window *window = nullptr;
-    SDL_Renderer *renderer = nullptr;
+SDL_Window *window = nullptr;
+SDL_Renderer *renderer = nullptr;
 
-    void glInit() // initing SDL
+namespace sdl
+{
+    void sdlInit() // initing SDL
     {
         logoutf("init: gl");
         SDL_SetMainReady();
@@ -43,7 +43,7 @@ namespace gl
         TextureManager::getInstance().preloadTextures();
     }
 
-    bool glLoop() // renderer loop
+    bool sdlLoop() // renderer loop
     {
         SDL_Event event;
 
@@ -54,12 +54,12 @@ namespace gl
             gui::handleMouseEvents(event);
         }
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         switch(engineState)
         {
             case S_Initialization: // game intro splash screen
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
                 gui::renderSplashScreen("Press any key to continue.");
                 break;
 
@@ -72,6 +72,7 @@ namespace gl
                 break;
 
             case S_InGame: // in game
+                SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
                 render::renderGame();
                 break;
 
@@ -142,7 +143,7 @@ namespace gl
                 srcRect.x = (charIndex % cpr) * cw;
                 srcRect.y = (charIndex / cpr) * ch;
 
-                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, gl::renderer);
+                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
 
                 dstRect.x += static_cast<int>(cw * fontSize);
             }
@@ -153,7 +154,7 @@ namespace gl
                 srcRect.x = (charIndex % cpr) * cw;
                 srcRect.y = (charIndex / cpr) * ch;
 
-                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, gl::renderer);
+                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
 
                 dstRect.x += static_cast<int>(cw * fontSize);
             }
@@ -189,7 +190,7 @@ namespace gl
         SDL_RenderCopy(renderer, texture, NULL, &destRect);
     }
 
-    void glQuit()
+    void sdlQuit()
     {
         logoutf("shutdown: gl");
         TextureManager::getInstance().clearTextures();

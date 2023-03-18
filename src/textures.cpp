@@ -31,7 +31,7 @@ void TextureManager::preloadTextures() // preload images used in the game, soft-
 {
     TextureManager& textureManager = TextureManager::getInstance();
 
-    if(!textureManager.load("data/gui/font.png", "MainFont", gl::renderer)) fatal("Unable to load font texture!");
+    if(!textureManager.load("data/gui/font.png", "MainFont", renderer)) fatal("Unable to load font texture!");
 
     ifstream configFile("config/textures.cfg");
     if (!configFile.is_open()) fatal("Unable to open textures.cfg!");
@@ -44,7 +44,7 @@ void TextureManager::preloadTextures() // preload images used in the game, soft-
 
         if (iss >> command >> filePath >> textureID)
         {
-            if (command == "texture") textureManager.load(filePath, textureID, gl::renderer);
+            if (command == "texture") textureManager.load(filePath, textureID, renderer);
         }
     }
     configFile.close();
@@ -65,6 +65,36 @@ void TextureManager::draw(const string& id, int x, int y, int width, int height,
     SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &destRect, 0, nullptr, flip);
 }
 
+void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t shadowColor, int offsetX, int offsetY, int blurRadius, Uint8 shadowAlpha)
+{
+    TextureManager& textureManager = TextureManager::getInstance();
+
+    textureManager.setColorMod(textureID, (shadowColor >> 16) & 0xFF, (shadowColor >> 8) & 0xFF, shadowColor & 0xFF);
+
+    // Set up random number generation
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> offsetDist(-blurRadius, blurRadius);
+
+    // Render the shadow texture multiple times with different positions and transparency to simulate the blur effect
+    int numSamples = blurRadius * blurRadius; // Adjust this value as needed to control the number of shadow samples
+    for (int k = 0; k < numSamples; ++k)
+    {
+        int randomOffsetX = offsetDist(gen);
+        int randomOffsetY = offsetDist(gen);
+        int posX = x + offsetX + randomOffsetX;
+        int posY = y + offsetY + randomOffsetY;
+
+        textureManager.setAlpha(textureID, shadowAlpha);
+        textureManager.draw(textureID, posX, posY, width, height, renderer);
+    }
+
+    // Render the original texture without any color modulation or offset
+    textureManager.setColorMod(textureID, 255, 255, 255);
+    textureManager.setAlpha(textureID, 255);
+    textureManager.draw(textureID, x, y, width, height, renderer);
+}
+
 void TextureManager::drawFrame(const string& textureID, int x, int y, int width, int height, int srcX, int srcY, int srcW, int srcH, int scale, SDL_Renderer* renderer) // draw choosen part of a texture
 {
     SDL_Rect srcRect = {srcX, srcY, srcW, srcH};
@@ -77,6 +107,13 @@ void TextureManager::setColorMod(const string& textureID, Uint8 r, Uint8 g, Uint
     auto it = m_textureMap.find(textureID);
     if(it != m_textureMap.end()) SDL_SetTextureColorMod(it->second, r, g, b);
     else logoutf("warning: texture not found (%d)", textureID);
+}
+
+void TextureManager::setAlpha(const std::string& textureID, Uint8 alpha) // alpha mod for texture
+{
+    auto it = m_textureMap.find(textureID);
+    if (it != m_textureMap.end()) SDL_SetTextureAlphaMod(it->second, alpha);
+    else logoutf("warning: failed to set alpha, texture not found (%d)", textureID);
 }
 
 void TextureManager::clearTextures() // free all textures ressources before quitting

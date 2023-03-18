@@ -14,9 +14,9 @@ namespace gui
         else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen
         {
             fullscreen = !fullscreen;
-            if(fullscreen) SDL_SetWindowFullscreen(gl::window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            else SDL_SetWindowFullscreen(gl::window, 0);
-            SDL_GetWindowSize(gl::window, &screenw, &screenh);
+            if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+            else SDL_SetWindowFullscreen(window, 0);
+            SDL_GetWindowSize(window, &screenw, &screenh);
         }
     }
 
@@ -65,17 +65,17 @@ namespace gui
     void renderSplashScreen(string text) // showing splash screen
     {
         TextureManager& textureManager = TextureManager::getInstance();
-        textureManager.draw("GameLogo", (screenw - 500) / 2, (screenh - 500) / 2, 500, 500, gl::renderer);
+        textureManager.draw("GameLogo", (screenw - 500) / 2, (screenh - 500) / 2, 500, 500, renderer);
 
         int tw, th; // text width, text height
         int textSize = 3;
 
-        gl::getTextSize(text, tw, th, textSize);
+        sdl::getTextSize(text, tw, th, textSize);
 
         int x = (screenw - tw) / 2;
         int y = (screenh - th) / 1.05f;
 
-        gl::renderText(text, x, y, textSize);
+        sdl::renderText(text, x, y, textSize);
 
     }
 
@@ -85,18 +85,18 @@ namespace gui
 
         int x = 100, y = 200;
         std::string newGameText = "New Game";
-        gl::renderText(newGameText, x, y, textSize);
-        newGameRect = {x, y, static_cast<int>(newGameText.length()) * gl::cw * textSize, gl::ch * textSize}; // Play
+        sdl::renderText(newGameText, x, y, textSize);
+        newGameRect = {x, y, static_cast<int>(newGameText.length()) * cw * textSize, ch * textSize}; // Play
 
         y+=75;
         std::string optionsText = "Options";
-        gl::renderText(optionsText, x, y, textSize);
-        optionsRect = {x, y, static_cast<int>(optionsText.length()) * gl::cw * textSize, gl::ch * textSize}; // Options
+        sdl::renderText(optionsText, x, y, textSize);
+        optionsRect = {x, y, static_cast<int>(optionsText.length()) * cw * textSize, ch * textSize}; // Options
 
         y+=75;
         std::string exitText = "Exit";
-        gl::renderText(exitText, x, y, textSize);
-        exitRect = {x, y, static_cast<int>(exitText.length()) * gl::cw * textSize, gl::ch * textSize}; // Exit
+        sdl::renderText(exitText, x, y, textSize);
+        exitRect = {x, y, static_cast<int>(exitText.length()) * cw * textSize, ch * textSize}; // Exit
     }
 }
 

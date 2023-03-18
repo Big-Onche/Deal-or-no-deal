@@ -71,20 +71,21 @@ namespace gui // menus and splash/loading screens
     extern void renderMenu();
 }
 
-namespace gl
+//sdl things
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
+
+// bitmap font
+const int cw = 8; // char width
+const int ch = 12; // height
+const int cpr = 16; // char per rows
+
+namespace sdl
 {
-    extern SDL_Window *window;
-    extern SDL_Renderer *renderer;
-
-    // bitmap font
-    const int cw = 8; // char width
-    const int ch = 12; // height
-    const int cpr = 16; // char per rows
-
-    // main gl funcs
-    extern void glInit();
-    extern bool glLoop();
-    extern void glQuit();
+    // main sdl funcs
+    extern void sdlInit();
+    extern bool sdlLoop();
+    extern void sdlQuit();
 
     // other useful funcs
     extern void preloadTextures();

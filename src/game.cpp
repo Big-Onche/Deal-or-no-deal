@@ -217,8 +217,6 @@ namespace game
 
                 if(allOpened()) boxes[player.playerBox-1].opened = true;
 
-
-
                 nextStep = true;
             }
         }
