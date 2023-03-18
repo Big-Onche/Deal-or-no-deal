@@ -1,3 +1,9 @@
+font_1.png
 https://opengameart.org/content/bitmap-font
 by Clint Bellanger
+CC0 (Public Domain)
+
+font_2.png
+https://opengameart.org/content/ascii-bitmap-font-oldschool
+by domsson
 CC0 (Public Domain)

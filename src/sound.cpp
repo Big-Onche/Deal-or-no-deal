@@ -12,7 +12,7 @@ namespace sound
         result = ma_engine_init(NULL, &engine);
         if(result != MA_SUCCESS)
         {
-            conoutf(C_RED, C_DEF, "Failed to initialize audio module (miniaudio)\n");
+            logoutf("Failed to initialize audio module (miniaudio)");
             return result;  // Failed to initialize the engine.
         }
         logoutf("init: audio (miniaudio version: %s)", MA_VERSION_STRING);
@@ -24,7 +24,7 @@ namespace sound
     {
         char path[64]; sprintf(path, "data/audio/%s.wav", soundName);
         result = ma_engine_play_sound(&engine, path, NULL);
-        if(result != MA_SUCCESS) conoutf(C_YELLOW, C_DEF, "Failed to play sound \"%s\"\n", path);
+        if(result != MA_SUCCESS) logoutf("Failed to play sound (%s)", path);
     }
 
     void unInitAudio()

@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     logoutf("init: main");
     sdl::sdlInit();
     sound::initAudio();
-    clearConsole();
     sound::playSound("theme");
     logoutf("init: game");
 

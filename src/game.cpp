@@ -138,8 +138,8 @@ namespace game
                     if(exchangeOffer)
                     {
                         printf("Please enter the box you want:\n");
-                        playerInput(&player.playerBox);
-                        clearConsole();
+                        //playerInput(&player.playerBox);
+                        //clearConsole();
                         //render::drawBoxes(player, boxes);
                         //if(!allOpened()) render::drawRemainingPrices(player, boxes);
                         printf("Your box is now the number %d!:\n", player.playerBox);
@@ -166,9 +166,9 @@ namespace game
         while(player.playerBox < 1 || player.playerBox > maxBoxes)
         {
             printf("Please select a box from 1 to %d:\n", maxBoxes);
-            playerInput(&player.playerBox);
+            //playerInput(&player.playerBox);
         }
-        clearConsole();
+        //clearConsole();
         bool nextStep = true;
 
         for(;;)
@@ -191,7 +191,7 @@ namespace game
             if(nextStep) switch(openCount()) { case 6: case 10: case 14: bankCall(); }
 
             printf("Please choose a box to open:\n");
-            playerInput(&player.choosenBox);
+            //playerInput(&player.choosenBox);
 
             if(player.choosenBox==player.playerBox)
             {
@@ -215,7 +215,7 @@ namespace game
             else
             {
                 boxes[player.choosenBox-1].opened = true;
-                clearConsole();
+                //clearConsole();
 
                 if(allOpened()) boxes[player.playerBox-1].opened = true;
 

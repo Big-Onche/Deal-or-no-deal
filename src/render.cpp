@@ -21,12 +21,12 @@ namespace render
         {
             string text = "$" + to_string(boxvalue);
             int tw, th;
-            sdl::getTextSize(font[MainFont], text, tw, th, ownBox ? 3 : 2);
+            getTextSize(font[MainFont], text, tw, th, ownBox ? 3 : 2);
             int textX = (x + (bwidth - tw) / 2) + 8, textY = y + (bheight - th) / 5;
 
-            sdl::renderText(font[MainFont], text, textX, textY, textsize, 0xFFFFFF);
+            renderText(font[MainFont], text, textX, textY, textsize, 0xFFFFFF);
         }
-        sdl::renderText(font[MainFont], to_string(id + 1), x + bwidth / 2, y + bheight / 1.5f, textsize, opened ? 0x999999 : 0xFFFFFF);
+        renderText(font[MainFont], to_string(id + 1), x + bwidth / 2, y + bheight / 1.5f, textsize, opened ? 0x999999 : 0xFFFFFF);
     }
 
     void drawBoxes(TextureManager& textureManager) // draw all boxes in a grid
@@ -67,7 +67,7 @@ namespace render
             string text = "$" + to_string(val);
             int x, y, tw, th;
 
-            sdl::getTextSize(font[MainFont], text, tw, th, textSize);
+            getTextSize(font[MainFont], text, tw, th, textSize);
 
             if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
             else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
@@ -77,7 +77,7 @@ namespace render
             textureManager.setColorMod("RemainingPrices", (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
             textureManager.draw("RemainingPrices", x - 4, y - 6, tw + 8, th + 8, renderer);
 
-            sdl::renderOutlinedText(font[MainFont], text, x, y, textSize, 0xFFFFFF, 0x333333);
+            renderOutlinedText(font[MainFont], text, x, y, textSize, 0xFFFFFF, 0x333333);
         }
     }
 
@@ -87,7 +87,7 @@ namespace render
         textureManager.draw("Bubble", 133, screenh-165, 640, 160, renderer);
 
         if(gameState == S_ChoosePlayerBox) game::presenterDialog = "Please choose your box!";
-        sdl::renderShadowedText(font[DialFont], game::presenterDialog, 225, screenh-120, 2.5f, 0x000000, 0xCCCCCC, 500);
+        renderShadowedText(font[DialFont], game::presenterDialog, 225, screenh-120, 2.5f, 0x000000, 0xCCCCCC, 500);
 
         logoutf("%d %d", font[DialFont], font[MainFont]);
     }
