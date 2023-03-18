@@ -77,9 +77,11 @@ extern int screenw, screenh;
 extern float scalew, scaleh;
 
 // bitmap font
-const int cw = 8; // char width
-const int ch = 12; // height
-const int cpr = 16; // char per rows
+enum {MainFont = 0, DialFont, MaxFonts};
+extern int font[MaxFonts];
+extern int cw[MaxFonts];
+extern int ch[MaxFonts];
+extern int cpr[MaxFonts];
 
 namespace sdl
 {
@@ -90,10 +92,10 @@ namespace sdl
 
     // other useful funcs
     extern void preloadTextures();
-    extern void renderText(const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF, int maxWidth = screenw/1.5f);
-    extern void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
-    extern void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
-    extern void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
+    extern void renderText(int font, const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF, int maxWidth = screenw/1.5f);
+    extern void renderShadowedText(int font, const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+    extern void renderOutlinedText(int font, const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+    extern void getTextSize(int font, const string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
     extern void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh);
 }
 

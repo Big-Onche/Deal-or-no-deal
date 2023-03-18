@@ -31,7 +31,8 @@ void TextureManager::preloadTextures() // preload images used in the game, soft-
 {
     TextureManager& textureManager = TextureManager::getInstance();
 
-    if(!textureManager.load("data/gui/font.png", "MainFont", renderer)) fatal("Unable to load font texture!");
+    if(!textureManager.load("data/gui/font_1.png", "MainFont", renderer) || !textureManager.load("data/gui/font_2.png", "DialFont", renderer))
+        fatal("Unable to load font texture!");
 
     ifstream configFile("config/textures.cfg");
     if (!configFile.is_open()) fatal("Unable to open textures.cfg!");

@@ -1,5 +1,10 @@
 #include "main.h"
 
+int font[MaxFonts] = {MainFont, DialFont};
+int cw[MaxFonts] = {8, 7}; // char width
+int ch[MaxFonts] = {12, 9}; // height
+int cpr[MaxFonts] = {16, 18}; // char per rows
+
 void playerInput(int *value)
 {
     char input[32];

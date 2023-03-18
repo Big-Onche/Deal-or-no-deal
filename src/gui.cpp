@@ -67,13 +67,12 @@ namespace gui
         int tw, th; // text width, text height
         int textSize = 3;
 
-        sdl::getTextSize(text, tw, th, textSize);
+        sdl::getTextSize(font[MainFont], text, tw, th, textSize);
 
         int x = (screenw - tw) / 2;
         int y = (screenh - th) / 1.05f;
 
-        sdl::renderText(text, x, y, textSize);
-
+        sdl::renderText(MainFont, text, x, y, textSize);
     }
 
     void renderMenu() // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first
@@ -82,18 +81,18 @@ namespace gui
 
         int x = 100, y = 200;
         std::string newGameText = "New Game";
-        sdl::renderText(newGameText, x, y, textSize);
-        newGameRect = {x, y, static_cast<int>(newGameText.length()) * cw * textSize, ch * textSize}; // Play
+        sdl::renderText(font[MainFont], newGameText, x, y, textSize);
+        newGameRect = {x, y, static_cast<int>(newGameText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Play
 
         y+=75;
         std::string optionsText = "Options";
-        sdl::renderText(optionsText, x, y, textSize);
-        optionsRect = {x, y, static_cast<int>(optionsText.length()) * cw * textSize, ch * textSize}; // Options
+        sdl::renderText(font[MainFont], optionsText, x, y, textSize);
+        optionsRect = {x, y, static_cast<int>(optionsText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Options
 
         y+=75;
         std::string exitText = "Exit";
-        sdl::renderText(exitText, x, y, textSize);
-        exitRect = {x, y, static_cast<int>(exitText.length()) * cw * textSize, ch * textSize}; // Exit
+        sdl::renderText(font[MainFont], exitText, x, y, textSize);
+        exitRect = {x, y, static_cast<int>(exitText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Exit
     }
 }
 

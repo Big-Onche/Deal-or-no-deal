@@ -102,10 +102,10 @@ namespace sdl
         return true;
     }
 
-    void getTextSize(const string &text, int &width, int &height, int fontSize, int maxWidth)
+    void getTextSize(int font, const string &text, int &width, int &height, int fontSize, int maxWidth)
     {
-        int charWidth = cw * fontSize;
-        int charHeight = ch * fontSize;
+        int charWidth = cw[font] * fontSize;
+        int charHeight = ch[font] * fontSize;
         int currentWidth = 0;
         int currentHeight = charHeight;
         int lineWidth = 0;
@@ -133,65 +133,67 @@ namespace sdl
         height = currentHeight;
     }
 
-    void renderText(const string &text, int x, int y, float fontSize, uint32_t fontColor, int maxWidth)
+    void renderText(int font, const string &text, int x, int y, float fontSize, uint32_t fontColor, int maxWidth)
     {
         TextureManager& textureManager = TextureManager::getInstance();
 
-        SDL_Rect srcRect = {0, 0, cw, ch};
-        SDL_Rect dstRect = {x, y, static_cast<int>(cw * fontSize), static_cast<int>(ch * fontSize)};
+        string fontID = font==MainFont ? "MainFont" : "DialFont";
 
-        textureManager.setColorMod("MainFont", (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
+        SDL_Rect srcRect = {0, 0, cw[font], ch[font]};
+        SDL_Rect dstRect = {x, y, static_cast<int>(cw[font] * fontSize), static_cast<int>(ch[font] * fontSize)};
+
+        textureManager.setColorMod(fontID, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
 
         stringstream ss(text); string word;
 
         while (ss >> word)
         {
-            int wordWidth = word.length() * static_cast<int>(cw * fontSize);
-            int spaceWidth = static_cast<int>(cw * fontSize);
+            int wordWidth = word.length() * static_cast<int>(cw[font] * fontSize);
+            int spaceWidth = static_cast<int>(cw[font] * fontSize);
 
             if(maxWidth > 0 && (dstRect.x + wordWidth + spaceWidth) - x > maxWidth)
             {
                 dstRect.x = x;
-                dstRect.y += static_cast<int>(ch * fontSize);
+                dstRect.y += static_cast<int>(ch[font] * fontSize);
             }
 
             for (char c : word)
             {
                 int charIndex = static_cast<int>(c) - 32;
-                srcRect.x = (charIndex % cpr) * cw;
-                srcRect.y = (charIndex / cpr) * ch;
+                srcRect.x = (charIndex % cpr[font]) * cw[font];
+                srcRect.y = (charIndex / cpr[font]) * ch[font];
 
-                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
+                textureManager.drawFrame(fontID, dstRect.x, dstRect.y, cw[font], ch[font], srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
 
-                dstRect.x += static_cast<int>(cw * fontSize);
+                dstRect.x += static_cast<int>(cw[font] * fontSize);
             }
 
             if(!ss.eof()) // render a space after each word (except the last one)
             {
                 int charIndex = static_cast<int>(' ') - 32;
-                srcRect.x = (charIndex % cpr) * cw;
-                srcRect.y = (charIndex / cpr) * ch;
+                srcRect.x = (charIndex % cpr[font]) * cw[font];
+                srcRect.y = (charIndex / cpr[font]) * ch[font];
 
-                textureManager.drawFrame("MainFont", dstRect.x, dstRect.y, cw, ch, srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
+                textureManager.drawFrame(fontID, dstRect.x, dstRect.y, cw[font], ch[font], srcRect.x, srcRect.y, srcRect.w, srcRect.h, fontSize, renderer);
 
-                dstRect.x += static_cast<int>(cw * fontSize);
+                dstRect.x += static_cast<int>(cw[font] * fontSize);
             }
         }
     }
 
-    void renderShadowedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor, int maxWidth)
+    void renderShadowedText(int font, const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t shadowColor, int maxWidth)
     {
-        renderText(text, x+3, y+3, fontSize, shadowColor, maxWidth);
-        renderText(text, x, y, fontSize, textColor, maxWidth);
+        renderText(font, text, x+2, y+2, fontSize, shadowColor, maxWidth);
+        renderText(font, text, x, y, fontSize, textColor, maxWidth);
     }
 
-    void renderOutlinedText(const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor, int maxWidth)
+    void renderOutlinedText(int font, const string &text, int x, int y, float fontSize, uint32_t textColor, uint32_t outlineColor, int maxWidth)
     {
-        renderText(text, x+2, y, fontSize, outlineColor, maxWidth);
-        renderText(text, x-2, y, fontSize, outlineColor, maxWidth);
-        renderText(text, x, y+2, fontSize, outlineColor, maxWidth);
-        renderText(text, x, y-2, fontSize, outlineColor, maxWidth);
-        renderText(text, x, y, fontSize, textColor, maxWidth);
+        renderText(font, text, x+2, y, fontSize, outlineColor, maxWidth);
+        renderText(font, text, x-2, y, fontSize, outlineColor, maxWidth);
+        renderText(font, text, x, y+2, fontSize, outlineColor, maxWidth);
+        renderText(font, text, x, y-2, fontSize, outlineColor, maxWidth);
+        renderText(font, text, x, y, fontSize, textColor, maxWidth);
     }
 
     void renderCenteredTexture(SDL_Renderer *renderer, SDL_Texture *texture, int screenw, int screenh) // render an image at the center of the window
