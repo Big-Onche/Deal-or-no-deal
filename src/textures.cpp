@@ -66,15 +66,15 @@ void TextureManager::draw(const string& id, int x, int y, int width, int height,
     SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &destRect, 0, nullptr, flip);
 }
 
-void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t shadowColor, int offsetX, int offsetY, int blurRadius, Uint8 shadowAlpha)
+void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t originalColor, uint32_t shadowColor, int offsetX, int offsetY, Uint8 shadowAlpha)
 {
     TextureManager& textureManager = TextureManager::getInstance();
     // shadow
-    textureManager.setColorMod(textureID, (shadowColor >> 16) & 0xFF, (shadowColor >> 8) & 0xFF, shadowColor & 0xFF);
+    textureManager.setColorMod(textureID, shadowColor);
     textureManager.setAlpha(textureID, shadowAlpha);
     textureManager.draw(textureID, x+offsetX, y+offsetY, width, height, renderer);
     // original
-    textureManager.setColorMod(textureID, 255, 255, 255);
+    textureManager.setColorMod(textureID, originalColor);
     textureManager.setAlpha(textureID, 255);
     textureManager.draw(textureID, x, y, width, height, renderer);
 }
@@ -86,10 +86,10 @@ void TextureManager::drawFrame(const string& textureID, int x, int y, int width,
     SDL_RenderCopy(renderer, m_textureMap[textureID], &srcRect, &destRect);
 }
 
-void TextureManager::setColorMod(const string& textureID, Uint8 r, Uint8 g, Uint8 b) // change color of a texture
+void TextureManager::setColorMod(const string& textureID, uint32_t colorMod) // change color of a texture
 {
     auto it = m_textureMap.find(textureID);
-    if(it != m_textureMap.end()) SDL_SetTextureColorMod(it->second, r, g, b);
+    if(it != m_textureMap.end()) SDL_SetTextureColorMod(it->second, (colorMod >> 16) & 0xFF, (colorMod >> 8) & 0xFF, colorMod & 0xFF);
     else logoutf("warning: texture not found (%d)", textureID);
 }
 

@@ -4,10 +4,10 @@
 namespace render
 {
     int boxWidth = 140, boxHeight = 125;
-    int boxSpacing = 15;
+    int boxSpacing = 12;
 
     int boxesgridX() { return (screenw - (4 * boxWidth + 3 * boxSpacing)) / 2; }
-    int boxesgridY() { return ((4 * boxHeight + 3 * boxSpacing)) - screenh / 1.3f; }
+    int boxesgridY() { return ((4 * boxHeight + 3 * boxSpacing)) - screenh / 1.35f; }
 
     void drawBox(TextureManager& textureManager, int id, int x, int y, int boxvalue, bool opened, bool ownBox = false) // draw one box
     {
@@ -15,7 +15,7 @@ namespace render
 
         if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset *= 2, textsize*=2; }
 
-        textureManager.drawShadowedTex(opened ? "OpenedBox" : "ClosedBox", x, y, bwidth, bheight, renderer, 0x000000, shadowOffset, shadowOffset, 50, 75);
+        textureManager.drawShadowedTex(opened ? "OpenedBox" : "ClosedBox", x, y, bwidth, bheight, renderer, 0xFFFFFF, 0x000000, shadowOffset, shadowOffset, 75);
 
         if(opened)
         {
@@ -74,7 +74,7 @@ namespace render
 
             uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 2000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
 
-            textureManager.setColorMod("RemainingPrices", (bgrdColor >> 16) & 0xFF, (bgrdColor >> 8) & 0xFF, bgrdColor & 0xFF);
+            textureManager.setColorMod("RemainingPrices", bgrdColor);
             textureManager.draw("RemainingPrices", x - 4, y - 6, tw + 8, th + 8, renderer);
 
             renderOutlinedText(font[MainFont], text, x, y, textSize, 0xFFFFFF, 0x333333);
@@ -83,7 +83,7 @@ namespace render
 
     void drawDialogs(TextureManager& textureManager)
     {
-        textureManager.drawShadowedTex("Presenter", -30, screenh-230, 200, 300, renderer, 0x000000, 15, 15, 50, 75);
+        textureManager.drawShadowedTex("Presenter", -30, screenh-230, 200, 300, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
         textureManager.draw("Bubble", 133, screenh-165, 640, 160, renderer);
 
         if(gameState == S_ChoosePlayerBox) game::presenterDialog = "Please choose your box!";

@@ -42,7 +42,7 @@ void renderText(int font, const string &text, int x, int y, float fontSize, uint
     SDL_Rect srcRect = {0, 0, cw[font], ch[font]};
     SDL_Rect dstRect = {x, y, static_cast<int>(cw[font] * fontSize), static_cast<int>(ch[font] * fontSize)};
 
-    textureManager.setColorMod(fontID, (fontColor >> 16) & 0xFF, (fontColor >> 8) & 0xFF, fontColor & 0xFF);
+    textureManager.setColorMod(fontID, fontColor);
 
     stringstream ss(text); string word;
 

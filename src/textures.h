@@ -11,9 +11,9 @@ class TextureManager
         bool load(const string& fileName, const string& id, SDL_Renderer* pRenderer);
         void preloadTextures();
         void draw(const string& id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
-        void drawShadowedTex(const string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t shadowColor, int offsetX = 5, int offsetY = 5, int blurRadius = 3, Uint8 shadowAlpha = 64);
+        void drawShadowedTex(const string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, uint32_t originalColor, uint32_t shadowColor, int offsetX = 5, int offsetY = 5, Uint8 shadowAlpha = 64);
         void drawFrame(const string& textureID, int x, int y, int width, int height, int srcX, int srcY, int srcW, int srcH, int scale, SDL_Renderer* renderer);
-        void setColorMod(const string& textureID, Uint8 r, Uint8 g, Uint8 b);
+        void setColorMod(const string& textureID, uint32_t colorMod);
         void setAlpha(const string& textureID, Uint8 alpha);
         void clearTextures();
 
