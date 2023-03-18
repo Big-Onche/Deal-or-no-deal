@@ -99,7 +99,7 @@ namespace game
                                 presenterDialog = "You choosed the box " + to_string(id+1) + ", I hope that it's a good number for you today!";
                                 break;
                             }
-                            else openBox(id);
+                            else openBox(id); // else we open a box when clicking on it
                         }
                     }
                 }

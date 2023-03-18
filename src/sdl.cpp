@@ -77,7 +77,7 @@ namespace sdl
         switch(engineState)
         {
             case S_Initialization: // game intro splash screen
-                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                SDL_SetRenderDrawColor(renderer, 33, 33, 33, 255);
                 gui::renderSplashScreen("Press any key to continue.");
                 break;
 
