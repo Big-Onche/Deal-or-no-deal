@@ -47,7 +47,12 @@ namespace game
         assignBoxes();
         gameState = S_ChoosePlayerBox;
         engineState = S_InGame;
-        popDialog("Please choose your box!");
+        switch(rnd(3))
+        {
+            case 0: popDialog("Please choose your box!"); break;
+            case 1: popDialog("It's time to choose your box wisely! But remember: It's all about chance."); break;
+            case 2: popDialog("So, what's your box today? Pick the one that smells like bucks!");
+        }
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
@@ -60,6 +65,18 @@ namespace game
     bool allOpened() // check if all boxes are opened
     {
         return openCount()>=maxBoxes-1; //-1 because of player box not opened
+    }
+
+    void chooseBox(int id)
+    {
+        player.playerBox = id;
+        gameState = S_OpeningBoxes;
+        switch(rnd(3))
+        {
+            case 0: popDialog("You choosed the box %d, I hope that it's a good number for you today!", id+1); break;
+            case 1: popDialog("Box %d? I don't trust this number. But hey: maybe it's a lucky one for you!", id+1); break;
+            case 2: popDialog("Let's go with box number %d. I think this is the one too! Or maybe not.", id+1);
+        }
     }
 
     void openBox(int id)
@@ -105,13 +122,7 @@ namespace game
 
                         if(SDL_PointInRect(&mousePoint, &boxRect))
                         {
-                            if(gameState==S_ChoosePlayerBox) // just choose a box (early game or bank exchange)
-                            {
-                                player.playerBox = id;
-                                gameState = S_OpeningBoxes;
-                                popDialog("You choosed the box %d, I hope that it's a good number for you today!", id+1);
-                                break;
-                            }
+                            if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
                             else openBox(id); // else we open a box when clicking on it
                         }
                     }

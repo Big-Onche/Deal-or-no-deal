@@ -13,7 +13,7 @@ namespace render
     {
         int bwidth = boxWidth, bheight = boxHeight, shadowOffset = 4, textsize = 2;
 
-        if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset *= 2, textsize*=2; }
+        if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset = 8, textsize= 3; }
 
         textureManager.drawShadowedTex(opened ? "OpenedBox" : "ClosedBox", x, y, bwidth, bheight, renderer, 0xFFFFFF, 0x000000, shadowOffset, shadowOffset, 75);
 
@@ -45,7 +45,7 @@ namespace render
         if(gameState>S_ChoosePlayerBox)
         {
             int id = game::player.playerBox;
-            drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 20+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
+            drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
         }
     }
 
