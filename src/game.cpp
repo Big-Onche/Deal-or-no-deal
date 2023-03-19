@@ -11,7 +11,19 @@ namespace game
     box boxes[maxBoxes];
     struct playerinfo player;
 
-    string presenterDialog;
+    string mainDialog;
+    void popDialog(const char* format, ...)
+    {
+        char buffer[256];
+        va_list args;
+        va_start(args, format);
+        vsnprintf(buffer, 256, format, args);
+        va_end(args);
+
+        mainDialog = buffer;
+
+        lastDialogTime = elapsedTime;
+    }
 
     void assignBoxes() // random distribution of boxes
     {
@@ -35,6 +47,7 @@ namespace game
         assignBoxes();
         gameState = S_ChoosePlayerBox;
         engineState = S_InGame;
+        popDialog("Please choose your box!");
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
@@ -64,13 +77,13 @@ namespace game
         switch(game::openCount())
         {
             case 1:
-                if(boxValue >= 50000) presenterDialog = "What a bad start! $" + to_string(boxValue) + " in the first box. Let's try to forget that.";
-                else presenterDialog = "Only $" + to_string(boxValue) + " nice! Let's continue like this.";
+                if(boxValue >= 50000) popDialog("What a bad start! $%d, in the first box. Let's try to forget that.", boxValue);
+                else popDialog("Only $%d, nice! Let's continue like this.", boxValue);
                 break;
 
             default:
-                if(boxValue >= 50000) presenterDialog = "Holy shit! $" + to_string(boxValue) + ". I hope it was the last big one.";
-                else presenterDialog = "Nice, only $" + to_string(boxValue) + "! You're doing well, please choose another box.";
+                if(boxValue >= 50000)  popDialog("Holy shit! $%d. Maybe it was the last big one.", boxValue);
+                else popDialog("Nice, only $%d! You're doing well, please choose another box.", boxValue);
                 break;
         }
     }
@@ -96,7 +109,7 @@ namespace game
                             {
                                 player.playerBox = id;
                                 gameState = S_OpeningBoxes;
-                                presenterDialog = "You choosed the box " + to_string(id+1) + ", I hope that it's a good number for you today!";
+                                popDialog("You choosed the box %d, I hope that it's a good number for you today!", id+1);
                                 break;
                             }
                             else openBox(id); // else we open a box when clicking on it

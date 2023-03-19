@@ -86,8 +86,7 @@ namespace render
         textureManager.drawShadowedTex("Presenter", -30, screenh-230, 200, 300, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
         textureManager.draw("Bubble", 133, screenh-165, 640, 160, renderer);
 
-        if(gameState == S_ChoosePlayerBox) game::presenterDialog = "Please choose your box!";
-        renderShadowedText(font[DialFont], game::presenterDialog, 225, screenh-120, 2.5f, 0x000000, 0xCCCCCC, 500);
+        renderShadowedText(font[DialFont], game::mainDialog, 225, screenh-120, 2.5f, 0x000000, 0xCCCCCC, 500);
 
         logoutf("%d %d", font[DialFont], font[MainFont]);
     }

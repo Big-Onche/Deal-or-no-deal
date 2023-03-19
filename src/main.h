@@ -5,6 +5,8 @@
 
 using namespace std;
 
+extern Uint32 elapsedTime, seconds, milliseconds;
+
 enum EngineState {S_Initialization = 0, S_MainMenu, S_LoadingScreen, S_InGame, S_ShuttingDown};
 extern EngineState engineState;
 
@@ -13,20 +15,6 @@ extern GameState gameState;
 
 extern void quit(bool fatal = false);
 extern void fatal(const string &message);
-
-// console
-enum ConsoleColors
-{
-    C_DEF = 0,
-    C_BLACK = 30,
-    C_RED, //31, etc.
-    C_GREEN,
-    C_YELLOW,
-    C_BLUE,
-    C_MAGENTA,
-    C_CYAN,
-    C_WHITE
-};
 
 extern void logoutf(const char* format, ...);
 
@@ -45,8 +33,7 @@ namespace game
         int bankGain;
     };
 
-    extern string presenterDialog;
-
+    extern string mainDialog;
     extern box boxes[maxBoxes];
     extern playerinfo player;
 
@@ -100,7 +87,9 @@ namespace sound
     extern void unInitAudio();
 }
 
-// bitmap font
+// bitmap font and text rendring
+extern Uint32 lastDialogTime;
+
 enum {MainFont = 0, DialFont, MaxFonts};
 extern int font[MaxFonts];
 extern int cw[MaxFonts];

@@ -1,6 +1,8 @@
 #include "main.h"
 #include "textures.h"
 
+Uint32 lastDialogTime;
+
 int font[MaxFonts] = {MainFont, DialFont};
 int cw[MaxFonts] = {8, 7}; // char width
 int ch[MaxFonts] = {12, 9}; // height
@@ -46,8 +48,13 @@ void renderText(int font, const string &text, int x, int y, float fontSize, uint
 
     stringstream ss(text); string word;
 
+    int wordCounter = 0;
+
     while (ss >> word)
     {
+        if(elapsedTime - lastDialogTime >= static_cast<Uint32>(wordCounter * 100))  wordCounter++;
+        else break;
+
         int wordWidth = word.length() * static_cast<int>(cw[font] * fontSize);
         int spaceWidth = static_cast<int>(cw[font] * fontSize);
 
@@ -94,19 +101,4 @@ void renderOutlinedText(int font, const string &text, int x, int y, float fontSi
     renderText(font, text, x, y+2, fontSize, outlineColor, maxWidth);
     renderText(font, text, x, y-2, fontSize, outlineColor, maxWidth);
     renderText(font, text, x, y, fontSize, textColor, maxWidth);
-}
-
-
-void logoutf(const char* format, ...) // Print to log file
-{
-    FILE* logfile = fopen("log.txt", "a"); // Open log file in append mode
-
-    // Print formatted text
-    va_list args;
-    va_start(args, format);
-    vfprintf(logfile, format, args);
-    vfprintf(logfile, "\n", args); //newline
-    va_end(args);
-
-    fclose(logfile); // Close log file
 }
