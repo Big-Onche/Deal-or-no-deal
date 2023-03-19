@@ -85,18 +85,57 @@ namespace render
     void drawDialogs(TextureManager& textureManager)
     {
         textureManager.drawShadowedTex("Presenter", -30, screenh-230, 200, 300, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
-        textureManager.draw("Bubble", 133, screenh-165, 640, 160, renderer);
+        textureManager.draw("Bubble", 135, screenh-160, 652, 163, renderer);
 
-        renderShadowedText(font[DialFont], game::mainDialog, 225, screenh-120, 2.5f, 0x000000, 0xCCCCCC, 500);
+        renderShadowedText(font[DialFont], game::mainDialog, 217, screenh-127, 3, 0x000000, 0xCCCCCC, 550);
+    }
 
-        logoutf("%d %d", font[DialFont], font[MainFont]);
+    SDL_Rect yesRect, noRect;
+
+    void drawBank(TextureManager& textureManager)
+    {
+        textureManager.drawShadowedTex("BankVault", (screenw - 500) / 2, (screenh - 500) / 8, 500, 500, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
+        textureManager.drawShadowedTex("Banker", (screenw - 500) / 2, (screenh - 500) / 3, 500, 500, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
+
+        if(gameState==S_Dealing)
+        {
+            int x=820, y=600, tw, th;
+            string acceptText = "Accept", refuseText = "Refuse";
+
+            yesRect = {x, y, static_cast<int>(acceptText.length()) * cw[DialFont] * 4, ch[DialFont]*4};
+            getTextSize(font[DialFont], acceptText, tw, th, 4);
+            textureManager.drawShadowedTex("Button", x - 4, y - 6, tw + 8, th + 8, renderer, 0x00CC00, 0x000000, 5, 5, 75);
+            renderOutlinedText(font[DialFont], acceptText, x, y, 4, 0xFFFFFF, 0x333333);
+
+            y+=55;
+
+            noRect = {x, y, static_cast<int>(refuseText.length()) * cw[DialFont] * 4, ch[DialFont]*4};
+            getTextSize(font[DialFont], refuseText, tw, th, 4);
+            textureManager.drawShadowedTex("Button", x - 4, y - 6, tw + 8, th + 8, renderer, 0xFF0000, 0x000000, 5, 5, 75);
+            renderOutlinedText(font[DialFont], refuseText, x, y, 4, 0xFFFFFF, 0x333333);
+
+            string offerText = "Offer: $" + to_string(game::bankOffer());
+            getTextSize(font[DialFont], offerText, tw, th, 5);
+            textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
+            renderOutlinedText(font[DialFont], offerText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
+        }
+
+        int id = game::player.playerBox;
+        drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
+    }
+
+    void drawBackground(TextureManager& textureManager)
+    {
+        //textureManager.draw("GameBackground", 0, 0, screenw, screenh, renderer);
     }
 
     void renderGame() // rendering a game
     {
         TextureManager& textureManager = TextureManager::getInstance();
+
+        if(gameState==S_ChoosePlayerBox || gameState==S_OpeningBoxes) drawBoxes(textureManager);
+        else drawBank(textureManager);
         drawDialogs(textureManager);
-        drawBoxes(textureManager);
         drawRemainingPrices(textureManager);
     }
 }

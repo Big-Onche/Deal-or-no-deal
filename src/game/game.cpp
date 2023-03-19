@@ -108,50 +108,83 @@ namespace game
         }
     }
 
-    void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint)
+
+    int bankOffer()
     {
-        SDL_RenderGetScale(renderer, &scalew, &scaleh);
+        SoundManager& SoundManager = SoundManager::getInstance();
 
-        switch(gameState)
+        SoundManager.play("BankOffer");
+
+        int offer = 0;
+        loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
+        if(openCount(true)) offer /= (openCount(true)<3 ? (float)openCount(true)*1.3 : (openCount(true)*4));
+
+        return offer;
+    }
+
+    void handleGame(SDL_Event &event, SDL_Point &mousePoint)
+    {
+        if(event.type == SDL_MOUSEBUTTONDOWN)
         {
-            case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
-                loopi(4) {
-                    loopj(4) {
-                        int id = i * 4 + j;
-                        // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
-                        SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
-                                            render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
-                                            render::boxWidth, render::boxHeight};
+            switch(gameState)
+            {
+                case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
+                    loopi(4) {
+                        loopj(4) {
+                            int id = i * 4 + j;
+                            // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
+                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
+                                                render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
+                                                render::boxWidth, render::boxHeight};
 
-                        if(SDL_PointInRect(&mousePoint, &boxRect))
-                        {
-                            if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
-                            else openBox(id); // else we open a box when clicking on it
+                            if(SDL_PointInRect(&mousePoint, &boxRect))
+                            {
+                                if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
+                                else openBox(id); // else we open a box when clicking on it
+                            }
+
+                            if(openCount()==2) gameState = S_BankCall;
                         }
                     }
-                }
-                break;
+                    break;
 
-            case S_BankCall:
-                break;
+                case S_BankCall:
+                    popDialog("It seems that the banker has an offer for you!");
+                    gameState=S_BankOffer;
+                    break;
 
-            case S_AcceptedDeal:
-                break;
+                case S_BankOffer:
+                    popDialog("He want to buy your box number %d for $%d", player.playerBox+1, bankOffer());
+                    gameState=S_Dealing;
+                    break;
 
-            case S_GameOver:
-                break;
+                case S_Dealing:
+                    popDialog("So, you take the bucks or you risk the bust?");
+                    if(SDL_PointInRect(&mousePoint, &render::yesRect))
+                    {
+                        popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
+                        gameState=S_AcceptedDeal;
+                    }
+                    if(SDL_PointInRect(&mousePoint, &render::noRect))
+                    {
+                        popDialog("It's risky: I like that! Let's continue.");
+                        gameState=S_OpeningBoxes;
+                    }
+                    break;
+
+                case S_AcceptedDeal:
+                    break;
+
+                case S_GameOver:
+                    break;
+            }
         }
     }
 
     void bankCall()
     {
-        int bankOffer = 0;
 
-        //SoundManager.playSound("bank_offer");
-
-        loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
-        if(openCount(true)) bankOffer/= (openCount(true)<3 ? (float)openCount(true)*1.3 : (openCount(true)*3) + rnd(2)) ;
-
+    /*
         if(player.bankGain)
         {
             printf("At this time, the bank would make another offer: %d$, %s", bankOffer, player.bankGain>=bankOffer ? "well done!\n\n" : "bad luck!\n\n");
@@ -191,6 +224,7 @@ namespace game
                 }
             }
         }
+        */
     }
 
     void playGame() // run a game

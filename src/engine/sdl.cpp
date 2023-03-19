@@ -48,9 +48,12 @@ namespace sdl
         TextureManager::getInstance().preloadTextures();
     }
 
+    int mouseX, mouseY;
+
     bool sdlLoop() // events then render loop
     {
         SDL_Event event;
+
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
@@ -77,7 +80,15 @@ namespace sdl
                     break;
             }
 
-            gui::handleMouseEvents(event);
+            SDL_GetMouseState(&mouseX, &mouseY);
+            SDL_RenderGetScale(renderer, &scalew, &scaleh);
+            SDL_Point mousePoint = { static_cast<int>(mouseX / scalew), static_cast<int>(mouseY / scaleh) };
+
+            switch(engineState)
+            {
+                case S_MainMenu: gui::handleMenus(event, mousePoint); break;
+                case S_InGame: game::handleGame(event, mousePoint);
+            }
         }
 
         SDL_RenderClear(renderer); // cleaning all rendered things

@@ -6,45 +6,28 @@ namespace gui
 {
     vector<sdl::RectInfo> menuItems;
 
-    void handleMouseEvents(SDL_Event &event)
+    void handleMenus(SDL_Event &event, SDL_Point &mousePoint)
     {
         if(event.type == SDL_MOUSEBUTTONDOWN)
         {
-            int mouseX, mouseY;
-            SDL_GetMouseState(&mouseX, &mouseY);
-
-            SDL_RenderGetScale(renderer, &scalew, &scaleh);
-            SDL_Point mousePoint = { static_cast<int>(mouseX / scalew), static_cast<int>(mouseY / scaleh) };
-
-            switch(engineState)
+            loopi(menuItems.size())
             {
-                case S_MainMenu:
-                    loopi(menuItems.size())
+                if(SDL_PointInRect(&mousePoint, &menuItems[i].rect))
+                {
+                    switch(i)
                     {
-                        if(SDL_PointInRect(&mousePoint, &menuItems[i].rect))
-                        {
-                            switch(i)
-                            {
-                                case 0:
-                                    engineState = S_LoadingScreen;
-                                    game::initGame();
-                                    break;
+                        case 0:
+                            engineState = S_LoadingScreen;
+                            game::initGame();
+                            break;
 
-                                case 1:
-                                    // Handle Options here
-                                    break;
+                        case 1:
+                            // options
+                            break;
 
-                                case 2: quit();
-                            }
-                        }
+                        case 2: quit();
                     }
-                    break;
-
-                case S_InGame:
-                    game::handleGameEvents(event, mousePoint);
-                    break;
-
-                default: break;
+                }
             }
         }
     }
@@ -63,7 +46,6 @@ namespace gui
 
         renderText(MainFont, text, x, y, textSize);
     }
-
 
     void initMenuItems(int textSize, int x, int y)
     {
