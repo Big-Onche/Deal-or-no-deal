@@ -15,7 +15,6 @@ bool SoundManager::init() //sdl2_mixer init
     }
 
     preloadSounds(); // if initialized, we preload all sounds in sounds.cfg
-
     return true;
 }
 
@@ -105,10 +104,7 @@ void SoundManager::playMusic(const string &path) // cleanup
 
 void SoundManager::quit() // cleanup
 {
-    for (auto& sound : m_soundMap)
-    {
-        Mix_FreeChunk(sound.second);
-    }
+    for (auto& sound : m_soundMap) Mix_FreeChunk(sound.second);
     m_soundMap.clear();
     Mix_FreeMusic(music);
     Mix_CloseAudio();

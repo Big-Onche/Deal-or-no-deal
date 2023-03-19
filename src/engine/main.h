@@ -26,6 +26,16 @@ extern float scalew, scaleh;
 
 namespace sdl
 {
+    struct RectInfo
+    {
+        SDL_Rect rect;
+        string text;
+        string textureID;
+
+        RectInfo(int x, int y, int w, int h, const std::string& text, const std::string& textureID)
+            : rect{x, y, w, h}, text{text}, textureID{textureID} {}
+    };
+
     // main sdl funcs
     extern void sdlInit();
     extern bool sdlLoop();
@@ -33,15 +43,6 @@ namespace sdl
 
     // other useful funcs
     extern void preloadTextures();
-}
-
-namespace render // render game
-{
-    extern int boxWidth, boxHeight;
-    extern int boxSpacing;
-    extern int boxesgridX();
-    extern int boxesgridY();
-    extern void renderGame();
 }
 
 // bitmap font and text rendring

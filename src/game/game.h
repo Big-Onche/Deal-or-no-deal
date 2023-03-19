@@ -5,7 +5,7 @@
 
 using namespace std;
 
-enum GameState {S_ChoosePlayerBox = 0, S_OpeningBoxes, S_BankCall, S_AcceptedDeal, S_GameOver};
+enum GameState {S_ChoosePlayerBox = 0, S_OpeningBoxes, S_BankCall, S_BankOffer, S_Dealing, S_AcceptedDeal, S_GameOver};
 extern GameState gameState;
 
 namespace game
@@ -16,23 +16,24 @@ namespace game
         int insideBox;
         bool opened;
     };
+    extern box boxes[maxBoxes];
 
     struct playerinfo {
         int playerBox;
         int choosenBox;
         int bankGain;
     };
-
-    extern string mainDialog;
-    extern box boxes[maxBoxes];
     extern playerinfo player;
 
+    extern string mainDialog;
+
+    extern void initGame();
     extern int openCount(bool remaining = false);
     extern bool allOpened();
 
     extern void handleGameEvents(SDL_Event &event, SDL_Point &mousePoint);
 
-    extern void initGame();
+
 }
 
 namespace gui // menus and splash/loading screens
@@ -41,6 +42,18 @@ namespace gui // menus and splash/loading screens
     extern void handleMouseEvents(SDL_Event &event);
     extern void renderSplashScreen(string text);
     extern void renderMenu();
+}
+
+namespace render // render game
+{
+    extern int boxWidth, boxHeight;
+    extern int boxSpacing;
+    extern int boxesgridX();
+    extern int boxesgridY();
+    extern void renderGame();
+
+    extern SDL_Rect *acceptRect;
+    extern SDL_Rect *refuseRect;
 }
 
 #endif
