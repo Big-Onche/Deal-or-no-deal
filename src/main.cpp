@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
+#include "sounds.h"
 
 EngineState engineState;
 
@@ -13,8 +14,8 @@ int main(int argc, char *argv[])
 {
     logoutf("init: main");
     sdl::sdlInit();
-    sound::initAudio();
-    sound::playSound("theme");
+    SoundManager::getInstance().init();
+    SoundManager::getInstance().playMusic("data/songs/theme.ogg");
     logoutf("init: game");
 
     for(;;) // main loop
@@ -51,7 +52,7 @@ void quit(bool fatal) // cleanup and quit
 {
     engineState = S_ShuttingDown;
     sdl::sdlQuit();
-    sound::unInitAudio();
+    SoundManager::getInstance().quit();
     if(fatal)
     {
         logoutf("shutdown: fatal error\n");
@@ -67,6 +68,5 @@ void quit(bool fatal) // cleanup and quit
 void fatal(const std::string &message)
 {
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message.c_str(), nullptr);
-    std::cerr << message << std::endl;
     quit(true);
 }

@@ -80,13 +80,6 @@ namespace render // render game
     extern void renderGame();
 }
 
-namespace sound
-{
-    extern bool initAudio();
-    extern void playSound(const char *soundName);
-    extern void unInitAudio();
-}
-
 // bitmap font and text rendring
 extern Uint32 lastDialogTime;
 

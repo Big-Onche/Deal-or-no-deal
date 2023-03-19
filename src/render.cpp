@@ -13,7 +13,7 @@ namespace render
     {
         int bwidth = boxWidth, bheight = boxHeight, shadowOffset = 4, textsize = 2;
 
-        if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset = 8, textsize= 3; }
+        if(ownBox) { bwidth *= 1.5f, bheight *= 1.5f, shadowOffset = 10, textsize= 3; }
 
         textureManager.drawShadowedTex(opened ? "OpenedBox" : "ClosedBox", x, y, bwidth, bheight, renderer, 0xFFFFFF, 0x000000, shadowOffset, shadowOffset, 75);
 

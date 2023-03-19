@@ -1,4 +1,5 @@
 #include "main.h"
+#include "sounds.h"
 #include <SDL_thread.h>
 
 GameState gameState;
@@ -81,6 +82,8 @@ namespace game
 
     void openBox(int id)
     {
+        SoundManager& SoundManager = SoundManager::getInstance();
+
         if(game::boxes[id].opened || id==player.playerBox) return;
 
         game::boxes[id].opened = true;
@@ -89,7 +92,7 @@ namespace game
         bool soundTrigger = (openCount() < 10 && boxValue>=50000) ? true :
                 openCount() > 10 && boxValue>=10000 ? true : false;
 
-        soundTrigger ? sound::playSound("money_loss") : sound::playSound("box_open");
+        soundTrigger ? SoundManager.play("MoneyLoss") : SoundManager.play("BoxOpen");
 
         switch(game::openCount())
         {
@@ -144,7 +147,7 @@ namespace game
     {
         int bankOffer = 0;
 
-        sound::playSound("bank_offer");
+        //SoundManager.playSound("bank_offer");
 
         loopi(maxBoxes) if(!boxes[i].opened) bankOffer+=boxes[i].insideBox;
         if(openCount(true)) bankOffer/= (openCount(true)<3 ? (float)openCount(true)*1.3 : (openCount(true)*3) + rnd(2)) ;
@@ -176,7 +179,7 @@ namespace game
                     else
                     {
                         player.bankGain = bankOffer;
-                        sound::playSound("victory");
+                        //sound::playSound("victory");
                         printf("You selled your box for %d$\n\n", player.bankGain);
                     }
                     break;
