@@ -1,6 +1,8 @@
 #include "main.h"
+#include "game.h"
 #include "textures.h"
 
+bool fullscreen;
 int screenw = 1280;
 int screenh = 720;
 float scalew = 1280.f;
@@ -13,7 +15,7 @@ namespace sdl
 {
     void sdlInit() // initing SDL
     {
-        logoutf("init: gl");
+        logoutf("init: image");
         SDL_SetMainReady();
 
         if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -46,15 +48,22 @@ namespace sdl
         TextureManager::getInstance().preloadTextures();
     }
 
-    bool sdlLoop() // renderer loop
+    bool sdlLoop() // events then render loop
     {
         SDL_Event event;
-
         while(SDL_PollEvent(&event))
         {
             if(event.type == SDL_QUIT) return false; // quit
 
-            switch(event.type)
+            if(event.type == SDL_KEYDOWN && engineState==S_Initialization) { engineState=S_MainMenu; } // exit splash screen
+            else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen (rescaling is called in sdlLoop(), SDL_WINDOWEVENT)
+            {
+                fullscreen = !fullscreen;
+                if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                else SDL_SetWindowFullscreen(window, 0);
+            }
+
+            switch(event.type) // window resized
             {
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -63,16 +72,15 @@ namespace sdl
                         SDL_GetWindowSize(window, &newWidth, &newHeight);
                         scalew = static_cast<float>(newWidth) / 1280;
                         scaleh = static_cast<float>(newHeight) / 720;
-                        SDL_RenderSetScale(renderer, scalew, scaleh);
+                        SDL_RenderSetScale(renderer, scalew, scaleh); // set scale to get a responsive 16:9 screen
                     }
                     break;
             }
 
-            gui::handleKeyboardEvents(event);
             gui::handleMouseEvents(event);
         }
 
-        SDL_RenderClear(renderer);
+        SDL_RenderClear(renderer); // cleaning all rendered things
 
         switch(engineState)
         {
@@ -98,7 +106,7 @@ namespace sdl
                 break;
         }
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(renderer); // rendering all things
         return true;
     }
 

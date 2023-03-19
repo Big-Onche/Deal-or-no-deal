@@ -1,6 +1,6 @@
 #include "main.h"
+#include "game.h"
 #include "sounds.h"
-#include <SDL_thread.h>
 
 GameState gameState;
 

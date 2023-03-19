@@ -1,4 +1,5 @@
 #include "main.h"
+#include "game.h"
 #include "textures.h"
 #include <functional>
 
@@ -6,19 +7,6 @@ using namespace std;
 
 namespace gui
 {
-    bool fullscreen = false;
-
-    void handleKeyboardEvents(SDL_Event &event)
-    {
-        if(event.type == SDL_KEYDOWN && engineState==S_Initialization) { engineState=S_MainMenu; } // exit splash screen
-        else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen (rescaling is called in sdlLoop(), SDL_WINDOWEVENT)
-        {
-            fullscreen = !fullscreen;
-            if(fullscreen) SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-            else SDL_SetWindowFullscreen(window, 0);
-        }
-    }
-
     SDL_Rect newGameRect;
     SDL_Rect optionsRect;
     SDL_Rect exitRect;

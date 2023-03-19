@@ -12,7 +12,6 @@ const int frameDelay = 1000 / maxfps;
 
 int main(int argc, char *argv[])
 {
-    logoutf("init: main");
     sdl::sdlInit();
     SoundManager::getInstance().init();
     SoundManager::getInstance().playMusic("data/songs/theme.ogg");

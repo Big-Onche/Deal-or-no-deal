@@ -1,4 +1,5 @@
 #include "main.h"
+#include "game.h"
 #include "textures.h"
 
 namespace render

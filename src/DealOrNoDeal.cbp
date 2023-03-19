@@ -49,9 +49,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="console.cpp" />
 		<Unit filename="game.cpp" />
-		<Unit filename="gl.cpp" />
 		<Unit filename="gui.cpp" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
@@ -59,7 +57,11 @@
 		<Unit filename="resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
+		<Unit filename="sdl.cpp" />
 		<Unit filename="sound.cpp" />
+		<Unit filename="texts.cpp" />
+		<Unit filename="textures.cpp" />
+		<Unit filename="textures.h" />
 		<Unit filename="tools.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
