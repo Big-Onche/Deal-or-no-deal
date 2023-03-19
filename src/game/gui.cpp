@@ -1,15 +1,10 @@
 #include "main.h"
 #include "game.h"
 #include "textures.h"
-#include <functional>
-
-using namespace std;
 
 namespace gui
 {
-    SDL_Rect newGameRect;
-    SDL_Rect optionsRect;
-    SDL_Rect exitRect;
+    vector<sdl::RectInfo> menuItems;
 
     void handleMouseEvents(SDL_Event &event)
     {
@@ -24,17 +19,24 @@ namespace gui
             switch(engineState)
             {
                 case S_MainMenu:
-                    if(SDL_PointInRect(&mousePoint, &newGameRect))
+                    loopi(menuItems.size())
                     {
-                        engineState = S_LoadingScreen;
-                        game::initGame();
-                    }
-                    else if(SDL_PointInRect(&mousePoint, &optionsRect))
-                    {
-                    }
-                    else if(SDL_PointInRect(&mousePoint, &exitRect))
-                    {
-                        quit();
+                        if(SDL_PointInRect(&mousePoint, &menuItems[i].rect))
+                        {
+                            switch(i)
+                            {
+                                case 0:
+                                    engineState = S_LoadingScreen;
+                                    game::initGame();
+                                    break;
+
+                                case 1:
+                                    // Handle Options here
+                                    break;
+
+                                case 2: quit();
+                            }
+                        }
                     }
                     break;
 
@@ -62,32 +64,35 @@ namespace gui
         renderText(MainFont, text, x, y, textSize);
     }
 
-    void renderMenu() // yeah yeah: arrays for menu items, loops and shit, let me make a playable game first
+
+    void initMenuItems(int textSize, int x, int y)
     {
+        array<string, 3> menuItemTexts = {"New Game", "Options", "Exit"};
+
+        for (const auto& itemText : menuItemTexts)
+        {
+            menuItems.emplace_back(x, y, static_cast<int>(itemText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize, itemText, "Button");
+            y += 75;
+        }
+    }
+
+    void renderMenu()
+    {
+        int textSize = 4;
+        int x = 100, y = 350;
+
+        if(menuItems.empty()) initMenuItems(textSize, x, y);
+
         TextureManager& textureManager = TextureManager::getInstance();
 
         textureManager.drawShadowedTex("GameLogo", 90, 100, 210, 210, renderer, 0xFFFFFF, 0x191919, 5, 5, 100);
 
-        int textSize = 3;
-
-        int x = 100, y = 350;
-        string newGameText = "New Game";
-        newGameRect = {x, y, static_cast<int>(newGameText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Play
-        textureManager.drawShadowedTex("RemainingPrices", x, y, static_cast<int>(newGameText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize, renderer, 0x888888, 0x222222);
-        renderShadowedText(font[MainFont], newGameText, x, y, textSize, 0xFFFFFF, 0x444444);
-
-        y+=75;
-        string optionsText = "Options";
-        optionsRect = {x, y, static_cast<int>(optionsText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Options
-        textureManager.drawShadowedTex("RemainingPrices", x, y, static_cast<int>(optionsText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize, renderer, 0x888888, 0x222222);
-        renderShadowedText(font[MainFont], optionsText, x, y, textSize, 0xFFFFFF, 0x444444);
-
-        y+=75;
-        string exitText = "Exit";
-
-        exitRect = {x, y, static_cast<int>(exitText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize}; // Exit
-        textureManager.drawShadowedTex("RemainingPrices", x, y, static_cast<int>(exitText.length()) * cw[MainFont] * textSize, ch[MainFont] * textSize, renderer, 0x888888, 0x222222);
-        renderShadowedText(font[MainFont], exitText, x, y, textSize, 0xFFFFFF, 0x444444);
+        for(const sdl::RectInfo& menuItem : menuItems) // Iterate through the menu items and render the
+        {
+            textureManager.drawShadowedTex(menuItem.textureID, menuItem.rect.x, menuItem.rect.y, menuItem.rect.w, menuItem.rect.h, renderer, 0x888888, 0x222222);
+            renderShadowedText(font[MainFont], menuItem.text, menuItem.rect.x, menuItem.rect.y, textSize, 0xFFFFFF, 0x444444);
+            y += 75;
+        }
     }
 }
 
