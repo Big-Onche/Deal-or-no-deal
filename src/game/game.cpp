@@ -157,25 +157,29 @@ namespace game
             }
         }
 
+        if(openCount()==5) SoundManager.playMusic("data/songs/mid_game.ogg");
+
         if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
         {
+            SoundManager.play("BankCall");
             loopi(3) boxCombo[i]=0;
             gameAtmo = A_neutral;
             gameState = S_BankCall;
         }
-        else if(allOpened()) gameState = S_GameOver;
+        else if(allOpened())
+        {
+            gameState = S_GameOver;
+            SoundManager.playMusic("data/songs/jingle.ogg");
+        }
     }
 
-    int bankOffer()
+    int lastOffer;
+    int bankOffer(float offerMod)
     {
-        SoundManager& SoundManager = SoundManager::getInstance();
-
-        SoundManager.play("BankOffer");
-
         int offer = 0;
         loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
-        if(openCount(true)) offer /= (openCount(true)<3 ? (float)openCount(true)*1.3f : (openCount(true)*2.f));
-
+        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.5f+offerMod)));
+        lastOffer = offer;
         return offer;
     }
 
@@ -209,7 +213,7 @@ namespace game
                     break;
 
                 case S_BankOffer:
-                    popDialog("He want to buy your box number %d for $%d", player.playerBox+1, bankOffer());
+                    popDialog("He want to buy your box number %d for $%d", player.playerBox+1, bankOffer(rnd(10)/10.f));
                     gameState=S_Dealing;
                     break;
 
@@ -218,7 +222,7 @@ namespace game
                     if(SDL_PointInRect(&mousePoint, &render::yesRect))
                     {
                         popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
-                        player.bankGain = bankOffer();
+                        player.bankGain = bankOffer(rnd(10)/10.f);
                         gameState=S_AcceptedDeal;
                     }
                     if(SDL_PointInRect(&mousePoint, &render::noRect))

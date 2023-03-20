@@ -113,7 +113,7 @@ namespace render
             textureManager.drawShadowedTex("Button", x - 4, y - 6, tw + 8, th + 8, renderer, 0xFF0000, 0x000000, 5, 5, 75);
             renderOutlinedText(font[DialFont], refuseText, x, y, 4, 0xFFFFFF, 0x333333);
 
-            string offerText = "Offer: $" + to_string(game::bankOffer());
+            string offerText = "Offer: $" + to_string(game::lastOffer);
             getTextSize(font[DialFont], offerText, tw, th, 5);
             textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
             renderOutlinedText(font[DialFont], offerText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);

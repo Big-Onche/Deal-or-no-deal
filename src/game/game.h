@@ -28,10 +28,12 @@ namespace game
     };
     extern playerinfo player;
 
+    extern int lastOffer;
+
     extern void initGame();
     extern int openCount(bool remaining = false);
     extern bool allOpened();
-    extern int bankOffer();
+    extern int bankOffer(float offerMod);
 
     extern void loadDialogs();
     extern string mainDialog;

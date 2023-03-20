@@ -15,9 +15,10 @@ int main(int argc, char *argv[])
 {
     sdl::sdlInit();
     SoundManager::getInstance().init();
-    SoundManager::getInstance().playMusic("data/songs/theme.ogg");
     logoutf("init: game");
     game::loadDialogs();
+
+    SoundManager::getInstance().playMusic("data/songs/theme.ogg");
 
     for(;;) // main loop
     {

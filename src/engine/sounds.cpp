@@ -57,7 +57,7 @@ void SoundManager::play(const string &id, int loops) // play a sound
     auto it = m_soundMap.find(id);
     if (it == m_soundMap.end())
     {
-        logoutf("warning: failed to play sound (%s)", id);
+        logoutf("warning: failed to play sound (%s)", id.c_str());
         return;
     }
 
