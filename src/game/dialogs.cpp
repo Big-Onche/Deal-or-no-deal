@@ -39,6 +39,7 @@ namespace game
     vector<string> endGameMidDialog;
     vector<string> endGameLossDialog;
     vector<string> bankerCall;
+    vector<string> dealRefused;
 
     void loadDialogs()
     {
@@ -56,5 +57,6 @@ namespace game
         endGameMidDialog = dialogs["endGameMidDialog"];
         endGameLossDialog = dialogs["endGameLossDialog"];
         bankerCall = dialogs["bankerCall"];
+        dealRefused = dialogs["dealRefused"];
     }
 }

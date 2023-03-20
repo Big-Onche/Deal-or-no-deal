@@ -49,6 +49,7 @@ namespace game
     extern vector<string> endGameMidDialog;
     extern vector<string> endGameLossDialog;
     extern vector<string> bankerCall;
+    extern vector<string> dealRefused;
 
     extern void handleGame(SDL_Event &event, SDL_Point &mousePoint);
 }
