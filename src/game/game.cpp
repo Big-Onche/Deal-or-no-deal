@@ -3,11 +3,11 @@
 #include "sounds.h"
 
 GameState gameState;
+GameAtmo gameAtmo;
 
 namespace game
 {
-    //const int maxBoxes = 16;
-    const int boxValues[maxBoxes] = {0, 1, 10, 30, 69, 100, 420, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 250000, 500000};
+    const int boxValues[maxBoxes] = {0, 1, 5, 10, 30, 69, 100, 420, 1000, 2000, 5000, 7500, 10000, 15000, 20000, 50000, 75000, 100000, 250000, 500000};
 
     box boxes[maxBoxes];
     struct playerinfo player;
@@ -48,12 +48,8 @@ namespace game
         assignBoxes();
         gameState = S_ChoosePlayerBox;
         engineState = S_InGame;
-        switch(rnd(3))
-        {
-            case 0: popDialog("Please choose your box!"); break;
-            case 1: popDialog("It's time to choose your box wisely! But remember: It's all about chance."); break;
-            case 2: popDialog("So, what's your box today? Pick the one that smells like bucks!");
-        }
+
+        popDialog(introDialog[rnd(introDialog.size())].c_str());
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
@@ -70,13 +66,21 @@ namespace game
 
     void chooseBox(int id)
     {
+        popDialog(chooseBoxDialog[rnd(chooseBoxDialog.size())].c_str(), id + 1);
         player.playerBox = id;
         gameState = S_OpeningBoxes;
-        switch(rnd(3))
-        {
-            case 0: popDialog("You choosed the box %d, I hope that it's a good number for you today!", id+1); break;
-            case 1: popDialog("Box %d? I don't trust this number. But hey: maybe it's a lucky one for you!", id+1); break;
-            case 2: popDialog("Let's go with box number %d. I think this is the one too! Or maybe not.", id+1);
+    }
+
+    int boxCombo[3];
+
+    void checkGameAtmo()
+    {
+        size_t maxIndex = std::max_element(boxCombo, boxCombo + 3) - boxCombo;
+
+        switch (maxIndex) { // Set gameAtmo based on the index
+            case A_neutral: gameAtmo = A_neutral; break;
+            case A_bad: gameAtmo = A_bad; break;
+            case A_good: gameAtmo = A_good; break;
         }
     }
 
@@ -84,30 +88,83 @@ namespace game
     {
         SoundManager& SoundManager = SoundManager::getInstance();
 
-        if(game::boxes[id].opened || id==player.playerBox) return;
+        if(boxes[id].opened || id==player.playerBox) return;
 
-        game::boxes[id].opened = true;
-        int boxValue = game::boxes[id].insideBox;
+        boxes[id].opened = true;
+        int boxValue = boxes[id].insideBox;
 
-        bool soundTrigger = (openCount() < 10 && boxValue>=50000) ? true :
-                openCount() > 10 && boxValue>=10000 ? true : false;
-
-        soundTrigger ? SoundManager.play("MoneyLoss") : SoundManager.play("BoxOpen");
-
-        switch(game::openCount())
+        if(openCount()<=3)
         {
-            case 1:
-                if(boxValue >= 50000) popDialog("What a bad start! $%d, in the first box. Let's try to forget that.", boxValue);
-                else popDialog("Only $%d, nice! Let's continue like this.", boxValue);
-                break;
-
-            default:
-                if(boxValue >= 50000)  popDialog("Holy shit! $%d. Maybe it was the last big one.", boxValue);
-                else popDialog("Nice, only $%d! You're doing well, please choose another box.", boxValue);
-                break;
+            if(boxValue >= 50000)
+            {
+                SoundManager.play("MoneyLoss");
+                boxCombo[A_bad]++;
+                popDialog(earlyGameLossDialog[rnd(earlyGameLossDialog.size())].c_str(), boxValue);
+            }
+            else if(boxValue >= 5000)
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_neutral]++;
+                popDialog(earlyGameMidDialog[rnd(earlyGameMidDialog.size())].c_str(), boxValue);
+            }
+            else
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_good]++;
+                popDialog(earlyGameWinDialog[rnd(earlyGameWinDialog.size())].c_str(), boxValue);
+            }
         }
-    }
+        else if(openCount()>=4 && openCount()<=14)
+        {
+            if(boxValue >= 20000)
+            {
+                SoundManager.play("MoneyLoss");
+                boxCombo[A_bad]++;
+                popDialog(midGameLossDialog[rnd(midGameLossDialog.size())].c_str(), boxValue);
+            }
+            else if(boxValue >= 2000)
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_neutral]++;
+                popDialog(midGameMidDialog[rnd(midGameMidDialog.size())].c_str(), boxValue);
+            }
+            else
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_good]++;
+                popDialog(midGameWinDialog[rnd(midGameWinDialog.size())].c_str(), boxValue);
+            }
+        }
+        else
+        {
+            if(boxValue >= 5000)
+            {
+                SoundManager.play("MoneyLoss");
+                boxCombo[A_bad]++;
+                popDialog(endGameLossDialog[rnd(endGameLossDialog.size())].c_str(), boxValue);
+            }
+            else if(boxValue >= 1000)
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_neutral]++;
+                popDialog(endGameMidDialog[rnd(endGameMidDialog.size())].c_str(), boxValue);
+            }
+            else
+            {
+                SoundManager.play("BoxOpen");
+                boxCombo[A_good]++;
+                popDialog(endGameWinDialog[rnd(endGameWinDialog.size())].c_str(), boxValue);
+            }
+        }
 
+        if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
+        {
+            loopi(3) boxCombo[i]=0;
+            gameAtmo = A_neutral;
+            gameState = S_BankCall;
+        }
+        else if(allOpened()) gameState = S_GameOver;
+    }
 
     int bankOffer()
     {
@@ -117,7 +174,7 @@ namespace game
 
         int offer = 0;
         loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
-        if(openCount(true)) offer /= (openCount(true)<3 ? (float)openCount(true)*1.3 : (openCount(true)*4));
+        if(openCount(true)) offer /= (openCount(true)<3 ? (float)openCount(true)*1.3f : (openCount(true)*2.f));
 
         return offer;
     }
@@ -130,8 +187,8 @@ namespace game
             {
                 case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
                     loopi(4) {
-                        loopj(4) {
-                            int id = i * 4 + j;
+                        loopj(5) {
+                            int id = i * 5 + j;
                             // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
                             SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
                                                 render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
@@ -142,14 +199,12 @@ namespace game
                                 if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
                                 else openBox(id); // else we open a box when clicking on it
                             }
-
-                            if(openCount()==2) gameState = S_BankCall;
                         }
                     }
                     break;
 
                 case S_BankCall:
-                    popDialog("It seems that the banker has an offer for you!");
+                    popDialog(bankerCall[rnd(bankerCall.size())].c_str());
                     gameState=S_BankOffer;
                     break;
 
@@ -163,6 +218,7 @@ namespace game
                     if(SDL_PointInRect(&mousePoint, &render::yesRect))
                     {
                         popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
+                        player.bankGain = bankOffer();
                         gameState=S_AcceptedDeal;
                     }
                     if(SDL_PointInRect(&mousePoint, &render::noRect))
@@ -173,119 +229,12 @@ namespace game
                     break;
 
                 case S_AcceptedDeal:
+                    popDialog("Well done! You just won $%d. Let's see if you've made a good choice.", player.bankGain);
                     break;
 
                 case S_GameOver:
+                    popDialog("Well done! You just won $%d!", (player.bankGain ? player.bankGain : game::boxes[game::player.playerBox].insideBox));
                     break;
-            }
-        }
-    }
-
-    void bankCall()
-    {
-
-    /*
-        if(player.bankGain)
-        {
-            printf("At this time, the bank would make another offer: %d$, %s", bankOffer, player.bankGain>=bankOffer ? "well done!\n\n" : "bad luck!\n\n");
-        }
-        else
-        {
-            bool exchangeOffer = !rnd(3);
-            printf("The bank has an offer for you: %s%s Deal or no deal? (Y/N)\n", exchangeOffer ? "Box exchange," : to_string(bankOffer).c_str(), exchangeOffer? "" : "$");
-
-            string response;
-            while(response!="Y" || response!="N")
-            {
-                getline(cin, response);
-                if(response=="Y")
-                {
-                    if(exchangeOffer)
-                    {
-                        printf("Please enter the box you want:\n");
-                        //playerInput(&player.playerBox);
-                        //clearConsole();
-                        //render::drawBoxes(player, boxes);
-                        //if(!allOpened()) render::drawRemainingPrices(player, boxes);
-                        printf("Your box is now the number %d!:\n", player.playerBox);
-                    }
-                    else
-                    {
-                        player.bankGain = bankOffer;
-                        //sound::playSound("victory");
-                        printf("You selled your box for %d$\n\n", player.bankGain);
-                    }
-                    break;
-                }
-                else if(response=="N")
-                {
-                    printf("You declined bank's offer.\n\n");
-                        break;
-                }
-            }
-        }
-        */
-    }
-
-    void playGame() // run a game
-    {
-        while(player.playerBox < 1 || player.playerBox > maxBoxes)
-        {
-            printf("Please select a box from 1 to %d:\n", maxBoxes);
-            //playerInput(&player.playerBox);
-        }
-        //clearConsole();
-        bool nextStep = true;
-
-        for(;;)
-        {
-            if(nextStep)
-            {
-                //render::drawBoxes(player, boxes);
-                //if(!allOpened()) render::drawRemainingPrices(player, boxes);
-            }
-
-            if(openCount() && nextStep) printf("There was %d$ in the %d box!\n", boxes[player.choosenBox-1].insideBox, player.choosenBox);
-
-            if(allOpened())
-            {
-                if(player.bankGain) printf("You won %d$ and there was %d$ in your box, %s", player.bankGain, boxes[player.playerBox-1].insideBox, player.bankGain>=boxes[player.playerBox-1].insideBox ? "well done!\n\n" : "bad luck!\n\n");
-                else printf("You won %d$ with your box %d.\n\n", boxes[player.playerBox-1].insideBox, player.playerBox);
-                break;
-            }
-
-            if(nextStep) switch(openCount()) { case 6: case 10: case 14: bankCall(); }
-
-            printf("Please choose a box to open:\n");
-            //playerInput(&player.choosenBox);
-
-            if(player.choosenBox==player.playerBox)
-            {
-                printf("That's your box, please choose another one.\n");
-                nextStep = false;
-                continue;
-            }
-            else if(player.choosenBox<1 || player.choosenBox>maxBoxes)
-            {
-                player.choosenBox=0;
-                printf("Invalid box, please choose between 1 and %d.\n", maxBoxes);
-                nextStep = false;
-                continue;
-            }
-            else if(boxes[player.choosenBox-1].opened)
-            {
-                printf("That box is already opened, please choose another one.\n");
-                nextStep = false;
-                continue;
-            }
-            else
-            {
-                boxes[player.choosenBox-1].opened = true;
-                //clearConsole();
-
-                if(allOpened()) boxes[player.playerBox-1].opened = true;
-
-                nextStep = true;
             }
         }
     }
