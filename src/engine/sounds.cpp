@@ -13,7 +13,7 @@ bool SoundManager::init() //sdl2_mixer init
         logoutf("Failed to initialize SDL_mixer: (%s)", Mix_GetError());
         return false;
     }
-
+    Mix_VolumeMusic(96);
     preloadSounds(); // if initialized, we preload all sounds in sounds.cfg
     return true;
 }
@@ -85,22 +85,21 @@ void SoundManager::stop(const string &id) // stop a sound
 
 Mix_Music* music;
 
-void SoundManager::playMusic(const string &path) // cleanup
+void SoundManager::playMusic(const string &path, int loops) // cleanup
 {
     Mix_Music* music = Mix_LoadMUS(path.c_str());
-    if (music == nullptr)
+    if(music == nullptr)
     {
         logoutf("warning: failed to play music (%s)", Mix_GetError());
         return;
     }
 
-    if (Mix_PlayMusic(music, 0) == -1)
+    if(Mix_PlayMusic(music, loops) == -1)
     {
         logoutf("warning: failed to play music (%s)", Mix_GetError());
         return;
     }
 }
-
 
 void SoundManager::quit() // cleanup
 {

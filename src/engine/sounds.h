@@ -21,7 +21,7 @@ class SoundManager
         void preloadSounds();
         void play(const string &id, int loops = 0);
         void stop(const string &id);
-        void playMusic(const string &path);
+        void playMusic(const string &path, int loops = 0);
 
     private:
         SoundManager() {}
