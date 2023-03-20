@@ -93,23 +93,30 @@ namespace game
         boxes[id].opened = true;
         int boxValue = boxes[id].insideBox;
 
+        if(allOpened())
+        {
+            gameState = S_GameOver;
+            SoundManager.playMusic("data/songs/jingle.ogg");
+            return;
+        }
+
         if(openCount()<=3)
         {
             if(boxValue >= 50000)
             {
-                SoundManager.play("MoneyLoss");
+                SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
                 popDialog(earlyGameLossDialog[rnd(earlyGameLossDialog.size())].c_str(), boxValue);
             }
             else if(boxValue >= 5000)
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
                 popDialog(earlyGameMidDialog[rnd(earlyGameMidDialog.size())].c_str(), boxValue);
             }
             else
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
                 popDialog(earlyGameWinDialog[rnd(earlyGameWinDialog.size())].c_str(), boxValue);
             }
@@ -118,19 +125,19 @@ namespace game
         {
             if(boxValue >= 20000)
             {
-                SoundManager.play("MoneyLoss");
+                SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
                 popDialog(midGameLossDialog[rnd(midGameLossDialog.size())].c_str(), boxValue);
             }
             else if(boxValue >= 2000)
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
                 popDialog(midGameMidDialog[rnd(midGameMidDialog.size())].c_str(), boxValue);
             }
             else
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
                 popDialog(midGameWinDialog[rnd(midGameWinDialog.size())].c_str(), boxValue);
             }
@@ -139,37 +146,33 @@ namespace game
         {
             if(boxValue >= 5000)
             {
-                SoundManager.play("MoneyLoss");
+                SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
                 popDialog(endGameLossDialog[rnd(endGameLossDialog.size())].c_str(), boxValue);
             }
             else if(boxValue >= 1000)
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
                 popDialog(endGameMidDialog[rnd(endGameMidDialog.size())].c_str(), boxValue);
             }
             else
             {
-                SoundManager.play("BoxOpen");
+                SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
                 popDialog(endGameWinDialog[rnd(endGameWinDialog.size())].c_str(), boxValue);
             }
         }
 
-        if(openCount()==5) SoundManager.playMusic("data/songs/mid_game.ogg");
+        SoundManager.play("BoxOpen");
+        checkGameAtmo();
 
         if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
         {
             SoundManager.play("BankCall");
             loopi(3) boxCombo[i]=0;
             gameAtmo = A_neutral;
-            gameState = S_BankCall;
-        }
-        else if(allOpened())
-        {
-            gameState = S_GameOver;
-            SoundManager.playMusic("data/songs/jingle.ogg");
+            gameState = (player.bankGain ? S_BankOffer : S_BankCall);
         }
     }
 
@@ -209,31 +212,42 @@ namespace game
 
                 case S_BankCall:
                     popDialog(bankerCall[rnd(bankerCall.size())].c_str());
+                    SoundManager::getInstance().playMusic("data/songs/bank.ogg", -1);
                     gameState=S_BankOffer;
                     break;
 
                 case S_BankOffer:
-                    popDialog("He want to buy your box number %d for $%d", player.playerBox+1, bankOffer(rnd(10)/10.f));
+                    if(player.bankGain) popDialog("At this point of the game, the banker would buy your box number %d for $%d", player.playerBox+1, bankOffer(rnd(10)/10.f));
+                    else popDialog("He want to buy your box number %d for $%d", player.playerBox+1, bankOffer(rnd(10)/10.f));
                     gameState=S_Dealing;
                     break;
 
                 case S_Dealing:
-                    popDialog("So, you take the bucks or you risk the bust?");
+                    if(player.bankGain && player.bankGain>lastOffer) popDialog("Well done, you have accepted $%d just before!", player.bankGain);
+                    else if(player.bankGain && player.bankGain<lastOffer) popDialog("You accepted $%d before! Maybe you accepted a bit too fast?", player.bankGain);
+                    else popDialog("So, you take the bucks or you risk the bust?");
+
                     if(SDL_PointInRect(&mousePoint, &render::yesRect))
                     {
                         popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
-                        player.bankGain = bankOffer(rnd(10)/10.f);
-                        gameState=S_AcceptedDeal;
+                        if(!player.bankGain)
+                        {
+                            player.bankGain = bankOffer(rnd(10)/10.f);
+                            gameState=S_AcceptedDeal;
+                        }
+                        else gameState=S_OpeningBoxes;
                     }
-                    if(SDL_PointInRect(&mousePoint, &render::noRect))
+                    if(SDL_PointInRect(&mousePoint, &render::noRect) || !player.bankGain)
                     {
-                        popDialog("It's risky: I like that! Let's continue.");
+                        popDialog(dealRefused[rnd(dealRefused.size())].c_str());
+                        Mix_FadeOutMusic(1000);
                         gameState=S_OpeningBoxes;
                     }
                     break;
 
                 case S_AcceptedDeal:
                     popDialog("Well done! You just won $%d. Let's see if you've made a good choice.", player.bankGain);
+                    gameState=S_OpeningBoxes;
                     break;
 
                 case S_GameOver:
