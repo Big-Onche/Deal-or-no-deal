@@ -1,13 +1,14 @@
 #define SDL_MAIN_HANDLED
 #include "main.h"
 #include "sounds.h"
+#include "game.h"
 
 EngineState engineState;
 
 Uint32 elapsedTime, seconds, milliseconds = 0;
 
 int frameTime;
-const int maxfps = 30;
+const int maxfps = 60;
 const int frameDelay = 1000 / maxfps;
 
 int main(int argc, char *argv[])
@@ -16,6 +17,7 @@ int main(int argc, char *argv[])
     SoundManager::getInstance().init();
     SoundManager::getInstance().playMusic("data/songs/theme.ogg");
     logoutf("init: game");
+    game::loadDialogs();
 
     for(;;) // main loop
     {
