@@ -67,6 +67,8 @@ namespace gui
 
         TextureManager& textureManager = TextureManager::getInstance();
 
+        textureManager.draw("MenuBackground", 0, 0, screenw, screenh, renderer);
+
         textureManager.drawShadowedTex("GameLogo", 90, 100, 210, 210, renderer, 0xFFFFFF, 0x191919, 5, 5, 100);
 
         for(const sdl::RectInfo& menuItem : menuItems) // Iterate through the menu items and render the
