@@ -22,6 +22,7 @@ bool TextureManager::load(const string& fileName, const string& id, SDL_Renderer
     if(pTexture != nullptr)
     {
         m_textureMap[id] = pTexture;
+        SDL_SetTextureBlendMode(pTexture, SDL_BLENDMODE_BLEND);
         return true;
     }
     return false;
@@ -77,6 +78,16 @@ void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y,
     textureManager.setColorMod(textureID, originalColor);
     textureManager.setAlpha(textureID, 255);
     textureManager.draw(textureID, x, y, width, height, renderer);
+}
+
+void TextureManager::drawAlphaTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, Uint8 alphaBlend)
+{
+    TextureManager& textureManager = TextureManager::getInstance();
+
+    textureManager.setAlpha(textureID, alphaBlend);
+    textureManager.draw(textureID, x, y, width, height, renderer);
+
+    textureManager.setAlpha(textureID, 255);
 }
 
 void TextureManager::drawFrame(const string& textureID, int x, int y, int width, int height, int srcX, int srcY, int srcW, int srcH, int scale, SDL_Renderer* renderer) // draw choosen part of a texture
