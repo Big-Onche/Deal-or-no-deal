@@ -94,7 +94,6 @@ namespace render
 
     void drawBank(TextureManager& textureManager)
     {
-        textureManager.drawShadowedTex("BankVault", (screenw - 500) / 2, (screenh - 500) / 8, 500, 500, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
         textureManager.drawShadowedTex("Banker", (screenw - 500) / 2, (screenh - 500) / 3, 500, 500, renderer, 0xFFFFFF, 0x000000, 15, 15, 75);
 
         if(gameState==S_Dealing)
