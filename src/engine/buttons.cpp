@@ -24,7 +24,6 @@ Button *createButton(int x, int y, const char *text, int fontSize, uint32_t colo
     return button;
 }
 
-
 void addButton(Button *button)
 {
     if(buttonCount < MAX_BUTTONS) buttons[buttonCount++] = button;

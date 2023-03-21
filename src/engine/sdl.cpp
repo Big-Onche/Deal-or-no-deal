@@ -58,7 +58,7 @@ namespace sdl
         {
             if(event.type == SDL_QUIT) return false; // quit
 
-            if(event.type == SDL_KEYDOWN && engineState==S_Initialization) { engineState=S_MainMenu; } // exit splash screen
+            if(event.type == SDL_KEYDOWN && engineState==S_Initialization && event.key.keysym.sym!=SDLK_F11) { engineState=S_MainMenu; } // exit splash screen
             else if (event.key.keysym.sym == SDLK_F11 && event.type == SDL_KEYDOWN) // toggle fullscreen (rescaling is called in sdlLoop(), SDL_WINDOWEVENT)
             {
                 fullscreen = !fullscreen;

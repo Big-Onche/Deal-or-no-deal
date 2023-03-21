@@ -61,6 +61,7 @@
 		<Unit filename="engine/textures.h" />
 		<Unit filename="engine/tools.cpp" />
 		<Unit filename="engine/tools.h" />
+		<Unit filename="game/bank.cpp" />
 		<Unit filename="game/dialogs.cpp" />
 		<Unit filename="game/game.cpp" />
 		<Unit filename="game/game.h" />

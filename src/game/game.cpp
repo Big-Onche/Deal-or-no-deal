@@ -12,20 +12,6 @@ namespace game
     box boxes[maxBoxes];
     struct playerinfo player;
 
-    string mainDialog;
-    void popDialog(const char* format, ...)
-    {
-        char buffer[256];
-        va_list args;
-        va_start(args, format);
-        vsnprintf(buffer, 256, format, args);
-        va_end(args);
-
-        mainDialog = buffer;
-
-        lastDialogTime = elapsedTime;
-    }
-
     void assignBoxes() // random distribution of boxes
     {
         random_device rd;
@@ -67,43 +53,33 @@ namespace game
         return openCount()>=maxBoxes-1; //-1 because of player box not opened
     }
 
-    void chooseBox(int id)
+    void chooseBox(int id) // when player is prompt to choose his box
     {
         popDialog(chooseBoxDialog[rnd(chooseBoxDialog.size())].c_str(), id + 1);
         player.playerBox = id;
         gameState = S_OpeningBoxes;
     }
 
-    int boxCombo[3];
-
-    void checkGameAtmo()
-    {
-        size_t maxIndex = std::max_element(boxCombo, boxCombo + 3) - boxCombo;
-
-        switch (maxIndex) { // Set gameAtmo based on the index
-            case A_neutral: gameAtmo = A_neutral; break;
-            case A_bad: gameAtmo = A_bad; break;
-            case A_good: gameAtmo = A_good; break;
-        }
-    }
+    int boxCombo[3]; // store streaks of positive, neutral or negative of box opening
 
     void openBox(int id)
     {
         SoundManager& SoundManager = SoundManager::getInstance();
 
-        if(boxes[id].opened || id==player.playerBox) return;
-
-        boxes[id].opened = true;
-        int boxValue = boxes[id].insideBox;
-
-        if(allOpened())
+        if(boxes[id].opened || id==player.playerBox) return; // stop if already opened or player's box
+        else if(allOpened()) // check for game over
         {
             gameState = S_GameOver;
             SoundManager.playMusic("data/songs/jingle.ogg");
             return;
         }
 
-        if(openCount()<=3)
+        boxes[id].opened = true;
+        int boxValue = boxes[id].insideBox;
+        SoundManager.play("BoxOpen");
+        render::checkGameAtmo();
+
+        if(openCount()<=3) // early game
         {
             if(boxValue >= 50000)
             {
@@ -124,7 +100,7 @@ namespace game
                 popDialog(earlyGameWinDialog[rnd(earlyGameWinDialog.size())].c_str(), boxValue);
             }
         }
-        else if(openCount()>=4 && openCount()<=14)
+        else if(openCount()>=4 && openCount()<=14) // mid game
         {
             if(boxValue >= 20000)
             {
@@ -145,7 +121,7 @@ namespace game
                 popDialog(midGameWinDialog[rnd(midGameWinDialog.size())].c_str(), boxValue);
             }
         }
-        else
+        else // end game
         {
             if(boxValue >= 5000)
             {
@@ -167,9 +143,6 @@ namespace game
             }
         }
 
-        SoundManager.play("BoxOpen");
-        checkGameAtmo();
-
         if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
         {
             SoundManager.play("BankCall");
@@ -179,65 +152,9 @@ namespace game
         }
     }
 
-    int lastOffer;
-    int bankOffer(float offerMod)
-    {
-        int offer = 0;
-        loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
-        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.7f+(offerMod/2.f))));
-        lastOffer = offer;
-        return offer;
-    }
-
-    void acceptDeal()
-    {
-        popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
-        if(!player.bankGain)
-        {
-            player.bankGain = lastOffer;
-            gameState=S_AcceptedDeal;
-        }
-        else gameState=S_OpeningBoxes;
-    }
-
-    void refuseDeal()
-    {
-        popDialog(dealRefused[rnd(dealRefused.size())].c_str());
-        Mix_FadeOutMusic(1000);
-        gameState=S_OpeningBoxes;
-    }
-
-    void continueGame()
-    {
-        //popDialog(dealRefused[rnd(dealRefused.size())].c_str());
-        Mix_FadeOutMusic(1000);
-        gameState=S_OpeningBoxes;
-    }
-
-
-    Button *dealButton;
-
-    void initDealButtons() // called when initializing the engine
-    {
-        int y = 600;
-
-        dealButton = createButton(810, y, "Accept", 4, 0x22CC00, acceptDeal);
-        addButton(dealButton);
-
-        y += 55;
-
-        dealButton = createButton(810, y, "Refuse", 4, 0xFF3300, refuseDeal);
-        addButton(dealButton);
-
-        dealButton = createButton(810, y, "Continue", 4, 0xFFAA00, continueGame);
-        addButton(dealButton);
-    }
-
-
-
     void handleGame(SDL_Event &event, SDL_Point &mousePoint)
     {
-        if(gameState==S_Dealing)
+        if(gameState==S_Dealing) // accept/refuse or continue buttons handling
         {
             loopi(numDealButtons)
             {
@@ -254,29 +171,31 @@ namespace game
                 }
             }
         }
+        else if ((gameState==S_OpeningBoxes || gameState==S_ChoosePlayerBox) && event.type == SDL_MOUSEBUTTONDOWN) // handling clicks on boxes
+        {
+            loopi(4)
+            {
+                loopj(5)
+                {
+                    int id = i * 5 + j;
+                    // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
+                    SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
+                                        render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
+                                        render::boxWidth, render::boxHeight};
 
-        if(event.type == SDL_MOUSEBUTTONDOWN)
+                    if(SDL_PointInRect(&mousePoint, &boxRect))
+                    {
+                        if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
+                        else openBox(id); // else we open a box when clicking on it
+                    }
+                }
+            }
+        }
+
+        if(event.type == SDL_KEYDOWN && event.key.keysym.sym==SDLK_SPACE)
         {
             switch(gameState)
             {
-                case S_OpeningBoxes: case S_ChoosePlayerBox: // handling clicks on boxes
-                    loopi(4) {
-                        loopj(5) {
-                            int id = i * 5 + j;
-                            // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
-                            SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
-                                                render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
-                                                render::boxWidth, render::boxHeight};
-
-                            if(SDL_PointInRect(&mousePoint, &boxRect))
-                            {
-                                if(gameState==S_ChoosePlayerBox) chooseBox(id); // just choose a box (early game or bank exchange)
-                                else openBox(id); // else we open a box when clicking on it
-                            }
-                        }
-                    }
-                    break;
-
                 case S_BankCall:
                     popDialog(bankerCall[rnd(bankerCall.size())].c_str());
                     SoundManager::getInstance().playMusic("data/songs/bank.ogg", -1);
@@ -306,4 +225,7 @@ namespace game
             }
         }
     }
+
+
+
 }

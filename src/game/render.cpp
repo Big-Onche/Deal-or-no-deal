@@ -102,6 +102,12 @@ namespace render
                 drawButton(buttons[game::Btn_Accept], renderer);
                 drawButton(buttons[game::Btn_Refuse], renderer);
             }
+            // draw offer from banker
+            int tw, th;
+            string offerText = "Offer: $" + to_string(game::lastOffer);
+            getTextSize(font[DialFont], offerText, tw, th, 5);
+            textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
+            renderOutlinedText(font[DialFont], offerText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
         }
         int id = game::player.playerBox;
         drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
@@ -118,6 +124,18 @@ namespace render
 
         int id = game::player.playerBox;
         drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
+    }
+
+    void checkGameAtmo()
+    {
+        size_t maxIndex = max_element(game::boxCombo, game::boxCombo + 3) - game::boxCombo;
+
+        switch (maxIndex)
+        { // Set gameAtmo based on the index
+            case A_neutral: gameAtmo = A_neutral; break;
+            case A_bad: gameAtmo = A_bad; break;
+            case A_good: gameAtmo = A_good; break;
+        }
     }
 
     int alphaBlendBad = 0, alphaBlendGood = 0;

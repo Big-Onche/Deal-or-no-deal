@@ -15,26 +15,29 @@ namespace game
 {
     const int maxBoxes = 20;
 
-    struct box {
+    struct box { // store boxes states
         int insideBox;
         bool opened;
     };
     extern box boxes[maxBoxes];
 
-    struct playerinfo {
+    struct playerinfo { // store player states
         int playerBox;
         int choosenBox;
         int bankGain;
     };
     extern playerinfo player;
 
-    extern int lastOffer;
-
+    // main game
     extern void initGame();
     extern int openCount(bool remaining = false);
     extern bool allOpened();
+    extern int boxCombo[3];
+    //bank
+    extern int lastOffer;
     extern int bankOffer(float offerMod);
-
+    //dialogs
+    extern void popDialog(const char* format, ...);
     extern void loadDialogs();
     extern string mainDialog;
     extern vector<string> introDialog;
@@ -72,6 +75,7 @@ namespace render // render game
     extern int boxesgridX();
     extern int boxesgridY();
     extern void renderGame();
+    extern void checkGameAtmo();
 }
 
 #endif

@@ -59,4 +59,20 @@ namespace game
         bankerCall = dialogs["bankerCall"];
         dealRefused = dialogs["dealRefused"];
     }
+
+    string mainDialog;
+    void popDialog(const char* format, ...)
+    {
+        char buffer[256];
+        va_list args;
+        va_start(args, format);
+        vsnprintf(buffer, 256, format, args);
+        va_end(args);
+
+        if(strcmp(mainDialog.c_str(), buffer)) // avoid rewriting the same text in cases where it happen
+        {
+            mainDialog = buffer;
+            lastDialogTime = elapsedTime;
+        }
+    }
 }
