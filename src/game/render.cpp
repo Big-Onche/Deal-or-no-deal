@@ -50,6 +50,11 @@ namespace render
         }
     }
 
+    uint32_t backgroundColor(int value)
+    {
+        return value==69 ? 0xCC33CC : value==420 ? 0x00CC00 : value < 5000 ? 0x3333FF : value < 50000 ? 0xCCCC33 : 0xFF3333;
+    }
+
     void drawRemainingPrices(TextureManager& textureManager)
     {
         int textSize = 3;
@@ -73,9 +78,7 @@ namespace render
             if (i < splitIndex) { x = 10; y = 10 + i * lineHeight; }
             else { x = screenw - tw; y = 10 + (i - splitIndex) * lineHeight;}
 
-            uint32_t bgrdColor = values[i]==69 ? 0xCC33CC : values[i]==420 ? 0x00CC00 : values[i] < 5000 ? 0x3333FF : values[i] < 50000 ? 0xCCCC33 : 0xFF3333;
-
-            textureManager.setColorMod("RemainingPrices", bgrdColor);
+            textureManager.setColorMod("RemainingPrices", backgroundColor(values[i]));
             textureManager.draw("RemainingPrices", x - 4, y - 6, tw + 8, th + 8, renderer);
 
             renderOutlinedText(font[MainFont], text, x, y, textSize, 0xFFFFFF, 0x333333);
@@ -116,10 +119,9 @@ namespace render
     void drawGameOver(TextureManager& textureManager)
     {
         int tw, th;
-
         string priceText = "You won: $" + to_string(game::player.bankGain ? game::player.bankGain : game::boxes[game::player.playerBox].insideBox);
         getTextSize(font[DialFont], priceText, tw, th, 5);
-        textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
+        textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 2, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
         renderOutlinedText(font[DialFont], priceText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
 
         int id = game::player.playerBox;
@@ -172,5 +174,14 @@ namespace render
         else if (gameState==S_GameOver) drawGameOver(textureManager);
         drawDialogs(textureManager);
         drawRemainingPrices(textureManager);
+
+        if(game::lastBoxOpeningTime+2000 > elapsedTime && game::openCount())
+        {
+            int tw, th;
+            string valueText = "$" + to_string(game::lastBoxValue);
+            getTextSize(font[DialFont], valueText, tw, th, 5);
+            textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, backgroundColor(game::lastBoxValue), 0x000000, 10, 10, 75);
+            renderOutlinedText(font[DialFont], valueText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
+        }
     }
 }

@@ -88,6 +88,7 @@ namespace sdl
             {
                 case S_MainMenu: menus::handleMenus(event, mousePoint); break;
                 case S_InGame: game::handleGame(event, mousePoint);
+                default: break;
             }
         }
 

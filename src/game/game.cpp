@@ -61,87 +61,92 @@ namespace game
     }
 
     int boxCombo[3]; // store streaks of positive, neutral or negative of box opening
+    Uint32 lastBoxOpeningTime;
+    int lastBoxValue;
 
     void openBox(int id)
     {
         SoundManager& SoundManager = SoundManager::getInstance();
 
         if(boxes[id].opened || id==player.playerBox) return; // stop if already opened or player's box
-        else if(allOpened()) // check for game over
+
+        lastBoxOpeningTime = elapsedTime;
+        boxes[id].opened = true;
+        lastBoxValue = boxes[id].insideBox;
+        SoundManager.play("BoxOpen");
+
+        if(allOpened()) // check for game over
         {
             gameState = S_GameOver;
             SoundManager.playMusic("data/songs/jingle.ogg");
             return;
         }
 
-        boxes[id].opened = true;
-        int boxValue = boxes[id].insideBox;
-        SoundManager.play("BoxOpen");
-        render::checkGameAtmo();
-
         if(openCount()<=3) // early game
         {
-            if(boxValue >= 50000)
+            if(lastBoxValue >= 50000)
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(getRandomDialogue(DialogueType::EarlyGameLoss).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameLoss).c_str(), lastBoxValue);
             }
-            else if(boxValue >= 5000)
+            else if(lastBoxValue >= 5000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(getRandomDialogue(DialogueType::EarlyGameMid).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameMid).c_str(), lastBoxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(getRandomDialogue(DialogueType::EarlyGameWin).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameWin).c_str(), lastBoxValue);
             }
         }
         else if(openCount()>=4 && openCount()<=14) // mid game
         {
-            if(boxValue >= 20000)
+            if(lastBoxValue >= 20000)
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(getRandomDialogue(DialogueType::MidGameLoss).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameLoss).c_str(), lastBoxValue);
             }
-            else if(boxValue >= 2000)
+            else if(lastBoxValue >= 2000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(getRandomDialogue(DialogueType::MidGameMid).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameMid).c_str(), lastBoxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(getRandomDialogue(DialogueType::MidGameWin).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameWin).c_str(), lastBoxValue);
             }
         }
         else // end game
         {
-            if(boxValue >= 5000)
+            if(lastBoxValue >= 5000)
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(getRandomDialogue(DialogueType::EndGameLoss).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameLoss).c_str(), lastBoxValue);
             }
-            else if(boxValue >= 1000)
+            else if(lastBoxValue >= 1000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(getRandomDialogue(DialogueType::EndGameMid).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameMid).c_str(), lastBoxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(getRandomDialogue(DialogueType::EndGameWin).c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameWin).c_str(), lastBoxValue);
             }
         }
+
+        render::checkGameAtmo();
 
         if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
         {
@@ -222,10 +227,9 @@ namespace game
                 case S_GameOver:
                     popDialog("Well done! You just won $%d!", (player.bankGain ? player.bankGain : game::boxes[game::player.playerBox].insideBox));
                     break;
+
+                default: break;
             }
         }
     }
-
-
-
 }

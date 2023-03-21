@@ -34,6 +34,8 @@ namespace game
     extern int openCount(bool remaining = false);
     extern bool allOpened();
     extern int boxCombo[3];
+    extern Uint32 lastBoxOpeningTime;
+    extern int lastBoxValue;
     //bank
     extern int lastOffer;
     extern int bankOffer(float offerMod);

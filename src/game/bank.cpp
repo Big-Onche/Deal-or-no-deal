@@ -21,6 +21,7 @@ namespace game
         if(!player.bankGain)
         {
             player.bankGain = lastOffer;
+            SoundManager::getInstance().playMusic("data/songs/jingle.ogg");
             gameState=S_AcceptedDeal;
         }
         else gameState=S_OpeningBoxes;
@@ -35,7 +36,6 @@ namespace game
 
     void continueGame()
     {
-        //popDialog(dealRefused[rnd(dealRefused.size())].c_str());
         if(gameState==S_BankCall)
         {
             gameState=S_BankOffer;
@@ -46,7 +46,6 @@ namespace game
             gameState=S_OpeningBoxes;
         }
     }
-
 
     Button *dealButton;
 
