@@ -2,6 +2,8 @@
 #define GAME_H
 
 #include "tools.h"
+#include "dialogs.h"
+#include <map>
 
 using namespace std;
 
@@ -37,24 +39,29 @@ namespace game
     extern int lastOffer;
     extern int bankOffer(float offerMod);
     //dialogs
-    extern void popDialog(const char* format, ...);
-    extern void loadDialogs();
     extern string mainDialog;
-    extern vector<string> introDialog;
-    extern vector<string> chooseBoxDialog;
-    extern vector<string> earlyGameWinDialog;
-    extern vector<string> earlyGameMidDialog;
-    extern vector<string> earlyGameLossDialog;
-    extern vector<string> midGameWinDialog;
-    extern vector<string> midGameMidDialog;
-    extern vector<string> midGameLossDialog;
-    extern vector<string> endGameWinDialog;
-    extern vector<string> endGameMidDialog;
-    extern vector<string> endGameLossDialog;
-    extern vector<string> bankerCall;
-    extern vector<string> dealRefused;
-
-    extern Button *dealButton;
+    enum class DialogueType {
+        Invalid = -1,
+        Intro,
+        ChooseBox,
+        EarlyGameWin,
+        EarlyGameMid,
+        EarlyGameLoss,
+        MidGameWin,
+        MidGameMid,
+        MidGameLoss,
+        EndGameWin,
+        EndGameMid,
+        EndGameLoss,
+        BankerCall,
+        DealRefused
+    };
+    extern map<DialogueType, vector<string>> dialogues;
+    extern void loadDialogs();
+    const string &getRandomDialogue(DialogueType type);
+    extern void popDialog(const char* format, ...);
+    //buttons and game handling
+    //extern Button *dealButton;
     enum {Btn_Accept, Btn_Refuse, Btn_Continue, numDealButtons};
     extern void initDealButtons();
     extern void handleGame(SDL_Event &event, SDL_Point &mousePoint);

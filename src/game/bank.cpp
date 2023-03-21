@@ -28,7 +28,7 @@ namespace game
 
     void refuseDeal()
     {
-        popDialog(dealRefused[rnd(dealRefused.size())].c_str());
+        popDialog(getRandomDialogue(DialogueType::DealRefused).c_str());
         Mix_FadeOutMusic(1000);
         gameState=S_OpeningBoxes;
     }

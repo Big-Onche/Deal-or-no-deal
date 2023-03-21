@@ -1,63 +1,73 @@
-#include <map>
+#include "game.h"
 #include "main.h"
+#include <optional>
 
 namespace game
 {
-    map<string, vector<string>> readDialogues(const string &filename)
-    {
-        map<string, vector<string>> dialogs;
-        ifstream file(filename);
+    map<DialogueType, vector<string>> dialogues;
 
-        if(!file) fatal("Cannot read config file! (" + filename + ")");
-
-        string line;
-        string currentGroup;
-
-        while(getline(file, line))
-        {
-            if(line.empty()) continue;
-            if(line[0] == '[')
-            {
-                currentGroup = line.substr(1, line.find(']') - 1);
-                dialogs[currentGroup] = vector<string>();
-            }
-            else dialogs[currentGroup].push_back(line);
+    DialogueType dialogueTypeFromString(const string &str) {
+        static const map<string, DialogueType> mapping = {
+            {"GAME_INTRO", DialogueType::Intro},
+            {"CHOOSE_BOX", DialogueType::ChooseBox},
+            {"EARLY_GAME_WIN", DialogueType::EarlyGameWin},
+            {"EARLY_GAME_MID", DialogueType::EarlyGameMid},
+            {"EARLY_GAME_LOSS", DialogueType::EarlyGameLoss},
+            {"MID_GAME_WIN", DialogueType::MidGameWin},
+            {"MID_GAME_MID", DialogueType::MidGameMid},
+            {"MID_GAME_LOSS", DialogueType::MidGameLoss},
+            {"END_GAME_WIN", DialogueType::EndGameWin},
+            {"END_GAME_MID", DialogueType::EndGameMid},
+            {"END_GAME_LOSS", DialogueType::EndGameLoss},
+            {"BANKER_CALL", DialogueType::BankerCall},
+            {"DEAL_REFUSED", DialogueType::DealRefused},
+        };
+        auto it = mapping.find(str);
+        if (it != mapping.end()) {
+            return it->second;
         }
-        file.close();
-        return dialogs;
+        logoutf("Warning Invalid dialogue type string (%s)", str.c_str());
+        return DialogueType::Invalid;
     }
 
-    vector<string> introDialog;
-    vector<string> chooseBoxDialog;
-    vector<string> earlyGameWinDialog;
-    vector<string> earlyGameMidDialog;
-    vector<string> earlyGameLossDialog;
-    vector<string> midGameWinDialog;
-    vector<string> midGameMidDialog;
-    vector<string> midGameLossDialog;
-    vector<string> endGameWinDialog;
-    vector<string> endGameMidDialog;
-    vector<string> endGameLossDialog;
-    vector<string> bankerCall;
-    vector<string> dealRefused;
+    void readDialogues(const string &filename, map<DialogueType, vector<string>> &dialogues)
+    {
+        ifstream file(filename);
+
+        if (!file) fatal("Cannot read config file! (" + filename + ")");
+
+        string line;
+        DialogueType currentGroup;
+
+        while (getline(file, line))
+        {
+            if (line.empty()) continue;
+            if (line[0] == '[')
+            {
+                currentGroup = dialogueTypeFromString(line.substr(1, line.find(']') - 1));
+                dialogues[currentGroup] = vector<string>();
+            }
+            else dialogues[currentGroup].push_back(line);
+        }
+        file.close();
+    }
 
     void loadDialogs()
     {
-        map<string, vector<string>> dialogs = readDialogues("config/dialogs.cfg");
+        readDialogues("config/dialogs.cfg", dialogues);
+    }
 
-        introDialog = dialogs["introDialog"];
-        chooseBoxDialog = dialogs["chooseBoxDialog"];
-        earlyGameWinDialog = dialogs["earlyGameWinDialog"];
-        earlyGameMidDialog = dialogs["earlyGameMidDialog"];
-        earlyGameLossDialog = dialogs["earlyGameLossDialog"];
-        midGameWinDialog = dialogs["midGameWinDialog"];
-        midGameMidDialog = dialogs["midGameMidDialog"];
-        midGameLossDialog = dialogs["midGameLossDialog"];
-        endGameWinDialog = dialogs["endGameWinDialog"];
-        endGameMidDialog = dialogs["endGameMidDialog"];
-        endGameLossDialog = dialogs["endGameLossDialog"];
-        bankerCall = dialogs["bankerCall"];
-        dealRefused = dialogs["dealRefused"];
+    const string &getRandomDialogue(DialogueType type)
+    {
+        auto it = dialogues.find(type);
+        if(it == dialogues.end())
+        {
+            static const string defaultString = "Error: Dialogue not found (and I'm not kidding)";
+            return defaultString;
+        }
+        auto &dialogueVec = it->second;
+        int randomIndex = rnd(dialogueVec.size());
+        return dialogueVec[randomIndex];
     }
 
     string mainDialog;

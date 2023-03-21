@@ -12,6 +12,7 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++17" />
 					<Add option="-g" />
 					<Add option="-ffast-math" />
 					<Add directory="include" />

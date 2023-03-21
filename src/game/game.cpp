@@ -38,7 +38,7 @@ namespace game
         gameState = S_ChoosePlayerBox;
         engineState = S_InGame;
 
-        popDialog(introDialog[rnd(introDialog.size())].c_str());
+        popDialog(getRandomDialogue(DialogueType::Intro).c_str());
     }
 
     int openCount(bool remaining) // count the number of opened boxes (or the number of remaining)
@@ -55,7 +55,7 @@ namespace game
 
     void chooseBox(int id) // when player is prompt to choose his box
     {
-        popDialog(chooseBoxDialog[rnd(chooseBoxDialog.size())].c_str(), id + 1);
+        popDialog(getRandomDialogue(DialogueType::ChooseBox).c_str(), id + 1);
         player.playerBox = id;
         gameState = S_OpeningBoxes;
     }
@@ -85,19 +85,19 @@ namespace game
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(earlyGameLossDialog[rnd(earlyGameLossDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameLoss).c_str(), boxValue);
             }
             else if(boxValue >= 5000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(earlyGameMidDialog[rnd(earlyGameMidDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameMid).c_str(), boxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(earlyGameWinDialog[rnd(earlyGameWinDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EarlyGameWin).c_str(), boxValue);
             }
         }
         else if(openCount()>=4 && openCount()<=14) // mid game
@@ -106,19 +106,19 @@ namespace game
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(midGameLossDialog[rnd(midGameLossDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameLoss).c_str(), boxValue);
             }
             else if(boxValue >= 2000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(midGameMidDialog[rnd(midGameMidDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameMid).c_str(), boxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(midGameWinDialog[rnd(midGameWinDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::MidGameWin).c_str(), boxValue);
             }
         }
         else // end game
@@ -127,19 +127,19 @@ namespace game
             {
                 SoundManager.play("BoxNegative");
                 boxCombo[A_bad]++;
-                popDialog(endGameLossDialog[rnd(endGameLossDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameLoss).c_str(), boxValue);
             }
             else if(boxValue >= 1000)
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_neutral]++;
-                popDialog(endGameMidDialog[rnd(endGameMidDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameMid).c_str(), boxValue);
             }
             else
             {
                 SoundManager.play("BoxPositive");
                 boxCombo[A_good]++;
-                popDialog(endGameWinDialog[rnd(endGameWinDialog.size())].c_str(), boxValue);
+                popDialog(getRandomDialogue(DialogueType::EndGameWin).c_str(), boxValue);
             }
         }
 
@@ -197,7 +197,7 @@ namespace game
             switch(gameState)
             {
                 case S_BankCall:
-                    popDialog(bankerCall[rnd(bankerCall.size())].c_str());
+                    popDialog(getRandomDialogue(DialogueType::BankerCall).c_str());
                     SoundManager::getInstance().playMusic("data/songs/bank.ogg", -1);
                     gameState=S_BankOffer;
                     break;
