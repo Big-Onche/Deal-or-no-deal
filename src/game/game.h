@@ -51,6 +51,9 @@ namespace game
     extern vector<string> bankerCall;
     extern vector<string> dealRefused;
 
+    extern Button *dealButton;
+    enum {Btn_Accept, Btn_Refuse, Btn_Continue, numDealButtons};
+    extern void initDealButtons();
     extern void handleGame(SDL_Event &event, SDL_Point &mousePoint);
 }
 
@@ -69,8 +72,6 @@ namespace render // render game
     extern int boxesgridX();
     extern int boxesgridY();
     extern void renderGame();
-
-    extern SDL_Rect yesRect, noRect;
 }
 
 #endif

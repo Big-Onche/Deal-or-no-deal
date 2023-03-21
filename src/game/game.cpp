@@ -44,6 +44,8 @@ namespace game
     void initGame() // (re)initialize everything for a new game
     {
         engineState = S_LoadingScreen;
+        freeButtons();
+        initDealButtons();
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
@@ -187,8 +189,72 @@ namespace game
         return offer;
     }
 
+    void acceptDeal()
+    {
+        popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
+        if(!player.bankGain)
+        {
+            player.bankGain = lastOffer;
+            gameState=S_AcceptedDeal;
+        }
+        else gameState=S_OpeningBoxes;
+    }
+
+    void refuseDeal()
+    {
+        popDialog(dealRefused[rnd(dealRefused.size())].c_str());
+        Mix_FadeOutMusic(1000);
+        gameState=S_OpeningBoxes;
+    }
+
+    void continueGame()
+    {
+        //popDialog(dealRefused[rnd(dealRefused.size())].c_str());
+        Mix_FadeOutMusic(1000);
+        gameState=S_OpeningBoxes;
+    }
+
+
+    Button *dealButton;
+
+    void initDealButtons() // called when initializing the engine
+    {
+        int y = 600;
+
+        dealButton = createButton(810, y, "Accept", 4, 0x22CC00, acceptDeal);
+        addButton(dealButton);
+
+        y += 55;
+
+        dealButton = createButton(810, y, "Refuse", 4, 0xFF3300, refuseDeal);
+        addButton(dealButton);
+
+        dealButton = createButton(810, y, "Continue", 4, 0xFFAA00, continueGame);
+        addButton(dealButton);
+    }
+
+
+
     void handleGame(SDL_Event &event, SDL_Point &mousePoint)
     {
+        if(gameState==S_Dealing)
+        {
+            loopi(numDealButtons)
+            {
+                Button *button = buttons[i];
+                if(button != nullptr)
+                {
+                    bool isMouseOver = isMouseOverButton(button, mousePoint);
+                    button->isHover = isMouseOver;
+
+                    if(event.type == SDL_MOUSEBUTTONDOWN && isMouseOver)
+                    {
+                        if(button->onClick != nullptr) button->onClick();
+                    }
+                }
+            }
+        }
+
         if(event.type == SDL_MOUSEBUTTONDOWN)
         {
             switch(gameState)
@@ -227,23 +293,6 @@ namespace game
                     if(player.bankGain && player.bankGain>lastOffer) popDialog("Well done, you have accepted $%d just before!", player.bankGain);
                     else if(player.bankGain && player.bankGain<lastOffer) popDialog("You accepted $%d before! Maybe you accepted a bit too fast?", player.bankGain);
                     else popDialog("So, you take the bucks or you risk the bust?");
-
-                    if(SDL_PointInRect(&mousePoint, &render::yesRect))
-                    {
-                        popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
-                        if(!player.bankGain)
-                        {
-                            player.bankGain = lastOffer;
-                            gameState=S_AcceptedDeal;
-                        }
-                        else gameState=S_OpeningBoxes;
-                    }
-                    if(SDL_PointInRect(&mousePoint, &render::noRect) || !player.bankGain)
-                    {
-                        popDialog(dealRefused[rnd(dealRefused.size())].c_str());
-                        Mix_FadeOutMusic(1000);
-                        gameState=S_OpeningBoxes;
-                    }
                     break;
 
                 case S_AcceptedDeal:
