@@ -64,9 +64,13 @@ void renderText(int font, const string &text, int x, int y, float fontSize, uint
             dstRect.y += static_cast<int>(ch[font] * fontSize);
         }
 
-        for (char c : word)
+        for (unsigned char c : word)
         {
-            int charIndex = static_cast<int>(c) - 32;
+            int charIndex;
+            if (c >= 32 && c <= 126) charIndex = static_cast<int>(c) - 32;
+            else if (c >= 160 && c <= 255) charIndex = static_cast<int>(c) - 32 - (160 - 127); // standard ASCII 0-255 sprite sheet
+            else continue; // ignore unsupported characters
+
             srcRect.x = (charIndex % cpr[font]) * cw[font];
             srcRect.y = (charIndex / cpr[font]) * ch[font];
 
