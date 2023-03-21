@@ -43,6 +43,7 @@ namespace game
 
     void initGame() // (re)initialize everything for a new game
     {
+        engineState = S_LoadingScreen;
         player.bankGain = 0;
         player.playerBox = 0;
         assignBoxes();
@@ -181,7 +182,7 @@ namespace game
     {
         int offer = 0;
         loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
-        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.5f+offerMod)));
+        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.7f+(offerMod/2.f))));
         lastOffer = offer;
         return offer;
     }
@@ -232,7 +233,7 @@ namespace game
                         popDialog("Maybe the banker trapped you, but let's see what's inside the other boxes.");
                         if(!player.bankGain)
                         {
-                            player.bankGain = bankOffer(rnd(10)/10.f);
+                            player.bankGain = lastOffer;
                             gameState=S_AcceptedDeal;
                         }
                         else gameState=S_OpeningBoxes;

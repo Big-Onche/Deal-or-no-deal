@@ -54,11 +54,12 @@ namespace game
     extern void handleGame(SDL_Event &event, SDL_Point &mousePoint);
 }
 
-namespace gui // menus and splash/loading screens
+namespace menus // menus and splash/loading screens
 {
-    extern void handleMenus(SDL_Event &event, SDL_Point &mousePoint);
-    extern void renderSplashScreen(string text);
+    extern void initMainMenuButtons();
     extern void renderMenu();
+    extern void renderSplashScreen(string text);
+    extern void handleMenus(SDL_Event &event, SDL_Point &mousePoint);
 }
 
 namespace render // render game

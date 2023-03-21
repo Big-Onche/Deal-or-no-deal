@@ -86,7 +86,7 @@ namespace sdl
 
             switch(engineState)
             {
-                case S_MainMenu: gui::handleMenus(event, mousePoint); break;
+                case S_MainMenu: menus::handleMenus(event, mousePoint); break;
                 case S_InGame: game::handleGame(event, mousePoint);
             }
         }
@@ -97,15 +97,15 @@ namespace sdl
         {
             case S_Initialization: // game intro splash screen
                 SDL_SetRenderDrawColor(renderer, 33, 33, 33, 255);
-                gui::renderSplashScreen("Press any key to continue.");
+                menus::renderSplashScreen("Press any key to continue.");
                 break;
 
             case S_MainMenu: // main menu
-                gui::renderMenu();
+                menus::renderMenu();
                 break;
 
             case S_LoadingScreen: // loading screen
-                gui::renderSplashScreen("Loading...");
+                menus::renderSplashScreen("Loading...");
                 break;
 
             case S_InGame: // in game
@@ -123,8 +123,7 @@ namespace sdl
 
     void sdlQuit()
     {
-        logoutf("shutdown: gl");
-        TextureManager::getInstance().clearTextures();
+        logoutf("shutdown: sdl");
         IMG_Quit();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
