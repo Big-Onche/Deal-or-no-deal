@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "tools.h"
-#include "dialogs.h"
 #include <map>
 
 using namespace std;

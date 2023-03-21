@@ -1,13 +1,14 @@
 #include "game.h"
 #include "main.h"
-#include <optional>
 
 namespace game
 {
     map<DialogueType, vector<string>> dialogues;
 
-    DialogueType dialogueTypeFromString(const string &str) {
-        static const map<string, DialogueType> mapping = {
+    DialogueType dialogueTypeFromString(const string &str)
+    {
+        static const map<string, DialogueType> mapping =
+        {
             {"GAME_INTRO", DialogueType::Intro},
             {"CHOOSE_BOX", DialogueType::ChooseBox},
             {"EARLY_GAME_WIN", DialogueType::EarlyGameWin},
@@ -23,9 +24,8 @@ namespace game
             {"DEAL_REFUSED", DialogueType::DealRefused},
         };
         auto it = mapping.find(str);
-        if (it != mapping.end()) {
-            return it->second;
-        }
+        if (it != mapping.end()) return it->second;
+
         logoutf("Warning Invalid dialogue type string (%s)", str.c_str());
         return DialogueType::Invalid;
     }
@@ -33,16 +33,15 @@ namespace game
     void readDialogues(const string &filename, map<DialogueType, vector<string>> &dialogues)
     {
         ifstream file(filename);
-
-        if (!file) fatal("Cannot read config file! (" + filename + ")");
+        if(!file) fatal("Cannot read config file! (" + filename + ")");
 
         string line;
         DialogueType currentGroup;
 
-        while (getline(file, line))
+        while(getline(file, line))
         {
-            if (line.empty()) continue;
-            if (line[0] == '[')
+            if(line.empty()) continue; // skip spaces
+            if(line[0] == '[') // check for DialogueType's square brackets
             {
                 currentGroup = dialogueTypeFromString(line.substr(1, line.find(']') - 1));
                 dialogues[currentGroup] = vector<string>();
@@ -62,7 +61,7 @@ namespace game
         auto it = dialogues.find(type);
         if(it == dialogues.end())
         {
-            static const string defaultString = "Error: Dialogue not found (and I'm not kidding)";
+            static const string defaultString = "Error: Dialogue not found (and I'm not kidding)"; // pop a error message if something went wrong
             return defaultString;
         }
         auto &dialogueVec = it->second;
@@ -70,7 +69,7 @@ namespace game
         return dialogueVec[randomIndex];
     }
 
-    string mainDialog;
+    string mainDialog; // what is showing in the bubble
     void popDialog(const char* format, ...)
     {
         char buffer[256];
