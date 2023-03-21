@@ -23,4 +23,6 @@
 #define loopi(m) loop(i,m)
 #define loopj(m) loop(j,m)
 
+extern uint32_t divideHexColor(uint32_t hex_color, float divisor);
+
 #endif

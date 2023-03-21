@@ -59,4 +59,27 @@ extern void renderShadowedText(int font, const string &text, int x, int y, float
 extern void renderOutlinedText(int font, const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
 extern void getTextSize(int font, const string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
 
+
+// buttons
+const int MAX_BUTTONS = 32;
+
+typedef struct Button
+{
+    SDL_Rect rect;
+    string texture;
+    const char *text;
+    int fontSize;
+    uint32_t color;
+    bool isHover;
+    void (*onClick)(void);
+} Button;
+
+extern Button *buttons[];
+
+extern Button *createButton(int x, int y, const char *text, int fontSize, uint32_t color, void (*onClick)(void));
+extern void drawButton(Button *button, SDL_Renderer *renderer);
+extern void addButton(Button *button);
+extern bool isMouseOverButton(const Button *button, const SDL_Point &mousePoint);
+extern void freeButtons();
+
 #endif

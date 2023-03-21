@@ -12,16 +12,16 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-m32" />
 					<Add option="-g" />
 					<Add option="-ffast-math" />
-					<Add directory="miniaudio" />
 					<Add directory="include" />
+					<Add directory="game" />
+					<Add directory="engine" />
 				</Compiler>
 				<Linker>
-					<Add option="-m32" />
 					<Add library="SDL2" />
 					<Add library="SDL2_image" />
+					<Add library="SDL2_mixer" />
 					<Add directory="lib64" />
 				</Linker>
 			</Target>
@@ -34,13 +34,15 @@
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-Os" />
 					<Add option="-ffast-math" />
-					<Add directory="miniaudio" />
 					<Add directory="include" />
+					<Add directory="game" />
+					<Add directory="engine" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add library="SDL2" />
 					<Add library="SDL2_image" />
+					<Add library="SDL2_mixer" />
 					<Add directory="lib64" />
 				</Linker>
 			</Target>
@@ -49,20 +51,25 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="game.cpp" />
-		<Unit filename="gui.cpp" />
-		<Unit filename="main.cpp" />
-		<Unit filename="main.h" />
-		<Unit filename="render.cpp" />
+		<Unit filename="engine/buttons.cpp" />
+		<Unit filename="engine/main.cpp" />
+		<Unit filename="engine/main.h" />
+		<Unit filename="engine/sdl.cpp" />
+		<Unit filename="engine/sounds.cpp" />
+		<Unit filename="engine/sounds.h" />
+		<Unit filename="engine/textures.cpp" />
+		<Unit filename="engine/textures.h" />
+		<Unit filename="engine/tools.cpp" />
+		<Unit filename="engine/tools.h" />
+		<Unit filename="game/dialogs.cpp" />
+		<Unit filename="game/game.cpp" />
+		<Unit filename="game/game.h" />
+		<Unit filename="game/menus.cpp" />
+		<Unit filename="game/render.cpp" />
+		<Unit filename="game/texts.cpp" />
 		<Unit filename="resource.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="sdl.cpp" />
-		<Unit filename="sound.cpp" />
-		<Unit filename="texts.cpp" />
-		<Unit filename="textures.cpp" />
-		<Unit filename="textures.h" />
-		<Unit filename="tools.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

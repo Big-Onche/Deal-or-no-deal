@@ -2,6 +2,7 @@
 #include "main.h"
 #include "sounds.h"
 #include "game.h"
+#include "textures.h"
 
 EngineState engineState;
 
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     SoundManager::getInstance().init();
     logoutf("init: game");
     game::loadDialogs();
+    menus::initMainMenuButtons();
 
     SoundManager::getInstance().playMusic("data/songs/theme.ogg");
 
@@ -53,8 +55,12 @@ void logoutf(const char* format, ...) // print to log file
 void quit(bool fatal) // cleanup and quit
 {
     engineState = S_ShuttingDown;
-    sdl::sdlQuit();
+
+    TextureManager::getInstance().clearTextures();
     SoundManager::getInstance().quit();
+    freeButtons();
+    sdl::sdlQuit();
+
     if(fatal)
     {
         logoutf("shutdown: fatal error\n");
