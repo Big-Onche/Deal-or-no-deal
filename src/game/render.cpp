@@ -5,10 +5,10 @@
 namespace render
 {
     int boxWidth = 140, boxHeight = 125;
-    int boxSpacing = 12;
+    int boxSpacingX = 20, boxSpacingY = 12;
 
-    int boxesgridX() { return (screenw - (5 * boxWidth + 3 * boxSpacing)) / 2; }
-    int boxesgridY() { return ((4 * boxHeight + 3 * boxSpacing)) - screenh / 1.37f; }
+    int boxesgridX() { return (screenw - (5 * boxWidth + 3 * boxSpacingX)) / 2; }
+    int boxesgridY() { return ((4 * boxHeight + 3 * boxSpacingY)) - screenh / 1.37f; }
 
     void drawBox(TextureManager& textureManager, int id, int x, int y, int boxvalue, bool opened, bool ownBox = false) // draw one box
     {
@@ -37,8 +37,8 @@ namespace render
             loopj(5)
             {
                 int id = i * 5 + j;
-                int x = boxesgridX() + j * (boxWidth + boxSpacing);
-                int y = boxesgridY() + i * (boxHeight + boxSpacing);
+                int x = boxesgridX() + j * (boxWidth + boxSpacingX);
+                int y = boxesgridY() + i * (boxHeight + boxSpacingY);
                 if(gameState==S_ChoosePlayerBox || id!=game::player.playerBox) drawBox(textureManager, id, x, y, game::boxes[id].insideBox, game::boxes[id].opened);
             }
         }
@@ -118,14 +118,14 @@ namespace render
 
     void drawGameOver(TextureManager& textureManager)
     {
-        if(!rnd(5) && (game::player.bankGain > 50000 || game::boxes[game::player.playerBox].insideBox > 50000))
+        if(!rnd(5) && game::player.finalGain >= game::boxes[game::player.playerBox].insideBox)
             particlesManager.spawnParticle("Confetti", 15, rnd(screenw), -10, (rand() % 50 - 25) / 1.0f, 100, 7.f, 0xFFD700);
 
         int id = game::player.playerBox;
         drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
 
         int tw, th;
-        string priceText = "You won: $" + to_string(game::player.bankGain ? game::player.bankGain : game::boxes[game::player.playerBox].insideBox);
+        string priceText = "You won: $" + to_string(game::player.finalGain);
         getTextSize(font[DialFont], priceText, tw, th, 5);
         textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 2, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
         renderOutlinedText(font[DialFont], priceText, (screenw - tw) / 2, (screenh - th) / 2, 5, 0xFFFFFF, 0x333333);

@@ -77,6 +77,8 @@ namespace game
 
         if(allOpened()) // check for game over
         {
+            if(player.bankGain) player.finalGain = player.bankGain;
+            else player.finalGain = game::boxes[game::player.playerBox].insideBox;
             gameState = S_GameOver;
             SoundManager.playMusic("data/songs/jingle.ogg");
             return;
@@ -148,7 +150,7 @@ namespace game
 
         render::checkGameAtmo();
 
-        if(openCount()==5 || openCount()==9 || openCount()==12 || openCount()==15 || openCount()==18)
+        if(openCount()==5 || openCount()==10 || openCount()==15 || openCount()==17+rnd(2))
         {
             SoundManager.play("BankCall");
             loopi(3) boxCombo[i]=0;
@@ -184,8 +186,8 @@ namespace game
                 {
                     int id = i * 5 + j;
                     // set the click zone at the same sizes of the box displayed in drawBox() with the same loop
-                    SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacing),
-                                        render::boxesgridY() + i * (render::boxHeight + render::boxSpacing),
+                    SDL_Rect boxRect = {render::boxesgridX() + j * (render::boxWidth + render::boxSpacingX),
+                                        render::boxesgridY() + i * (render::boxHeight + render::boxSpacingY),
                                         render::boxWidth, render::boxHeight};
 
                     if(SDL_PointInRect(&mousePoint, &boxRect))

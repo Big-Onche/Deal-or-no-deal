@@ -27,6 +27,7 @@ namespace game
         int playerBox;
         int choosenBox;
         int bankGain;
+        int finalGain;
     };
     extern playerinfo player;
 
@@ -83,7 +84,7 @@ namespace menus // menus and splash/loading screens
 namespace render // render game
 {
     extern int boxWidth, boxHeight;
-    extern int boxSpacing;
+    extern int boxSpacingX, boxSpacingY;
     extern int boxesgridX();
     extern int boxesgridY();
     extern void drawBackground(TextureManager &textureManager);
