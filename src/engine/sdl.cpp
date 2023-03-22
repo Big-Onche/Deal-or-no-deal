@@ -1,6 +1,7 @@
 #include "main.h"
 #include "game.h"
 #include "textures.h"
+#include "particles.h"
 
 bool fullscreen;
 int screenw = 1280;
@@ -94,24 +95,31 @@ namespace sdl
 
         SDL_RenderClear(renderer); // cleaning all rendered things
 
+        TextureManager& textureManager = TextureManager::getInstance();
+
+        render::drawBackground(textureManager);
+
+        particlesManager.update(1.f/maxfps);
+        particlesManager.render(renderer);
+
         switch(engineState)
         {
             case S_Initialization: // game intro splash screen
                 SDL_SetRenderDrawColor(renderer, 33, 33, 33, 255);
-                menus::renderSplashScreen("Press any key to continue.");
+                menus::renderSplashScreen("Press any key to continue.", textureManager);
                 break;
 
             case S_MainMenu: // main menu
-                menus::renderMenu();
+                menus::renderMenu(textureManager);
                 break;
 
             case S_LoadingScreen: // loading screen
-                menus::renderSplashScreen("Loading...");
+                menus::renderSplashScreen("Loading...", textureManager);
                 break;
 
             case S_InGame: // in game
                 SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
-                render::renderGame();
+                render::renderGame(textureManager);
                 break;
 
             case S_ShuttingDown:

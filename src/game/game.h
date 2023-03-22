@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "tools.h"
+#include "textures.h"
 #include <map>
 
 using namespace std;
@@ -71,8 +72,8 @@ namespace game
 namespace menus // menus and splash/loading screens
 {
     extern void initMainMenuButtons();
-    extern void renderMenu();
-    extern void renderSplashScreen(string text);
+    extern void renderMenu(TextureManager &textureManager);
+    extern void renderSplashScreen(string text, TextureManager &textureManager);
     extern void handleMenus(SDL_Event &event, SDL_Point &mousePoint);
 }
 
@@ -82,7 +83,8 @@ namespace render // render game
     extern int boxSpacing;
     extern int boxesgridX();
     extern int boxesgridY();
-    extern void renderGame();
+    extern void drawBackground(TextureManager &textureManager);
+    extern void renderGame(TextureManager &textureManager);
     extern void checkGameAtmo();
 }
 

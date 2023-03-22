@@ -10,7 +10,7 @@ namespace game
     {
         int offer = 0;
         loopi(maxBoxes) if(!boxes[i].opened) offer+=boxes[i].insideBox;
-        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.7f+(offerMod/2.f))));
+        if(openCount(true)) offer /= (openCount(true) < 3 ? (float)openCount(true)*(0.7f+offerMod) : (openCount(true)*(1.4f+(offerMod/2.f))));
         lastOffer = offer;
         return offer;
     }

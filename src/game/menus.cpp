@@ -28,19 +28,17 @@ namespace menus
         addButton(menuButton);
     }
 
-    void renderMenu()
+    void renderMenu(TextureManager &textureManager)
     {
-        TextureManager& textureManager = TextureManager::getInstance();
-
         textureManager.draw("MenuBackground", 0, 0, screenw, screenh, renderer);
         textureManager.drawShadowedTex("GameLogo", 90, 90, 220, 220, renderer, 0xFFFFFF, 0x191919, 5, 5, 100);
 
         loopi(numMenuButtons) drawButton(buttons[i], renderer); // iterate trough Btn_NewGame, Btn_Options, Btn_Quit
     }
 
-    void renderSplashScreen(string text) // showing splash screen
+    void renderSplashScreen(string text, TextureManager &textureManager) // showing splash screen
     {
-        TextureManager::getInstance().drawShadowedTex("GameLogo", (screenw - 500) / 2, (screenh - 500) / 2, 500, 500, renderer, 0xFFFFFF, 0x191919, 20, 20, 100);
+        textureManager.drawShadowedTex("GameLogo", (screenw - 500) / 2, (screenh - 500) / 2, 500, 500, renderer, 0xFFFFFF, 0x191919, 20, 20, 100);
         int tw, th; // text width, text height
         int textSize = 3;
         getTextSize(font[MainFont], text, tw, th, textSize);

@@ -55,6 +55,8 @@
 		<Unit filename="engine/buttons.cpp" />
 		<Unit filename="engine/main.cpp" />
 		<Unit filename="engine/main.h" />
+		<Unit filename="engine/particles.cpp" />
+		<Unit filename="engine/particles.h" />
 		<Unit filename="engine/sdl.cpp" />
 		<Unit filename="engine/sounds.cpp" />
 		<Unit filename="engine/sounds.h" />

@@ -20,6 +20,7 @@ extern void logoutf(const char* format, ...);
 //sdl things
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
+const int maxfps = 60;
 
 extern int screenw, screenh;
 extern float scalew, scaleh;

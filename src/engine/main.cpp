@@ -9,7 +9,6 @@ EngineState engineState;
 Uint32 elapsedTime, seconds, milliseconds = 0;
 
 int frameTime;
-const int maxfps = 60;
 const int frameDelay = 1000 / maxfps;
 
 int main(int argc, char *argv[])
@@ -33,6 +32,7 @@ int main(int argc, char *argv[])
 
         frameTime = SDL_GetTicks() - elapsedTime; // Calculate the time taken for one loop iteration
         if(frameDelay > frameTime) SDL_Delay(frameDelay - frameTime);
+
     }
 
     quit();

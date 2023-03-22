@@ -78,6 +78,8 @@ void TextureManager::drawShadowedTex(const std::string& textureID, int x, int y,
     textureManager.setColorMod(textureID, originalColor);
     textureManager.setAlpha(textureID, 255);
     textureManager.draw(textureID, x, y, width, height, renderer);
+
+    textureManager.setColorMod(textureID, 0xFFFFFF);
 }
 
 void TextureManager::drawAlphaTex(const std::string& textureID, int x, int y, int width, int height, SDL_Renderer* renderer, Uint8 alphaBlend)

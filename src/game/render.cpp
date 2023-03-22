@@ -1,6 +1,7 @@
 #include "main.h"
 #include "game.h"
 #include "textures.h"
+#include "particles.h"
 
 namespace render
 {
@@ -118,14 +119,17 @@ namespace render
 
     void drawGameOver(TextureManager& textureManager)
     {
+        if(!rnd(5) && (game::player.bankGain > 50000 || game::boxes[game::player.playerBox].insideBox > 50000))
+            particlesManager.spawnParticle("Confetti", 15, rnd(screenw), -10, (rand() % 50 - 25) / 1.0f, 100, 7.f, 0xFFD700);
+
+        int id = game::player.playerBox;
+        drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
+
         int tw, th;
         string priceText = "You won: $" + to_string(game::player.bankGain ? game::player.bankGain : game::boxes[game::player.playerBox].insideBox);
         getTextSize(font[DialFont], priceText, tw, th, 5);
         textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 2, tw + 4, th + 8, renderer, 0xFFCC11, 0x000000, 10, 10, 75);
-        renderOutlinedText(font[DialFont], priceText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
-
-        int id = game::player.playerBox;
-        drawBox(textureManager, id, (screenw-boxWidth*1.5f)-20, 10+(screenh-boxWidth*1.5f), game::boxes[id].insideBox, game::allOpened(), true);
+        renderOutlinedText(font[DialFont], priceText, (screenw - tw) / 2, (screenh - th) / 2, 5, 0xFFFFFF, 0x333333);
     }
 
     void checkGameAtmo()
@@ -164,18 +168,13 @@ namespace render
         textureManager.drawAlphaTex("GoodBackground", 0, 0, screenw, screenh, renderer, alphaBlendGood);
     }
 
-    void renderGame() // rendering a game
+    void renderGame(TextureManager &textureManager) // rendering a game
     {
-        TextureManager& textureManager = TextureManager::getInstance();
-
-        drawBackground(textureManager);
         if(gameState==S_ChoosePlayerBox || gameState==S_OpeningBoxes || gameState==S_BankCall) drawBoxes(textureManager);
         else if (gameState==S_BankOffer || gameState==S_Dealing) drawBank(textureManager);
         else if (gameState==S_GameOver) drawGameOver(textureManager);
-        drawDialogs(textureManager);
-        drawRemainingPrices(textureManager);
 
-        if(game::lastBoxOpeningTime+2000 > elapsedTime && game::openCount())
+        if(game::lastBoxOpeningTime+1500 > elapsedTime && game::openCount())
         {
             int tw, th;
             string valueText = "$" + to_string(game::lastBoxValue);
@@ -183,5 +182,8 @@ namespace render
             textureManager.drawShadowedTex("RemainingPrices", (screenw - tw-8) / 2, (screenh - th-4) / 1.35, tw + 4, th + 8, renderer, backgroundColor(game::lastBoxValue), 0x000000, 10, 10, 75);
             renderOutlinedText(font[DialFont], valueText, (screenw - tw) / 2, (screenh - th) / 1.35, 5, 0xFFFFFF, 0x333333);
         }
+
+        drawDialogs(textureManager);
+        drawRemainingPrices(textureManager);
     }
 }
