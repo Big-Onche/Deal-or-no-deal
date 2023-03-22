@@ -51,7 +51,7 @@ namespace sdl
 
     int mouseX, mouseY;
 
-    bool sdlLoop() // events then render loop
+    bool handleEvents() // events then render loop
     {
         SDL_Event event;
 
@@ -92,10 +92,12 @@ namespace sdl
                 default: break;
             }
         }
+        return true;
+    }
 
+    void render(TextureManager& textureManager)
+    {
         SDL_RenderClear(renderer); // cleaning all rendered things
-
-        TextureManager& textureManager = TextureManager::getInstance();
 
         render::drawBackground(textureManager);
 
@@ -127,7 +129,6 @@ namespace sdl
         }
 
         SDL_RenderPresent(renderer); // rendering all things
-        return true;
     }
 
     void sdlQuit()

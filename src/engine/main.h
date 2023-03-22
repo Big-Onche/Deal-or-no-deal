@@ -2,6 +2,7 @@
 #define MAIN_H
 
 #include "tools.h"
+#include "textures.h"
 
 using namespace std;
 
@@ -39,7 +40,8 @@ namespace sdl
 
     // main sdl funcs
     extern void sdlInit();
-    extern bool sdlLoop();
+    extern bool handleEvents();
+    extern void render(TextureManager &textureManager);
     extern void sdlQuit();
 
     // other useful funcs

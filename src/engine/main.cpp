@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
 
     SoundManager::getInstance().playMusic("data/songs/theme.ogg");
 
+    TextureManager& textureManager = TextureManager::getInstance();
+
     for(;;) // main loop
     {
         elapsedTime  = SDL_GetTicks();
@@ -28,7 +30,8 @@ int main(int argc, char *argv[])
         seconds = elapsedTime / 1000;
         milliseconds = elapsedTime % 1000;
 
-        if(!sdl::sdlLoop()) break; // break if SDL_QUIT is called
+        if(!sdl::handleEvents()) break; // break if SDL_QUIT is called
+        sdl::render(textureManager);
 
         frameTime = SDL_GetTicks() - elapsedTime; // Calculate the time taken for one loop iteration
         if(frameDelay > frameTime) SDL_Delay(frameDelay - frameTime);
