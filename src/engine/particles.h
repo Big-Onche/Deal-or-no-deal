@@ -1,12 +1,10 @@
 #ifndef PARTICLES_H
 #define PARTICLES_H
 
-#include "tools.h"
-
 struct Particle
 {
-    string textureID;        // Texture
-    float size;              // Particle size
+    std::string textureID;   // Texture
+    float size;         // Particle size
     float x, y;              // Spawn position
     float xVel, yVel;        // Velocity
     float life;              // Life (secs)
@@ -21,10 +19,10 @@ class ParticlesManager
 
         void update(float deltaTime);
         void render(SDL_Renderer* renderer);
-        void spawnParticle(string textureID, float size, float x, float y, float xVel, float yVel, float life, uint32_t color);
+        void spawnParticle(std::string textureID, float size, float x, float y, float xVel, float yVel, float life, uint32_t color);
 
     private:
-        vector<Particle> particles;
+        std::vector<Particle> particles;
 };
 
 extern ParticlesManager particlesManager;

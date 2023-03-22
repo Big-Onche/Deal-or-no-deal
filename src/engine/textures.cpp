@@ -1,6 +1,8 @@
 #include "main.h"
 #include "textures.h"
 
+using namespace std;
+
 TextureManager& TextureManager::getInstance()
 {
     static TextureManager instance;

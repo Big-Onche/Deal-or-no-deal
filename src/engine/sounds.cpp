@@ -1,6 +1,8 @@
 #include "main.h"
 #include "sounds.h"
 
+using namespace std;
+
 bool SoundManager::init() //sdl2_mixer init
 {
     logoutf("init: sound");

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "particles.h"
-#include "textures.h"
+
+using namespace std;
 
 const int maxParticles = 1024;
 

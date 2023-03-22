@@ -4,8 +4,6 @@
 #include "tools.h"
 #include "textures.h"
 
-using namespace std;
-
 // time
 extern Uint32 elapsedTime, seconds, milliseconds;
 
@@ -15,7 +13,7 @@ extern EngineState engineState;
 
 // useful global things
 extern void quit(bool fatal = false);
-extern void fatal(const string &message);
+extern void fatal(const std::string &message);
 extern void logoutf(const char* format, ...);
 
 //sdl things
@@ -31,8 +29,8 @@ namespace sdl
     struct RectInfo
     {
         SDL_Rect rect;
-        string text;
-        string textureID;
+        std::string text;
+        std::string textureID;
 
         RectInfo(int x, int y, int w, int h, const std::string& text, const std::string& textureID)
             : rect{x, y, w, h}, text{text}, textureID{textureID} {}
@@ -57,10 +55,10 @@ extern int cw[MaxFonts];
 extern int ch[MaxFonts];
 extern int cpr[MaxFonts];
 
-extern void renderText(int font, const string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF, int maxWidth = screenw/1.5f);
-extern void renderShadowedText(int font, const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
-extern void renderOutlinedText(int font, const string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
-extern void getTextSize(int font, const string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
+extern void renderText(int font, const std::string &text, int x, int y, float fontSize = 2.f, uint32_t hexColor = 0xFFFFFF, int maxWidth = screenw/1.5f);
+extern void renderShadowedText(int font, const std::string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+extern void renderOutlinedText(int font, const std::string &text, int x, int y, float fontSize, uint32_t = 0xFFFFFF, uint32_t = 0x333333, int maxWidth = screenw/1.5f);
+extern void getTextSize(int font, const std::string &text, int &width, int &height, int fontSize, int maxWidth = screenw/1.5f);
 
 
 // buttons
@@ -69,7 +67,7 @@ const int MAX_BUTTONS = 32;
 typedef struct Button
 {
     SDL_Rect rect;
-    string texture;
+    std::string texture;
     const char *text;
     int fontSize;
     uint32_t color;

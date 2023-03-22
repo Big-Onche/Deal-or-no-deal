@@ -37,9 +37,11 @@ namespace game
     extern int boxCombo[3];
     extern Uint32 lastBoxOpeningTime;
     extern int lastBoxValue;
+
     //bank
     extern int lastOffer;
     extern int bankOffer(float offerMod);
+
     //dialogs
     extern string mainDialog;
     enum class DialogueType {
@@ -62,6 +64,7 @@ namespace game
     extern void loadDialogs();
     const string &getRandomDialogue(DialogueType type);
     extern void popDialog(const char* format, ...);
+
     //buttons and game handling
     //extern Button *dealButton;
     enum {Btn_Accept, Btn_Refuse, Btn_Continue, numDealButtons};

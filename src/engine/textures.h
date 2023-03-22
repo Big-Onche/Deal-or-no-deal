@@ -2,7 +2,6 @@
 #define TEXTURES_H
 
 #include <map>
-#include "tools.h"
 
 class TextureManager
 {

@@ -2,7 +2,6 @@
 #include "main.h"
 #include "sounds.h"
 #include "game.h"
-#include "textures.h"
 
 EngineState engineState;
 

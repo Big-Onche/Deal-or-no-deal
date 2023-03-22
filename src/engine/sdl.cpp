@@ -1,6 +1,5 @@
 #include "main.h"
 #include "game.h"
-#include "textures.h"
 #include "particles.h"
 
 bool fullscreen;

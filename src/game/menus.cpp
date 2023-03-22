@@ -1,7 +1,5 @@
 #include "main.h"
 #include "game.h"
-#include "textures.h"
-#include "sounds.h"
 
 namespace menus
 {

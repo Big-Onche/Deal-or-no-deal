@@ -1,6 +1,8 @@
 #include "main.h"
 #include "textures.h"
 
+using namespace std;
+
 Uint32 lastDialogTime;
 
 int font[MaxFonts] = {MainFont, DialFont};
